@@ -25,11 +25,18 @@ import android.widget.Button;
 public class EnviaImagenSW extends Activity{
 	private Button btnEnviar;
 	private SoapObject request;
+	private Bundle bundle;
+	private String nombreImagen;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enviaimagensw);
+        
+        //obtenemos el nombre de la imagen
+        bundle = getIntent().getExtras();
+        nombreImagen = bundle.getString("nombreImagen");
+        //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
         btnEnviar.setOnClickListener(btnEnviarPres);
     }
