@@ -2,6 +2,8 @@ package com.amber.proyecto.envia.imagenes.sw;
 
 import java.util.List;
 
+import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,9 +12,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class Principal extends Activity {
 	private LocationManager locManager;
+	
 	
 
 	@Override
@@ -23,10 +29,22 @@ public class Principal extends Activity {
 		if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
+		else {
+			Button btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+			btnIniciar.setOnClickListener(btnIniciarPres);
+		}
 		
 	}
 
-	
+	private OnClickListener btnIniciarPres = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(Principal.this,ObtieneFoto.class);
+			startActivity(intent);
+		}
+	};
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

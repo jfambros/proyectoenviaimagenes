@@ -9,8 +9,17 @@
     tools:context=".Principal" >
 
     <TextView
+        android:id="@+id/tvTituloPrin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:text="Aplicación para obtener las coordenadas GPS de una foto" />
+    
+    <Button 
+        android:id="@+id/btnIniciaCamara"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTituloPrin"
+        android:layout_centerHorizontal="true"
+        android:text="Iniciar"/>
 
 </RelativeLayout>
