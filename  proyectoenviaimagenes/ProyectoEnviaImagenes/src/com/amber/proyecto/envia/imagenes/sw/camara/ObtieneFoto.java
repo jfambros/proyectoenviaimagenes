@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
@@ -28,6 +29,9 @@ public class ObtieneFoto extends Activity{
 	private LocationManager milocManager;
 	private LocationListener milocListener;
 	private String nombreImagen;
+	private double latitud;
+	private double longitud;
+	private String coordenadas;
 
 	  /** Called when the activity is first created. */
 	  @Override
@@ -58,6 +62,16 @@ public class ObtieneFoto extends Activity{
 		public void onClick(View v) {
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 			obtieneCoordenadas();
+			  //abrimos la actividad que envía la imagen
+			  Intent intent = new Intent();
+			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
+			  intent.putExtra("nombreImagen", nombreImagen);
+			  
+			  intent.putExtra("latitud", latitud);
+			  intent.putExtra("longitud", longitud);
+			  Log.i("coor;:", coordenadas+":");
+
+			  //startActivity(intent);		
 		}
 	  };
 	  // Called when shutter is opened
@@ -82,11 +96,7 @@ public class ObtieneFoto extends Activity{
 		    	  outStream = new FileOutputStream(String.format("/sdcard/%d.jpg",nombreImagen)); // <9>
 		    	  outStream.write(data);
 		    	  outStream.close();
-		    	  //abrimos la actividad que envía la imagen
-		    	  Intent intent = new Intent();
-		    	  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
-		    	  intent.putExtra("nombreImagen", nombreImagen);
-		    	  startActivity(intent);
+
 	      } catch (FileNotFoundException e) { // <10>
 	        e.printStackTrace();
 	      } catch (IOException e) {
@@ -104,8 +114,10 @@ public class ObtieneFoto extends Activity{
 		
 			  loc.getLatitude();
 			  loc.getLongitude();
-			  String coordenadas = "Mis coordenadas son: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
-			  Toast.makeText( getApplicationContext(),coordenadas,Toast.LENGTH_LONG).show();
+			  //String coordenadas = "Mis coordenadas son: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
+			  coordenadas = loc.getLatitude()+" "+loc.getLongitude();
+			  //Toast.makeText( getApplicationContext(),"latitud: "+latitud+" long: "+longitud,Toast.LENGTH_LONG).show();
+
 		  }
 		  public void onProviderDisabled(String provider)
 		  {
