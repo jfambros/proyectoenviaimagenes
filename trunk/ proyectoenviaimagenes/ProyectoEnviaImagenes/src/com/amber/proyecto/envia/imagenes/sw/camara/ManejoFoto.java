@@ -48,6 +48,7 @@ class ManejoFoto extends SurfaceView implements SurfaceHolder.Callback { // <1>
 	  // Called when the holder is destroyed
 	  public void surfaceDestroyed(SurfaceHolder holder) {  // <14>
 	    camera.stopPreview();
+	    camera.release();
 	    camera = null;
 	  }
 

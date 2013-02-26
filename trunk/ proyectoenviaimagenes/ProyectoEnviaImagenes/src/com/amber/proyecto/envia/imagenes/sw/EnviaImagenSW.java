@@ -21,12 +21,20 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class EnviaImagenSW extends Activity{
 	private Button btnEnviar;
 	private SoapObject request;
 	private Bundle bundle;
 	private String nombreImagen;
+	private String latitud;
+	private String longitud;
+	private TextView tvLatitud;
+	private TextView tvLongitd;
+	private ImageView imagen;
+	
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +44,15 @@ public class EnviaImagenSW extends Activity{
         //obtenemos el nombre de la imagen
         bundle = getIntent().getExtras();
         nombreImagen = bundle.getString("nombreImagen");
+        latitud = bundle.getString("latitud");
+        longitud = bundle.getString("longitud");
+        
+        tvLatitud = (TextView) findViewById(R.id.tvLatitud);
+        tvLongitd = (TextView) findViewById(R.id.tvLongitud);
+        
+        tvLatitud.setText(latitud+" ");
+        tvLongitd.setText(longitud);
+        
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
         btnEnviar.setOnClickListener(btnEnviarPres);

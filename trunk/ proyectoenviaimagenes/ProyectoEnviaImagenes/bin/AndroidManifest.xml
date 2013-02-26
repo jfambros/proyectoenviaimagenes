@@ -30,6 +30,8 @@
         </activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto"
             android:label="Capturar foto"></activity>
+        <activity android:name="com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW"
+            android:label="Enviando imagen"></activity>
     </application>
 
 </manifest>
