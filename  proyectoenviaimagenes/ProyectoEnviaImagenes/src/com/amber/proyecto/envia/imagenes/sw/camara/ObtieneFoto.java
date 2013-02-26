@@ -17,17 +17,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW;
 import com.amber.proyecto.envia.imagenes.sw.R;
-import com.google.android.maps.GeoPoint;
 
 public class ObtieneFoto extends Activity{
 	private ManejoFoto preview;
 	private FrameLayout frameLayout;
-	private LocationManager locationManager;
-	private LocationListener locationListener;
-	private GeoPoint currentGeoPoint;
+	private LocationManager milocManager;
+	private LocationListener milocListener;
+	private String nombreImagen;
 
 	  /** Called when the activity is first created. */
 	  @Override
@@ -39,65 +39,27 @@ public class ObtieneFoto extends Activity{
 	    frameLayout = ((FrameLayout) findViewById(R.id.preview));
 	    frameLayout.addView(preview);// <4>
 	    frameLayout.setOnClickListener(framePres);
+	    
+	    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
+	   
 	    
-	    locationListener = new LocationListener() {
-			
-			@Override
-			public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onProviderEnabled(String arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onProviderDisabled(String arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onLocationChanged(Location arg0) {
-				localizacion();
-				
-			}
-		};
-		
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-	    localizacion();
+
+	  }	    
 	    
+	
+	  private void obtieneCoordenadas(){
+		  milocListener = new MiLocationListener();
+		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);		  
 	  }
-	  
-	  public void localizacion(){
-	    	setCurrentGeoPoint(new GeoPoint( 
-	        		(int)(locationManager.getLastKnownLocation(
-	        				LocationManager.GPS_PROVIDER).getLatitude()*1000000.0),
-	        		(int)(locationManager.getLastKnownLocation(
-	        				LocationManager.GPS_PROVIDER).getLongitude()*1000000.0)));
-	    }
-	  
-		public void setCurrentGeoPoint(GeoPoint currentGeoPoint) {
-			this.currentGeoPoint = currentGeoPoint;
-		}
 
-		public GeoPoint getCurrentGeoPoint() {
-			return currentGeoPoint;
-		}
-
-	  
-	  
 	  private OnClickListener framePres = new OnClickListener() {
 			
 		public void onClick(View v) {
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+			obtieneCoordenadas();
 		}
-	};
+	  };
 	  // Called when shutter is opened
 	  ShutterCallback shutterCallback = new ShutterCallback() { // <6>
 	    public void onShutter() {
@@ -133,4 +95,27 @@ public class ObtieneFoto extends Activity{
 	      }
 	    }
 	  };	
+	  
+	  public class MiLocationListener implements LocationListener
+	  {
+
+		  public void onLocationChanged(Location loc)
+		  {
+		
+			  loc.getLatitude();
+			  loc.getLongitude();
+			  String coordenadas = "Mis coordenadas son: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
+			  Toast.makeText( getApplicationContext(),coordenadas,Toast.LENGTH_LONG).show();
+		  }
+		  public void onProviderDisabled(String provider)
+		  {
+			  Toast.makeText( getApplicationContext(),"Gps Desactivado",Toast.LENGTH_SHORT ).show();
+		  }
+		  public void onProviderEnabled(String provider)
+		  {
+			  Toast.makeText( getApplicationContext(),"Gps Activo",Toast.LENGTH_SHORT ).show();
+		  }
+			  public void onStatusChanged(String provider, int status, Bundle extras){}
+	  }
+
 }
