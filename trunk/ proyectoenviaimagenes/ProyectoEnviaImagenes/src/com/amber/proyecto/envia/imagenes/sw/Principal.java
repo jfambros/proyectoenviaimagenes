@@ -2,12 +2,12 @@ package com.amber.proyecto.envia.imagenes.sw;
 
 import java.util.List;
 
-import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +16,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
+
 public class Principal extends Activity {
-	private LocationManager locManager;
+	private LocationManager locationManager;
+	private LocationListener locationListener;
+	private Button btnIniciar;
 	
 	
 
@@ -26,11 +30,26 @@ public class Principal extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
 		utilizarGPS();
-		if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
 		else {
-			Button btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+			 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+			 locationListener = new LocationListener() {
+
+			    public void onLocationChanged(Location location) {
+
+			        //Remove the listener and make the button visible        
+			        locationManager.removeUpdates(locationListener);
+			        btnIniciar.setVisibility(1);
+			    }
+
+			    public void onStatusChanged(String provider, int status, Bundle extras) {}
+			    public void onProviderEnabled(String provider) {}
+			    public void onProviderDisabled(String provider) {}
+			};
+
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 			btnIniciar.setOnClickListener(btnIniciarPres);
 		}
 		
@@ -53,8 +72,8 @@ public class Principal extends Activity {
 	}
 	
 	private void utilizarGPS(){
-		locManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-		List<String> listaProviders = locManager.getAllProviders();
+		locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+		List<String> listaProviders = locationManager.getAllProviders();
 		Log.i("Prov", listaProviders.get(0).toString());
 	}
 	private void activarGPS(){
@@ -75,6 +94,8 @@ public class Principal extends Activity {
         })
         .show();   
 	}
+	
+	
 	
 
 }

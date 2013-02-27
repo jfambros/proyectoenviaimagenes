@@ -32,8 +32,19 @@ public class ObtieneFoto extends Activity{
 	private double latitud;
 	private double longitud;
 	private String coordenadas;
+	private Location locCoordenadas;;
 
-	  /** Called when the activity is first created. */
+	  public Location getLocCoordenadas() {
+		return locCoordenadas;
+	}
+
+
+	public void setLocCoordenadas(Location locCoordenadas) {
+		this.locCoordenadas = locCoordenadas;
+	}
+
+
+	/** Called when the activity is first created. */
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -61,17 +72,21 @@ public class ObtieneFoto extends Activity{
 			
 		public void onClick(View v) {
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-			obtieneCoordenadas();
+			milocListener = new MiLocationListener();
+		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
+		    
+		    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+		    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+		    
 			  //abrimos la actividad que envía la imagen
 			  Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
 			  intent.putExtra("nombreImagen", nombreImagen);
-			  
 			  intent.putExtra("latitud", latitud);
 			  intent.putExtra("longitud", longitud);
-			  Log.i("coor;:", coordenadas+":");
+			  //Log.i("coor;:", locCoordenadas.toString()+":");
 
-			  //startActivity(intent);		
+			  startActivity(intent);		
 		}
 	  };
 	  // Called when shutter is opened
@@ -96,6 +111,7 @@ public class ObtieneFoto extends Activity{
 		    	  outStream = new FileOutputStream(String.format("/sdcard/%d.jpg",nombreImagen)); // <9>
 		    	  outStream.write(data);
 		    	  outStream.close();
+		    	  Toast.makeText(ObtieneFoto.this, "imagen:"+Long.toString(nombreImagen), Toast.LENGTH_LONG).show();
 
 	      } catch (FileNotFoundException e) { // <10>
 	        e.printStackTrace();

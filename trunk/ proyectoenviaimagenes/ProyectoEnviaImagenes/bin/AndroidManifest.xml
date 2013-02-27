@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto"
-            android:label="Capturar foto"></activity>
+            android:label="Capturar foto" android:screenOrientation="landscape"></activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW"
             android:label="Enviando imagen"></activity>
     </application>
