@@ -29,8 +29,8 @@ public class EnviaImagenSW extends Activity{
 	private SoapObject request;
 	private Bundle bundle;
 	private String nombreImagen;
-	private String latitud;
-	private String longitud;
+	private double latitud;
+	private double longitud;
 	private TextView tvLatitud;
 	private TextView tvLongitd;
 	private ImageView imagen;
@@ -44,14 +44,14 @@ public class EnviaImagenSW extends Activity{
         //obtenemos el nombre de la imagen
         bundle = getIntent().getExtras();
         nombreImagen = bundle.getString("nombreImagen");
-        latitud = bundle.getString("latitud");
-        longitud = bundle.getString("longitud");
+        latitud = bundle.getDouble("latitud");
+        longitud = bundle.getDouble("longitud");
         
         tvLatitud = (TextView) findViewById(R.id.tvLatitud);
         tvLongitd = (TextView) findViewById(R.id.tvLongitud);
         
         tvLatitud.setText(latitud+" ");
-        tvLongitd.setText(longitud);
+        tvLongitd.setText(longitud+" ");
         
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
