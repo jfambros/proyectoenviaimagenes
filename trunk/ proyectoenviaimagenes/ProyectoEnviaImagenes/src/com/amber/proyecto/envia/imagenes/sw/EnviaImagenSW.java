@@ -55,7 +55,7 @@ public class EnviaImagenSW extends Activity{
         tvLongitd.setText(longitud+" ");
         
         imagen = (ImageView)findViewById(R.id.ivImagen);
-        nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
+        //nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         Bitmap bm = BitmapFactory.decodeFile(nombreImagen, options);

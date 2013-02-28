@@ -1,5 +1,6 @@
 package com.amber.proyecto.envia.imagenes.sw.camara;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -78,8 +79,8 @@ public class ObtieneFoto extends Activity{
 	  private OnClickListener framePres = new OnClickListener() {
 			
 		public void onClick(View v) {
-			nombreImagen = "FT"+System.currentTimeMillis()+".jpg"; 
-			ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/";
+			nombreImagen = System.currentTimeMillis()+".jpg"; 
+			ruta = "/sdcard/";
 			Log.i("ruta",ruta+nombreImagen);
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 			milocListener = new MiLocationListener();
@@ -91,7 +92,7 @@ public class ObtieneFoto extends Activity{
 			  //abrimos la actividad que envía la imagen
 			  Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
-			  intent.putExtra("nombreImagen", nombreImagen);
+			  intent.putExtra("nombreImagen", ruta+nombreImagen);
 			  //Log.i("nombreImagen", nombreImagen);
 			  intent.putExtra("latitud", latitud);
 			  intent.putExtra("longitud", longitud);
@@ -115,18 +116,23 @@ public class ObtieneFoto extends Activity{
 	  // Handles data for jpeg picture
 	  PictureCallback jpegCallback = new PictureCallback() { // <8>
 	    public void onPictureTaken(byte[] data, Camera camera) {
-	      FileOutputStream outStream = null;
+	      File outStream = null;
 	      try {
 		        // Write to SD Card
-		    	  outStream = new FileOutputStream(ruta+nombreImagen); // <9>
-		    	  outStream.write(data);
-		    	  outStream.close();
+		    	  outStream = new File(ruta,nombreImagen); // <9>
+		    	  FileOutputStream fos = new FileOutputStream(outStream);
+		          fos.write(data);
+		          fos.close();
+		    	  //outStream.write(data);
+		    	  //outStream.close();
 
-	      } catch (FileNotFoundException e) { // <10>
-	        e.printStackTrace();
-	      } catch (IOException e) {
-	        e.printStackTrace();
-	      } finally {
+	      } catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
 	      }
 	    }
 	  };	
