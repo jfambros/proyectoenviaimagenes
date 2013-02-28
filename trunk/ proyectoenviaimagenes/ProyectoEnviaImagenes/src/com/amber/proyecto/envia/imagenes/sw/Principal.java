@@ -42,19 +42,23 @@ public class Principal extends Activity {
 			        //Remove the listener and make the button visible        
 			        locationManager.removeUpdates(locationListener);
 			        //btnIniciar.setVisibility(1);
+			    	btnIniciar.setVisibility(1);
+			    	btnIniciar.setOnClickListener(btnIniciarPres);
 			    }
 
 			    public void onStatusChanged(String provider, int status, Bundle extras) {}
 			    public void onProviderEnabled(String provider) {}
 			    public void onProviderDisabled(String provider) {}
+			    
 			};
 
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-			
+			/*
 			if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude() > 0){
 				btnIniciar.setVisibility(1);
 				btnIniciar.setOnClickListener(btnIniciarPres);
-			}
+			}*/
+		
 		}
 		
 	}
