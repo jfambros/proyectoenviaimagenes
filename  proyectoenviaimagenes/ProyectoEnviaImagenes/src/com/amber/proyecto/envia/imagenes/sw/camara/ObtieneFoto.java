@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,7 +33,8 @@ public class ObtieneFoto extends Activity{
 	private double latitud;
 	private double longitud;
 	private String coordenadas;
-	private Location locCoordenadas;;
+	private Location locCoordenadas;
+	private String ruta;
 
 	  public Location getLocCoordenadas() {
 		return locCoordenadas;
@@ -56,12 +58,17 @@ public class ObtieneFoto extends Activity{
 	    frameLayout.setOnClickListener(framePres);
 	    
 	    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-
-	   
-	    
-
 	  }	    
 	    
+	  @Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		preview.getHolder().removeCallback(preview);
+		preview.camera.stopPreview();
+		preview.camera.release();
+		preview.camera = null;
+	}
 	
 	  private void obtieneCoordenadas(){
 		  milocListener = new MiLocationListener();
@@ -71,6 +78,9 @@ public class ObtieneFoto extends Activity{
 	  private OnClickListener framePres = new OnClickListener() {
 			
 		public void onClick(View v) {
+			nombreImagen = "FT"+System.currentTimeMillis()+".jpg"; 
+			ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/";
+			Log.i("ruta",ruta+nombreImagen);
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
@@ -82,10 +92,11 @@ public class ObtieneFoto extends Activity{
 			  Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
 			  intent.putExtra("nombreImagen", nombreImagen);
+			  //Log.i("nombreImagen", nombreImagen);
 			  intent.putExtra("latitud", latitud);
 			  intent.putExtra("longitud", longitud);
 			  //Log.i("coor;:", locCoordenadas.toString()+":");
-
+			  
 			  startActivity(intent);		
 		}
 	  };
@@ -107,11 +118,9 @@ public class ObtieneFoto extends Activity{
 	      FileOutputStream outStream = null;
 	      try {
 		        // Write to SD Card
-		    	  long nombreImagen =System.currentTimeMillis(); 
-		    	  outStream = new FileOutputStream(String.format("/sdcard/%d.jpg",nombreImagen)); // <9>
+		    	  outStream = new FileOutputStream(ruta+nombreImagen); // <9>
 		    	  outStream.write(data);
 		    	  outStream.close();
-		    	  Toast.makeText(ObtieneFoto.this, "imagen:"+Long.toString(nombreImagen), Toast.LENGTH_LONG).show();
 
 	      } catch (FileNotFoundException e) { // <10>
 	        e.printStackTrace();
@@ -145,5 +154,7 @@ public class ObtieneFoto extends Activity{
 		  }
 			  public void onStatusChanged(String provider, int status, Bundle extras){}
 	  }
+	  
+
 
 }

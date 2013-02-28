@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -52,6 +53,16 @@ public class EnviaImagenSW extends Activity{
         
         tvLatitud.setText(latitud+" ");
         tvLongitd.setText(longitud+" ");
+        
+        imagen = (ImageView)findViewById(R.id.ivImagen);
+        nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 2;
+        Bitmap bm = BitmapFactory.decodeFile(nombreImagen, options);
+        imagen.setImageBitmap(bm); 
+        
+        TextView tvNombreI = (TextView)findViewById(R.id.tvNombreIm);
+        tvNombreI.setText(nombreImagen);
         
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
