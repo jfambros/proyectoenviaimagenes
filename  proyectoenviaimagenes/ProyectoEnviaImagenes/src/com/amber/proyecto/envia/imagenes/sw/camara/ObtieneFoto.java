@@ -80,7 +80,7 @@ public class ObtieneFoto extends Activity{
 			
 		public void onClick(View v) {
 			nombreImagen = System.currentTimeMillis()+".jpg"; 
-			ruta = "/sdcard/";
+			ruta = "/sdcard"+File.separator;
 			Log.i("ruta",ruta+nombreImagen);
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 			milocListener = new MiLocationListener();
@@ -119,7 +119,8 @@ public class ObtieneFoto extends Activity{
 	      File outStream = null;
 	      try {
 		        // Write to SD Card
-		    	  outStream = new File(ruta,nombreImagen); // <9>
+	    	  String rutaCom = ruta+nombreImagen;
+		    	  outStream = new File(rutaCom); // <9>
 		    	  FileOutputStream fos = new FileOutputStream(outStream);
 		          fos.write(data);
 		          fos.close();
