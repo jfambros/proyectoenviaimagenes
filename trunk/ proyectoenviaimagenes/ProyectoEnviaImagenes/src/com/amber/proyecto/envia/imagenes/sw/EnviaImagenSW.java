@@ -12,7 +12,10 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -35,6 +38,7 @@ public class EnviaImagenSW extends Activity{
 	private TextView tvLatitud;
 	private TextView tvLongitd;
 	private ImageView imagen;
+	private ImageView ivAtrasEnvia;
 	
 
     @Override
@@ -67,6 +71,11 @@ public class EnviaImagenSW extends Activity{
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
         btnEnviar.setOnClickListener(btnEnviarPres);
+        
+        ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
+        ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
+        
+        
     }
 
     @Override
@@ -76,7 +85,16 @@ public class EnviaImagenSW extends Activity{
     }
     
 	
-	
+    private OnClickListener ivAtrasEnviaPres = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
+			startActivity(intent);
+			
+		}
+	};
 
     private OnClickListener btnEnviarPres = new OnClickListener() {
 		

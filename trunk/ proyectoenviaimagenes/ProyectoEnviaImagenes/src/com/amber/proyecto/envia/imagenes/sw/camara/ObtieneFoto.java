@@ -36,6 +36,8 @@ public class ObtieneFoto extends Activity{
 	private String coordenadas;
 	private Location locCoordenadas;
 	private String ruta;
+	private File archivo;
+	private FileOutputStream archivoAlmacenado;
 
 	  public Location getLocCoordenadas() {
 		return locCoordenadas;
@@ -53,6 +55,13 @@ public class ObtieneFoto extends Activity{
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
 
+	    nombreImagen = "FT"+System.currentTimeMillis()+".jpg"; 
+		ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +File.separator;
+		
+		archivo = new File(ruta,nombreImagen);
+
+		
+		
 	    preview = new ManejoFoto(this); // <3>
 	    frameLayout = ((FrameLayout) findViewById(R.id.preview));
 	    frameLayout.addView(preview);// <4>
@@ -60,7 +69,7 @@ public class ObtieneFoto extends Activity{
 	    
 	    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 	  }	    
-	    
+	    /*
 	  @Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
@@ -70,7 +79,7 @@ public class ObtieneFoto extends Activity{
 		preview.camera.release();
 		preview.camera = null;
 	}
-	
+	*/
 	  private void obtieneCoordenadas(){
 		  milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);		  
@@ -79,9 +88,7 @@ public class ObtieneFoto extends Activity{
 	  private OnClickListener framePres = new OnClickListener() {
 			
 		public void onClick(View v) {
-			nombreImagen = System.currentTimeMillis()+".jpg"; 
-			ruta = "/sdcard"+File.separator;
-			Log.i("ruta",ruta+nombreImagen);
+			
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
@@ -93,7 +100,7 @@ public class ObtieneFoto extends Activity{
 			  Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
 			  intent.putExtra("nombreImagen", ruta+nombreImagen);
-			  //Log.i("nombreImagen", nombreImagen);
+			  Log.i("nombreImagen", ruta+nombreImagen);
 			  intent.putExtra("latitud", latitud);
 			  intent.putExtra("longitud", longitud);
 			  //Log.i("coor;:", locCoordenadas.toString()+":");
@@ -119,13 +126,21 @@ public class ObtieneFoto extends Activity{
 	      File outStream = null;
 	      try {
 		        // Write to SD Card
-	    	  String rutaCom = ruta+nombreImagen;
-		    	  outStream = new File(rutaCom); // <9>
-		    	  FileOutputStream fos = new FileOutputStream(outStream);
-		          fos.write(data);
-		          fos.close();
-		    	  //outStream.write(data);
-		    	  //outStream.close();
+	    	  boolean mExternalStorageAvailable = false;
+	    	  boolean mExternalStorageWriteable = false;
+	    	  String state = Environment.getExternalStorageState();
+
+	    	  if (Environment.MEDIA_MOUNTED.equals(state)) {
+	    	      // We can read and write the media
+	    		
+	    	      mExternalStorageAvailable = mExternalStorageWriteable = true;
+		    	  
+			      archivoAlmacenado = new FileOutputStream(archivo);
+			      archivoAlmacenado.write(data);
+			      archivoAlmacenado.close();
+			    	  //outStream.write(data);
+			    	  //outStream.close();
+	    	  }
 
 	      } catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
