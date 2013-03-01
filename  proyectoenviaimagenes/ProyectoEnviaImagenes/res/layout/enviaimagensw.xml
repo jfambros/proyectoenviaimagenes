@@ -13,7 +13,7 @@
         android:orientation="vertical" >
 
         <ImageView
-            android:id="@+id/ivAtras"
+            android:id="@+id/ivAtrasEnvia"
             android:src="@drawable/atras48x48" 
             android:layout_width="48px"
             android:layout_height="48px"/>
