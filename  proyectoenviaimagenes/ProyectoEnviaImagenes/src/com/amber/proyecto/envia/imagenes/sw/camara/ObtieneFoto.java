@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
@@ -23,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW;
+import com.amber.proyecto.envia.imagenes.sw.Principal;
 import com.amber.proyecto.envia.imagenes.sw.R;
 
 public class ObtieneFoto extends Activity{
@@ -55,7 +58,7 @@ public class ObtieneFoto extends Activity{
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
 
-	    nombreImagen = "FT"+System.currentTimeMillis()+".bmp"; 
+	    nombreImagen = "FT"+System.currentTimeMillis()+".jpg"; 
 		ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +File.separator;
 		
 		archivo = new File(ruta,nombreImagen);
@@ -90,16 +93,22 @@ public class ObtieneFoto extends Activity{
 		public void onClick(View v) {
 			
 			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+			
 			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
 		    
 		    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
 		    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
-		    
+		    try {
+		    	Thread.sleep (3000);
+		    	} catch (Exception e) {
+		    	// Mensaje en caso de que falle
+		    	}
 			  //abrimos la actividad que envía la imagen
 			  Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
-			  intent.putExtra("nombreImagen", ruta+nombreImagen);
+			  intent.putExtra("ruta", ruta);
+			  intent.putExtra("nombreImagen", nombreImagen);
 			  Log.i("nombreImagen", ruta+nombreImagen);
 			  intent.putExtra("latitud", latitud);
 			  intent.putExtra("longitud", longitud);
@@ -177,6 +186,30 @@ public class ObtieneFoto extends Activity{
 			  public void onStatusChanged(String provider, int status, Bundle extras){}
 	  }
 	  
-
-
+	  private void mensaje(String titulo, String msj){
+	        new AlertDialog.Builder(ObtieneFoto.this)
+	        .setTitle(titulo)
+	        .setMessage(msj)
+	        .setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
+	        	public void onClick(DialogInterface dialog, int whichButton) {
+	        		setResult(RESULT_OK);
+	        	}
+	        })
+	        .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					frameLayout.addView(preview);
+					setResult(RESULT_CANCELED);
+				}
+			})
+	        .show();   
+		}
+	  
+	  private void espera(){
+		  
+	  }
+		
+	  
 }
+	  
+
