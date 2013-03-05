@@ -36,7 +36,7 @@ class ManejoFoto extends SurfaceView implements SurfaceHolder.Callback { // <1>
 	      camera.setPreviewCallback(new PreviewCallback() { // <10>
 	        // Called for each frame previewed
 	        public void onPreviewFrame(byte[] data, Camera camera) {  // <11>
-	          Log.d(TAG, "onPreviewFrame called at: " + System.currentTimeMillis());
+	          //Log.d(TAG, "onPreviewFrame called at: " + System.currentTimeMillis());
 	          ManejoFoto.this.invalidate();  // <12>
 	        }
 	      });

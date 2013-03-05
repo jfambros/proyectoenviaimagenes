@@ -32,6 +32,7 @@ public class EnviaImagenSW extends Activity{
 	private Button btnEnviar;
 	private SoapObject request;
 	private Bundle bundle;
+	private String ruta; 
 	private String nombreImagen;
 	private double latitud;
 	private double longitud;
@@ -48,9 +49,11 @@ public class EnviaImagenSW extends Activity{
         
         //obtenemos el nombre de la imagen
         bundle = getIntent().getExtras();
+        ruta = bundle.getString("ruta");        
         nombreImagen = bundle.getString("nombreImagen");
         latitud = bundle.getDouble("latitud");
         longitud = bundle.getDouble("longitud");
+        
         
         tvLatitud = (TextView) findViewById(R.id.tvLatitud);
         tvLongitd = (TextView) findViewById(R.id.tvLongitud);
@@ -62,11 +65,11 @@ public class EnviaImagenSW extends Activity{
         //nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
-        Bitmap bm = BitmapFactory.decodeFile(nombreImagen, options);
+        Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen, options);
         imagen.setImageBitmap(bm); 
         
         TextView tvNombreI = (TextView)findViewById(R.id.tvNombreIm);
-        tvNombreI.setText(nombreImagen);
+        tvNombreI.setText(ruta+nombreImagen);
         
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
@@ -75,6 +78,7 @@ public class EnviaImagenSW extends Activity{
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
         
+
         
     }
 
@@ -108,7 +112,8 @@ public class EnviaImagenSW extends Activity{
 			String base64String,str;
 			
 			try{
-				Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
+				Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen);
+				//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
 
 						ByteArrayOutputStream bao = new ByteArrayOutputStream();
 
@@ -120,11 +125,11 @@ public class EnviaImagenSW extends Activity{
 						
 						Log.i("imagen", ba1);
 						request = new SoapObject(NAMESPACE, METHOD_NAME); 
-						String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+						//String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 					    
 						request.addProperty("imagen", ba1);
-						request.addProperty("nombreIm", timeStamp); 
-						Log.i("nombre: ", timeStamp);
+						request.addProperty("nombreIm", nombreImagen); 
+						
 					    
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
