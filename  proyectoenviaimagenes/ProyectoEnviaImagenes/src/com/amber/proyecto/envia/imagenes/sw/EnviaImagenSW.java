@@ -2,8 +2,6 @@ package com.amber.proyecto.envia.imagenes.sw;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -12,21 +10,21 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 
 public class EnviaImagenSW extends Activity{
 	private Button btnEnviar;
@@ -66,6 +64,17 @@ public class EnviaImagenSW extends Activity{
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen, options);
+        
+        /*
+        final int THUMBNAIL_SIZE = 64;
+
+
+        Float width = new Float(bm.getWidth());
+        Float height = new Float(bm.getHeight());
+        Float ratio = width/height;
+        bm = Bitmap.createScaledBitmap(bm, (int)(THUMBNAIL_SIZE * ratio), THUMBNAIL_SIZE, false);
+*/
+        
         imagen.setImageBitmap(bm); 
         
         TextView tvNombreI = (TextView)findViewById(R.id.tvNombreIm);
@@ -80,6 +89,12 @@ public class EnviaImagenSW extends Activity{
         
 
         
+    }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
