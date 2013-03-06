@@ -20,9 +20,10 @@
     </LinearLayout>
     
     <ImageView android:id="@+id/ivImagen"
-        android:layout_width="100px"
-        android:layout_height="100px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@id/llEncabezado"
+        android:adjustViewBounds="true"
         android:layout_centerHorizontal="true"/>
     
     <TextView android:id="@+id/tvEtLat"
