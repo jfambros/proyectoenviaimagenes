@@ -58,10 +58,10 @@ public class ObtieneFoto extends Activity{
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
 
-	    nombreImagen = "FT"+System.currentTimeMillis()+".jpg"; 
+	    nombreImagen = "FT"+System.currentTimeMillis(); 
 		ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +File.separator;
 		
-		archivo = new File(ruta,nombreImagen);
+		archivo = new File(ruta,nombreImagen+".jpg");
 
 		
 		

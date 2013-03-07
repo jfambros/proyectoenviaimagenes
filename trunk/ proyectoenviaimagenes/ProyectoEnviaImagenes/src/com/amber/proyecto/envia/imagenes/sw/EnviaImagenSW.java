@@ -2,6 +2,7 @@ package com.amber.proyecto.envia.imagenes.sw;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -20,11 +21,17 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
+import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
+import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class EnviaImagenSW extends Activity{
 	private Button btnEnviar;
@@ -38,6 +45,10 @@ public class EnviaImagenSW extends Activity{
 	private TextView tvLongitd;
 	private ImageView imagen;
 	private ImageView ivAtrasEnvia;
+	private String HOST = Variables.HOST;
+	private Spinner spinnCategorias;
+    private ArrayList<Categoria> listaCategoria;
+    private int idCat;
 	
 
     @Override
@@ -63,7 +74,7 @@ public class EnviaImagenSW extends Activity{
         //nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
-        Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen, options);
+        Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
         
         /*
         final int THUMBNAIL_SIZE = 64;
@@ -77,8 +88,6 @@ public class EnviaImagenSW extends Activity{
         
         imagen.setImageBitmap(bm); 
         
-        TextView tvNombreI = (TextView)findViewById(R.id.tvNombreIm);
-        tvNombreI.setText(ruta+nombreImagen);
         
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
@@ -87,6 +96,8 @@ public class EnviaImagenSW extends Activity{
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
         
+        spinnCategorias = (Spinner)findViewById(R.id.spinnCategoria);
+        obtieneCategorias();
 
         
     }
@@ -121,7 +132,7 @@ public class EnviaImagenSW extends Activity{
 			String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
 			String METHOD_NAME = "recibeImagen";
 			String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-			String URL = "http://10.0.2.2/pags/servicios.php";   
+			String URL = "http://"+HOST+"/pags/servicios.php";   
 			
 			int noOfChunks ;
 			String base64String,str;
@@ -160,6 +171,8 @@ public class EnviaImagenSW extends Activity{
 		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
 		                
 						Log.i("result",spResul.toString());
+						Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
+						
 
 					
 		    } 
@@ -180,6 +193,80 @@ public class EnviaImagenSW extends Activity{
 		}
 	};
 	
+	private void obtieneCategorias(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneCategorias"; 
+		String METHOD_NAME = "obtieneCategorias";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		String URL = "http://"+Variables.HOST+"/pags/servicios.php";
+		SoapSerializationEnvelope envelope;
+        HttpTransportSE httpt;
+        SoapObject result;
+
+
+        ArrayList<String> nombresCategorias;
+        
+        
+        try{
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+               
+        httpt = new HttpTransportSE(URL);
+        envelope = new SoapSerializationEnvelope( SoapEnvelope.VER11 );
+        envelope.dotNet = false;
+        envelope.setOutputSoapObject(request);
+        httpt.call(SOAP_ACTION, envelope);
+        result = (SoapObject)envelope.bodyIn;
+        SoapObject result2 =  (SoapObject) envelope.getResponse();
+        listaCategoria = new ArrayList<Categoria>();
+        nombresCategorias = new ArrayList<String>();
+        for(int cont=0; cont< result2.getPropertyCount(); cont ++){
+        	SoapObject resultados = (SoapObject) result2.getProperty(cont);
+        	//primitivas
+        	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
+        	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
+
+        	Categoria c = new Categoria();
+                 c.setIdCategoria(Integer.parseInt(idCategoria.toString()));
+                 c.setNombreCategoria(nombreCategoria.toString());
+                 listaCategoria.add(c);
+                 nombresCategorias.add(nombreCategoria.toString());
+     }
+        
+        ArrayAdapter<String> adapterCategoria = new ArrayAdapter<String>( 
+                this,
+                android.R.layout.simple_spinner_item,
+                nombresCategorias );
+        adapterCategoria.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+        
+            spinnCategorias.setAdapter(adapterCategoria);
+                spinnCategorias.setSelection(0);
+            spinnCategorias.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, 
+                            View view, 
+                            int position, 
+                            long id) {
+                        Categoria cat = listaCategoria.get(position);
+                        //Log.i("Pais seleccionado", d.getNombrePais());
+                        idCat = cat.getIdCategoria();
+                        Log.i("categoria seleccionada", Integer.toString(cat.getIdCategoria()));
+                    }
+
+                                        public void onNothingSelected(AdapterView<?> arg0) {
+                                        
+                                        }
+                }
+            );
+            
+    }
+    catch(Exception err){
+        Log.e("Error en llena paises", err.toString());
+    }
+        
+		
+		
+	}
 	/*//grabar nombre imagen
 private File createImageFile() throws IOException {
     // Create an image file name

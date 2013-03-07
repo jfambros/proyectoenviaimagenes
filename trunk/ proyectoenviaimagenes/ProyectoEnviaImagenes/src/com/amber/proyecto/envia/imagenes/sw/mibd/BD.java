@@ -60,7 +60,7 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("nombreCategoria", "Sitio arqueológico");
 		db.insert(nombreTablaCategorias, null, cv);
 		cv.put("idCategoria", 5);
-		cv.put("nombreCategoria", "Otro");
+		cv.put("nombreCategoria", "Museo");
 		db.insert(nombreTablaCategorias, null, cv);		
 	
 	}
