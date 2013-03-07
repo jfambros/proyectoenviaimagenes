@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget33"
     android:layout_width="fill_parent"
@@ -25,13 +30,18 @@
         android:layout_below="@id/llEncabezado"
         android:adjustViewBounds="true"
         android:layout_centerHorizontal="true"/>
+    <TextView android:id="@+id/tvSeparadosEnvIma"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" "
+        android:layout_below="@id/ivImagen"/>
     
     <TextView android:id="@+id/tvEtLat"
         android:text="Latitud:   "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#000000"
-        android:layout_below="@id/ivImagen"
+        android:layout_below="@id/tvSeparadosEnvIma"
         />
     
     <TextView android:id="@+id/tvLatitud"
@@ -40,7 +50,7 @@
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:layout_toRightOf="@id/tvEtLat"
-        android:layout_below="@id/ivImagen"
+        android:layout_below="@id/tvSeparadosEnvIma"
         />
     
     <TextView android:id="@+id/tvELong"
@@ -58,12 +68,41 @@
         android:layout_toRightOf="@id/tvELong"
         android:layout_below="@id/tvLatitud"
         />
+    
+    <View android:id="@+id/vLinea2"
+        android:layout_below="@id/tvELong" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		
+		android:background="#FFFFFF"/>
+    
+       <TextView android:id="@+id/tvCategoria"
+        android:text="Categoría: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:layout_below="@id/vLinea2"
+        /> 
+    
+    <Spinner android:id="@+id/spinnCategoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tvCategoria"
+        android:layout_below="@id/vLinea2"/>
+
+    
+<View android:id="@+id/vLinea3"
+        android:layout_below="@id/spinnCategoria" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		android:background="#FFFFFF"/>
+    
  	<TextView android:id="@+id/tvECom"
         android:text="Comentario:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#000000"
-        android:layout_below="@id/tvELong"
+        android:layout_below="@id/vLinea3"
         />
  	<EditText android:id="@+id/etComentario"
  	    android:layout_width="fill_parent"
@@ -78,9 +117,5 @@
  	    android:text="Enviar"
  	    android:layout_below="@id/etComentario"
  	    android:layout_centerHorizontal="true"/>
- 	<TextView android:id="@+id/tvNombreIm"
- 	     	    android:layout_width="wrap_content"
- 	    android:layout_height="wrap_content"
- 	    android:text="_"
- 	    />
 </RelativeLayout>
+</ScrollView>
