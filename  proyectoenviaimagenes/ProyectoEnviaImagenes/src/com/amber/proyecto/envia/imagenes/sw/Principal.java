@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 
@@ -23,6 +24,7 @@ public class Principal extends Activity {
 	private LocationManager locationManager;
 	private LocationListener locationListener;
 	private Button btnIniciar;
+	private ImageView ivConecta;
 	
 	
 
@@ -45,6 +47,7 @@ public class Principal extends Activity {
 			        //btnIniciar.setVisibility(1);
 			    	btnIniciar.setVisibility(1);
 			    	btnIniciar.setOnClickListener(btnIniciarPres);
+			    	ivConecta = (ImageView)findViewById(R.id.ivConectar);
 			    }
 
 			    public void onStatusChanged(String provider, int status, Bundle extras) {}

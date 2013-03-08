@@ -2,8 +2,18 @@ package com.amber.proyecto.envia.imagenes.sw;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
@@ -15,6 +25,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -24,6 +36,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,7 +55,7 @@ public class EnviaImagenSW extends Activity{
 	private double latitud;
 	private double longitud;
 	private TextView tvLatitud;
-	private TextView tvLongitd;
+	private TextView tvLongitud;
 	private ImageView imagen;
 	private ImageView ivAtrasEnvia;
 	private String HOST = Variables.HOST;
@@ -65,40 +78,29 @@ public class EnviaImagenSW extends Activity{
         
         
         tvLatitud = (TextView) findViewById(R.id.tvLatitud);
-        tvLongitd = (TextView) findViewById(R.id.tvLongitud);
+        tvLongitud = (TextView) findViewById(R.id.tvLongitud);
         
         tvLatitud.setText(latitud+" ");
-        tvLongitd.setText(longitud+" ");
+        tvLongitud.setText(longitud+" ");
         
         imagen = (ImageView)findViewById(R.id.ivImagen);
         //nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
-        
-        /*
-        final int THUMBNAIL_SIZE = 64;
-
-
-        Float width = new Float(bm.getWidth());
-        Float height = new Float(bm.getHeight());
-        Float ratio = width/height;
-        bm = Bitmap.createScaledBitmap(bm, (int)(THUMBNAIL_SIZE * ratio), THUMBNAIL_SIZE, false);
-*/
-        
-        imagen.setImageBitmap(bm); 
-        
-        
-        //http://pastebin.com/qRZDaiqp
-        btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
-        btnEnviar.setOnClickListener(btnEnviarPres);
+        imagen.setImageBitmap(bm);
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
         
         spinnCategorias = (Spinner)findViewById(R.id.spinnCategoria);
         obtieneCategorias();
-
+        //http://pastebin.com/qRZDaiqp
+        btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
+        btnEnviar.setOnClickListener(btnEnviarPres);
+        
+       obtenerDireccion();
+        
         
     }
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -129,69 +131,70 @@ public class EnviaImagenSW extends Activity{
     private OnClickListener btnEnviarPres = new OnClickListener() {
 		
 		public void onClick(View v) {
-			String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
-			String METHOD_NAME = "recibeImagen";
-			String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-			String URL = "http://"+HOST+"/pags/servicios.php";   
-			
-			int noOfChunks ;
-			String base64String,str;
-			
-			try{
-				Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen);
-				//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
-
-						ByteArrayOutputStream bao = new ByteArrayOutputStream();
-
-						bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-
-						byte [] ba = bao.toByteArray();
-
-						String ba1=Base64.encodeBytes(ba);
-						
-						Log.i("imagen", ba1);
-						request = new SoapObject(NAMESPACE, METHOD_NAME); 
-						//String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-					    
-						request.addProperty("imagen", ba1);
-						request.addProperty("nombreIm", nombreImagen); 
-						
-					    
-						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-						
-						envelope.dotNet = false;
-						
-						envelope.setOutputSoapObject(request);
-
-						HttpTransportSE aht = new HttpTransportSE(URL); 
-
-						aht.call(SOAP_ACTION, envelope);
-						
-						SoapObject result =  (SoapObject) envelope.bodyIn;
-		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
-		                
-						Log.i("result",spResul.toString());
-						Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
-						
-
-					
-		    } 
-		    catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (XmlPullParserException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			finally{
-				
-			}
-
-			
-			
+			enviaImagen();
 		}
 	};
+	
+	private void enviaImagenSencillo(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
+		String METHOD_NAME = "recibeImagen";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		String URL = "http://"+HOST+"/pags/servicios.php";   
+		
+		int noOfChunks ;
+		String base64String,str;
+		
+		try{
+			Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen);
+			//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
+
+					ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+					bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+
+					byte [] ba = bao.toByteArray();
+
+					String ba1=Base64.encodeBytes(ba);
+					
+					Log.i("imagen", ba1);
+					request = new SoapObject(NAMESPACE, METHOD_NAME); 
+					//String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+				    
+					request.addProperty("imagen", ba1);
+					request.addProperty("nombreIm", nombreImagen+".jpg"); 
+					
+				    
+					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+					
+					envelope.dotNet = false;
+					
+					envelope.setOutputSoapObject(request);
+
+					HttpTransportSE aht = new HttpTransportSE(URL); 
+
+					aht.call(SOAP_ACTION, envelope);
+					
+					SoapObject result =  (SoapObject) envelope.bodyIn;
+	                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
+	                
+					Log.i("result",spResul.toString());
+					Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
+					
+
+				
+	    } 
+	    catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XmlPullParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		finally{
+			
+		}		
+	}
 	
 	private void obtieneCategorias(){
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneCategorias"; 
@@ -266,6 +269,126 @@ public class EnviaImagenSW extends Activity{
         
 		
 		
+	}
+	
+	private void enviaImagen(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
+		String METHOD_NAME = "enviaImagen";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		String URL = "http://"+HOST+"/pags/servicios.php";
+		
+		
+		try{
+			Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
+			//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
+
+					ByteArrayOutputStream bao = new ByteArrayOutputStream();
+
+					bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+
+					byte [] ba = bao.toByteArray();
+
+					String ba1=Base64.encodeBytes(ba);
+					
+
+					request = new SoapObject(NAMESPACE, METHOD_NAME); 
+					
+
+					EditText etComentario = (EditText)findViewById(R.id.etComentario);
+					
+					//Log.i("Datos: ", tvLatitud.getText().toString()+","+tvLongitud.getText().toString()+","+etComentario.getText().toString()+" "+nombreImagen);
+	
+					request.addProperty("nombreImagen", nombreImagen);
+					request.addProperty("contenido", ba1);
+					request.addProperty("latitud", tvLatitud.getText().toString());
+					request.addProperty("longitud", tvLongitud.getText().toString());
+					request.addProperty("comentario", etComentario.getText().toString());
+					request.addProperty("categoria", idCat);					
+					
+				    
+					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+					
+					envelope.dotNet = false;
+					
+					envelope.setOutputSoapObject(request);
+
+					HttpTransportSE aht = new HttpTransportSE(URL); 
+
+					aht.call(SOAP_ACTION, envelope);
+					
+					SoapObject result =  (SoapObject) envelope.bodyIn;
+	                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
+	                
+					Log.i("result",spResul.toString());
+					Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
+					
+
+				
+	    } 
+	    catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XmlPullParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		finally{
+			
+		}
+		
+	}
+	
+	public static JSONObject getLocationInfo(String address) {
+	    StringBuilder stringBuilder = new StringBuilder();
+	    try {
+
+	    address = address.replaceAll(" ","%20");    
+
+	    HttpPost httppost = new HttpPost("http://maps.google.com/maps/api/geocode/json?address=" + address + "&sensor=false");
+	    HttpClient client = new DefaultHttpClient();
+	    HttpResponse response;
+	    stringBuilder = new StringBuilder();
+
+
+	        response = client.execute(httppost);
+	        HttpEntity entity = response.getEntity();
+	        InputStream stream = entity.getContent();
+	        int b;
+	        while ((b = stream.read()) != -1) {
+	            stringBuilder.append((char) b);
+	        }
+	    } catch (ClientProtocolException e) {
+	    } catch (IOException e) {
+	    }
+
+	    JSONObject jsonObject = new JSONObject();
+	    try {
+	        jsonObject = new JSONObject(stringBuilder.toString());
+	    } catch (JSONException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+
+	    return jsonObject;
+	}	
+	
+	private void obtenerDireccion(){
+		Geocoder geocoder;
+		List<Address> addresses;
+		geocoder = new Geocoder(this);
+		try {
+			addresses = geocoder.getFromLocation(latitud, longitud, 1);
+			String address = addresses.get(0).getAddressLine(0);
+			String city = addresses.get(0).getAddressLine(1);
+			String country = addresses.get(0).getAddressLine(2);
+			Toast.makeText(this, "Geocoder:"+address+" "+city+" "+country, Toast.LENGTH_LONG).show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
 	}
 	/*//grabar nombre imagen
 private File createImageFile() throws IOException {
