@@ -22,11 +22,15 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -43,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
+import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -94,12 +99,19 @@ public class EnviaImagenSW extends Activity{
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
         
         spinnCategorias = (Spinner)findViewById(R.id.spinnCategoria);
-        obtieneCategorias();
+
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
         btnEnviar.setOnClickListener(btnEnviarPres);
-        
-       obtenerDireccion();
+    	obtenerDireccion();    
+        if (conexionInternet() == true){
+            obtieneCategorias();
+        }else{
+        	BD bd = new BD(this); 
+        	SQLiteDatabase sqlite = bd.getWritableDatabase();
+        	Toast.makeText(EnviaImagenSW.this, "BD creada", Toast.LENGTH_LONG).show();
+        }
+        	
         
         
     }
@@ -406,4 +418,16 @@ private File createImageFile() throws IOException {
 }	 * 
 	 
 	 */
+	
+	public boolean conexionInternet() {
+		ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+		return true;
+		}
+
+		return false;
+	}
 }

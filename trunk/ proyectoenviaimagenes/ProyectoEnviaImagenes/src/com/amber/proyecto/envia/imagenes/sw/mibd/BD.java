@@ -28,7 +28,7 @@ public class BD extends SQLiteOpenHelper{
 		// TODO Auto-generated constructor stub
 	}
 	public BD(Context context){
-		super(context, nombreBD, null,33);
+		super(context, nombreBD, null,1);
 	}
 	
 
@@ -57,11 +57,17 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("nombreCategoria", "Mercado");
 		db.insert(nombreTablaCategorias, null, cv);
 		cv.put("idCategoria", 4);
-		cv.put("nombreCategoria", "Sitio arqueológico");
+		cv.put("nombreCategoria", "Sitio arqueolï¿½gico");
 		db.insert(nombreTablaCategorias, null, cv);
 		cv.put("idCategoria", 5);
 		cv.put("nombreCategoria", "Museo");
+		db.insert(nombreTablaCategorias, null, cv);
+		cv.put("idCategoria", 6);
+		cv.put("nombreCategoria", "DiversiÃ³n");
 		db.insert(nombreTablaCategorias, null, cv);		
+		cv.put("idCategoria", 7);
+		cv.put("nombreCategoria", "Otro");
+		db.insert(nombreTablaCategorias, null, cv);				
 	
 	}
 	
@@ -69,6 +75,10 @@ public class BD extends SQLiteOpenHelper{
 		 SQLiteDatabase db=this.getReadableDatabase();
 		 Cursor cur=db.rawQuery("SELECT * from "+ nombreTablaCategorias,new String [] {});	 
 		 return cur;
+	}
+	
+	public void insertaImagen(){
+		
 	}
 	
 
