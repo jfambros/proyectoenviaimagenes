@@ -3,6 +3,7 @@ package com.amber.proyecto.envia.imagenes.sw.mibd;
 import java.util.ArrayList;
 
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
+import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,13 +15,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class BD extends SQLiteOpenHelper{
 	private static final String nombreBD = "enviaimagen.db";
 	private static final String nombreTablaCategorias = "categorias";
-	private static final String tablaImagenes = "create table imagenes(" +
+	private static final String nombreTablaImagenes = "imagenes";
+	private static final String tablaImagenes = "create table "+ nombreTablaImagenes+"(" +
 			"nombreImagen text not null, " +
 			"contenidoImagen text not null, " +
-			"longitud real not null," +
 			"latitud real not null," +
+			"longitud real not null," +
 			"idCategoria integer not null," +
-			"descripcion text," +
+			"comentario text," +
 			"constraint nombrePK primary key(nombreImagen) );";
 	private static final String tablaCategorias = "create table "+nombreTablaCategorias+ "(" +
 			"idCategoria integer not null," +
@@ -99,13 +101,56 @@ public class BD extends SQLiteOpenHelper{
 		 return categorias;
 	}
 	
-	public void insertaImagen(){
-		
+	public ArrayList<Imagen> obtieneImagenes(){
+		SQLiteDatabase db = this.getReadableDatabase();
+		ArrayList<Imagen> imagenes = new ArrayList<Imagen>();
+		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes, null);
+		if (cursor.moveToFirst()) {
+	        do {
+	        	Imagen ima = new Imagen();
+	        	ima.setNombreImagen(cursor.getString(0));
+	        	ima.setContenidoImagen(cursor.getString(1));
+	        	ima.setLatitud(Double.parseDouble(cursor.getString(2)));
+	        	ima.setLongitud(Double.parseDouble(cursor.getString(3)));
+	        	ima.setIdCategoria(Integer.parseInt(cursor.getString(4)));
+	        	ima.setComentario(cursor.getString(5));
+			    imagenes.add(ima);
+		   } while (cursor.moveToNext());
+		}
+			  cursor.close();
+		 return imagenes;
+	}
+	
+	public int cuentaRegImagenes(){
+		int total;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes, null);
+		total = cursor.getCount();
+		cursor.close();
+		return total;
+	}
+	
+	public void insertaImagen(String nombreImagen, String contenidoImagen, double latitud, double longitud, int idCategoria, String comentario){
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("nombreImagen", nombreImagen);
+		cv.put("contenidoImagen", contenidoImagen);
+		cv.put("latitud", latitud);
+		cv.put("longitud", longitud);
+		cv.put("idCategoria", idCategoria);
+		cv.put("comentario", comentario);
+		db.insert(nombreTablaImagenes, null, cv);
 	}
 	
 	public void borraCategorias(){
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.execSQL("delete from"+nombreTablaCategorias);
+		db.execSQL("delete from "+nombreTablaCategorias);
+		
+	}
+
+	public void borraImagenes(){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.execSQL("delete from "+nombreTablaImagenes);		
 	}
 	
 

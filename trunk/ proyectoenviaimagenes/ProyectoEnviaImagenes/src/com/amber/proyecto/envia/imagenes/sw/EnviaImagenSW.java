@@ -24,7 +24,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -62,12 +61,15 @@ public class EnviaImagenSW extends Activity{
 	private double longitud;
 	private TextView tvLatitud;
 	private TextView tvLongitud;
+	private String imagenCodificada;
 	private ImageView imagen;
 	private ImageView ivAtrasEnvia;
+	private EditText etComentario;
 	private String HOST = Variables.HOST;
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
+    private BD bd;
 	
 
     @Override
@@ -81,7 +83,7 @@ public class EnviaImagenSW extends Activity{
         nombreImagen = bundle.getString("nombreImagen");
         latitud = bundle.getDouble("latitud");
         longitud = bundle.getDouble("longitud");
-        
+        codificaImagen();
         
         tvLatitud = (TextView) findViewById(R.id.tvLatitud);
         tvLongitud = (TextView) findViewById(R.id.tvLongitud);
@@ -104,6 +106,9 @@ public class EnviaImagenSW extends Activity{
         //http://pastebin.com/qRZDaiqp
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
         btnEnviar.setOnClickListener(btnEnviarPres);
+		etComentario = (EditText)findViewById(R.id.etComentario);
+        
+   
     	obtenerDireccion();    
         if (conexionInternet() == true){
             obtieneCategorias();
@@ -142,13 +147,22 @@ public class EnviaImagenSW extends Activity{
     private OnClickListener btnEnviarPres = new OnClickListener() {
 		
 		public void onClick(View v) {
-			enviaImagen();
+			if (conexionInternet() == true){
+				enviaImagen();
+			}
+			else{
+				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
+				bd = new BD(EnviaImagenSW.this);
+				
+				bd.insertaImagen(nombreImagen, imagenCodificada, latitud, longitud, idCat, etComentario.getText().toString());
+				bd.close();
+				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
+			}
 		}
 	};
 	private void categoriasSinInternet(){
-    	BD bd = new BD(this); 
+    	bd = new BD(this); 
     	SQLiteDatabase sqlite = bd.getWritableDatabase();
-    	Toast.makeText(EnviaImagenSW.this, "BD creada", Toast.LENGTH_LONG).show();
     	listaCategoria = new ArrayList<Categoria>();
     	listaCategoria = bd.obtieneCategorias();
     	bd.close();
@@ -185,66 +199,7 @@ public class EnviaImagenSW extends Activity{
                 }
             );
 	}
-	private void enviaImagenSencillo(){
-		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
-		String METHOD_NAME = "recibeImagen";
-		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		String URL = "http://"+HOST+"/pags/servicios.php";   
-		
-		int noOfChunks ;
-		String base64String,str;
-		
-		try{
-			Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen);
-			//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
 
-					ByteArrayOutputStream bao = new ByteArrayOutputStream();
-
-					bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-
-					byte [] ba = bao.toByteArray();
-
-					String ba1=Base64.encodeBytes(ba);
-					
-					Log.i("imagen", ba1);
-					request = new SoapObject(NAMESPACE, METHOD_NAME); 
-					//String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-				    
-					request.addProperty("imagen", ba1);
-					request.addProperty("nombreIm", nombreImagen+".jpg"); 
-					
-				    
-					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-					
-					envelope.dotNet = false;
-					
-					envelope.setOutputSoapObject(request);
-
-					HttpTransportSE aht = new HttpTransportSE(URL); 
-
-					aht.call(SOAP_ACTION, envelope);
-					
-					SoapObject result =  (SoapObject) envelope.bodyIn;
-	                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
-	                
-					Log.i("result",spResul.toString());
-					Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
-					
-
-				
-	    } 
-	    catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		finally{
-			
-		}		
-	}
 	
 	private void obtieneCategorias(){
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneCategorias"; 
@@ -321,40 +276,27 @@ public class EnviaImagenSW extends Activity{
 		
 	}
 	
+	private void codificaImagen(){
+		Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
+		ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+		byte [] ba = bao.toByteArray();
+		imagenCodificada = Base64.encodeBytes(ba);
+	}
+	
 	private void enviaImagen(){
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
 		String METHOD_NAME = "enviaImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
 		String URL = "http://"+HOST+"/pags/servicios.php";
-		
-		
 		try{
-			Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
-			//Bitmap bitmapOrg = BitmapFactory.decodeResource(getResources(),R.drawable.nature);
-
-					ByteArrayOutputStream bao = new ByteArrayOutputStream();
-
-					bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-
-					byte [] ba = bao.toByteArray();
-
-					String ba1=Base64.encodeBytes(ba);
-					
-
 					request = new SoapObject(NAMESPACE, METHOD_NAME); 
-					
-
-					EditText etComentario = (EditText)findViewById(R.id.etComentario);
-					
-					//Log.i("Datos: ", tvLatitud.getText().toString()+","+tvLongitud.getText().toString()+","+etComentario.getText().toString()+" "+nombreImagen);
-	
 					request.addProperty("nombreImagen", nombreImagen);
-					request.addProperty("contenido", ba1);
+					request.addProperty("contenido", imagenCodificada);
 					request.addProperty("latitud", tvLatitud.getText().toString());
 					request.addProperty("longitud", tvLongitud.getText().toString());
 					request.addProperty("comentario", etComentario.getText().toString());
 					request.addProperty("categoria", idCat);					
-					
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					
@@ -371,10 +313,7 @@ public class EnviaImagenSW extends Activity{
 	                
 					Log.i("result",spResul.toString());
 					Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
-					
-
-				
-	    } 
+		    } 
 	    catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -457,7 +396,7 @@ private File createImageFile() throws IOException {
 	 
 	 */
 	
-	public boolean conexionInternet() {
+	private boolean conexionInternet() {
 		ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 		NetworkInfo netInfo = cm.getActiveNetworkInfo();
