@@ -1,5 +1,9 @@
 package com.amber.proyecto.envia.imagenes.sw.mibd;
 
+import java.util.ArrayList;
+
+import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -57,7 +61,7 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("nombreCategoria", "Mercado");
 		db.insert(nombreTablaCategorias, null, cv);
 		cv.put("idCategoria", 4);
-		cv.put("nombreCategoria", "Sitio arqueol�gico");
+		cv.put("nombreCategoria", "Sitio arqueológico");
 		db.insert(nombreTablaCategorias, null, cv);
 		cv.put("idCategoria", 5);
 		cv.put("nombreCategoria", "Museo");
@@ -71,14 +75,37 @@ public class BD extends SQLiteOpenHelper{
 	
 	}
 	
-	public Cursor obtieneCategorias(){
+	public void insertaCategoria(int idCategoria, String nombreCategoria){
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("idCategoria", idCategoria);
+		cv.put("nombreCategoria", nombreCategoria);
+		db.insert(nombreTablaCategorias, null, cv);				
+	}
+	
+	public ArrayList<Categoria> obtieneCategorias(){
 		 SQLiteDatabase db=this.getReadableDatabase();
-		 Cursor cur=db.rawQuery("SELECT * from "+ nombreTablaCategorias,new String [] {});	 
-		 return cur;
+		 ArrayList<Categoria> categorias = new ArrayList<Categoria>();
+		 Cursor cursor=db.rawQuery("SELECT * from "+ nombreTablaCategorias, null);	 
+		 if (cursor.moveToFirst()) {
+	        do {
+	        	Categoria cat = new Categoria();
+	        	cat.setIdCategoria(Integer.parseInt(cursor.getString(0)));
+	        	cat.setNombreCategoria(cursor.getString(1));
+			   categorias.add(cat);
+		   } while (cursor.moveToNext());
+		}
+			  cursor.close();
+		 return categorias;
 	}
 	
 	public void insertaImagen(){
 		
+	}
+	
+	public void borraCategorias(){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.execSQL("delete from"+nombreTablaCategorias);
 	}
 	
 
