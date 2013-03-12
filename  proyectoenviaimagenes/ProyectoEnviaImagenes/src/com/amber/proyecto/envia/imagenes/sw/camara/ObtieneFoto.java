@@ -59,6 +59,14 @@ public class ObtieneFoto extends Activity{
 	    setContentView(R.layout.obtienefoto);
 
 	    nombreImagen = "FT"+System.currentTimeMillis(); 
+	    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
+	    if(folder.exists()){
+	      //save your file then
+	    }
+	    else{
+	      folder.mkdirs();
+	      //save your file then
+	    }
 		ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +File.separator;
 		
 		archivo = new File(ruta,nombreImagen+".jpg");
@@ -104,7 +112,7 @@ public class ObtieneFoto extends Activity{
 		    	} catch (Exception e) {
 		    	// Mensaje en caso de que falle
 		    	}
-			  //abrimos la actividad que envía la imagen
+			  //abrimos la actividad que envï¿½a la imagen
 			  Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
 			  intent.putExtra("ruta", ruta);
