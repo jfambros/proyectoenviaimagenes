@@ -24,6 +24,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -107,9 +108,7 @@ public class EnviaImagenSW extends Activity{
         if (conexionInternet() == true){
             obtieneCategorias();
         }else{
-        	BD bd = new BD(this); 
-        	SQLiteDatabase sqlite = bd.getWritableDatabase();
-        	Toast.makeText(EnviaImagenSW.this, "BD creada", Toast.LENGTH_LONG).show();
+        	categoriasSinInternet();
         }
         	
         
@@ -146,7 +145,46 @@ public class EnviaImagenSW extends Activity{
 			enviaImagen();
 		}
 	};
-	
+	private void categoriasSinInternet(){
+    	BD bd = new BD(this); 
+    	SQLiteDatabase sqlite = bd.getWritableDatabase();
+    	Toast.makeText(EnviaImagenSW.this, "BD creada", Toast.LENGTH_LONG).show();
+    	listaCategoria = new ArrayList<Categoria>();
+    	listaCategoria = bd.obtieneCategorias();
+    	bd.close();
+    	ArrayList<String> aLCategorias = new ArrayList<String>();
+    	for (int i= 0; i<listaCategoria.size(); i++){
+    		aLCategorias.add(listaCategoria.get(i).getNombreCategoria());
+    	}
+    	
+    	ArrayAdapter<String> adapterCategoria = new ArrayAdapter<String>( 
+                this,
+                android.R.layout.simple_spinner_item, aLCategorias
+                 );
+        adapterCategoria.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+        
+            spinnCategorias.setAdapter(adapterCategoria);
+                spinnCategorias.setSelection(0);
+            spinnCategorias.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(
+                            AdapterView<?> parent, 
+                            View view, 
+                            int position, 
+                            long id) {
+                        Categoria cat = listaCategoria.get(position);
+                        //Log.i("Pais seleccionado", d.getNombrePais());
+                        idCat = cat.getIdCategoria();
+                        Log.i("categoria seleccionada", Integer.toString(cat.getIdCategoria()));
+                    }
+
+                                        public void onNothingSelected(AdapterView<?> arg0) {
+                                        
+                                        }
+                }
+            );
+	}
 	private void enviaImagenSencillo(){
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
 		String METHOD_NAME = "recibeImagen";
