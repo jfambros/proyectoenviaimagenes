@@ -110,9 +110,9 @@ public class BD extends SQLiteOpenHelper{
 	        	Imagen ima = new Imagen();
 	        	ima.setNombreImagen(cursor.getString(0));
 	        	ima.setContenidoImagen(cursor.getString(1));
-	        	ima.setLatitud(Double.parseDouble(cursor.getString(2)));
-	        	ima.setLongitud(Double.parseDouble(cursor.getString(3)));
-	        	ima.setIdCategoria(Integer.parseInt(cursor.getString(4)));
+	        	ima.setLatitud(cursor.getDouble(2));
+	        	ima.setLongitud(cursor.getDouble(3));
+	        	ima.setIdCategoria(cursor.getInt(4));
 	        	ima.setComentario(cursor.getString(5));
 			    imagenes.add(ima);
 		   } while (cursor.moveToNext());
