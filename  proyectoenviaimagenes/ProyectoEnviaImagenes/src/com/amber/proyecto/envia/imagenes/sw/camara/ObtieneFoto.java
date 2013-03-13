@@ -60,12 +60,8 @@ public class ObtieneFoto extends Activity{
 
 	    nombreImagen = "FT"+System.currentTimeMillis(); 
 	    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
-	    if(folder.exists()){
-	      //save your file then
-	    }
-	    else{
+	    if(!folder.exists()){
 	      folder.mkdirs();
-	      //save your file then
 	    }
 		ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +File.separator;
 		

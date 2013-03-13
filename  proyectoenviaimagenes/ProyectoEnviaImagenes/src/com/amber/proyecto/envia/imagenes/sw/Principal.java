@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
+import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -53,6 +54,8 @@ public class Principal extends Activity {
 		setContentView(R.layout.principal);
 		if (conexionInternet() == true){
 			enviaImagenBD();
+			insertaCategoriasInternet();
+			
 		}
 		utilizarGPS();
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -136,17 +139,7 @@ public class Principal extends Activity {
         .show();   
 	}
 	
-	private boolean conexionInternet() {
-		ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			return true;
-		}
-
-		return false;
-	}
 	/*
 	private ArrayList<Imagen> obtieneValoresBD(){
 		BD bd = new BD(Principal.this);
@@ -166,16 +159,18 @@ public class Principal extends Activity {
 		BD bd = new BD(Principal.this);
 		if (bd.cuentaRegImagenes() != 0){
 			imagenes = bd.obtieneImagenes();
+			request = new SoapObject(NAMESPACE, METHOD_NAME);
 			try{
 				
 					for (int i = 0; i<imagenes.size(); i++){
-						request = new SoapObject(NAMESPACE, METHOD_NAME); 
+						 
 						request.addProperty("nombreImagen", imagenes.get(i).getNombreImagen());
 						request.addProperty("contenido", imagenes.get(i).getContenidoImagen());
-						request.addProperty("latitud", imagenes.get(i).getLatitud());
-						request.addProperty("longitud", imagenes.get(i).getLongitud());
+						request.addProperty("latitud", Double.toString(imagenes.get(i).getLatitud()));
+						request.addProperty("longitud", Double.toString(imagenes.get(i).getLongitud()));
+						request.addProperty("comentario", imagenes.get(i).getComentario());						
 						request.addProperty("categoria", imagenes.get(i).getIdCategoria());							
-						request.addProperty("comentario", imagenes.get(i).getComentario());
+
 					    
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
@@ -195,7 +190,7 @@ public class Principal extends Activity {
 						Log.i("result",spResul.toString());
 						
 					}
-					Toast.makeText(Principal.this, "Imagen enviada", Toast.LENGTH_LONG).show();
+					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas", Toast.LENGTH_LONG).show();
 			    }
 		
 		    catch (IOException e) {
@@ -216,5 +211,47 @@ public class Principal extends Activity {
 		bd.close();
 	}
 	
+	private void insertaCategoriasInternet(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneCategorias"; 
+		String METHOD_NAME = "obtieneCategorias";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		String URL = "http://"+Variables.HOST+"/pags/servicios.php";
+		SoapSerializationEnvelope envelope;
+        HttpTransportSE httpt;
+        BD bd = new BD(Principal.this);
+     
+        try{
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+               
+        httpt = new HttpTransportSE(URL);
+        envelope = new SoapSerializationEnvelope( SoapEnvelope.VER11 );
+        envelope.dotNet = false;
+        envelope.setOutputSoapObject(request);
+        httpt.call(SOAP_ACTION, envelope);
+        SoapObject result2 =  (SoapObject) envelope.getResponse();
+
+        for(int cont=0; cont< result2.getPropertyCount(); cont ++){
+        	SoapObject resultados = (SoapObject) result2.getProperty(cont);
+        	//primitivas
+        	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
+        	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
+        	bd.insertaCategoria(Integer.parseInt(idCategoria.toString()), nombreCategoria.toString());
+        }
+     }
+     catch(Exception err){
+    	 
+     }
+	}
 		
+	private boolean conexionInternet() {
+		ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+			return true;
+		}
+
+		return false;
+	}
 }
