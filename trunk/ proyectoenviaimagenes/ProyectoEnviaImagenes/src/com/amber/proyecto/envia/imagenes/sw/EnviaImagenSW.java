@@ -22,7 +22,9 @@ import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -158,6 +160,7 @@ public class EnviaImagenSW extends Activity{
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
 			}
+			mensaje("Aviso", "¿Qué deseas realizar?");
 		}
 	};
 	private void categoriasSinInternet(){
@@ -311,7 +314,7 @@ public class EnviaImagenSW extends Activity{
 					SoapObject result =  (SoapObject) envelope.bodyIn;
 	                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
 	                
-					Log.i("result",spResul.toString());
+					Log.i("resultado",spResul.toString());
 					Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
 		    } 
 	    catch (IOException e) {
@@ -406,5 +409,31 @@ private File createImageFile() throws IOException {
 		}
 
 		return false;
+	}
+	
+	
+	private void mensaje(String titulo, String msj){
+        new AlertDialog.Builder(EnviaImagenSW.this)
+        .setTitle(titulo)
+        .setMessage(msj)
+        .setCancelable(false)
+        .setPositiveButton("Tomar otra foto", new DialogInterface.OnClickListener() {
+        	public void onClick(DialogInterface dialog, int whichButton) {
+        		Intent intent = new Intent();
+        		intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
+        		startActivity(intent);
+        		setResult(RESULT_OK);
+        	}
+        })
+        .setNeutralButton("Ir a inicio", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+        		Intent intent = new Intent();
+        		intent.setClass(EnviaImagenSW.this, Principal.class);
+        		startActivity(intent);
+        		setResult(RESULT_OK);				
+			}
+		})
+		
+        .show();   
 	}
 }

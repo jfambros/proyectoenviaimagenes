@@ -52,6 +52,7 @@ public class BD extends SQLiteOpenHelper{
 	}
 	
 	private void insertaCategorias(SQLiteDatabase db){
+		db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("idCategoria", 1);
 		cv.put("nombreCategoria", "Hotel");
