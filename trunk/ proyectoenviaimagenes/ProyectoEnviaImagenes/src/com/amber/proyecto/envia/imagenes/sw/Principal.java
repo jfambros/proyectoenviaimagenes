@@ -174,12 +174,14 @@ public class Principal extends Activity {
 						request.addProperty("contenido", imagenes.get(i).getContenidoImagen());
 						request.addProperty("latitud", imagenes.get(i).getLatitud());
 						request.addProperty("longitud", imagenes.get(i).getLongitud());
+						request.addProperty("categoria", imagenes.get(i).getIdCategoria());							
 						request.addProperty("comentario", imagenes.get(i).getComentario());
-						request.addProperty("categoria", imagenes.get(i).getIdCategoria());					
 					    
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
+						
+
 						
 						envelope.setOutputSoapObject(request);
 	
@@ -190,15 +192,17 @@ public class Principal extends Activity {
 						SoapObject result =  (SoapObject) envelope.bodyIn;
 		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
 		                
-						//Log.i("result",spResul.toString());
+						Log.i("result",spResul.toString());
 						
 					}
 					Toast.makeText(Principal.this, "Imagen enviada", Toast.LENGTH_LONG).show();
-			    } 
+			    }
+		
 		    catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (XmlPullParserException e) {
+				
+			}catch (XmlPullParserException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
