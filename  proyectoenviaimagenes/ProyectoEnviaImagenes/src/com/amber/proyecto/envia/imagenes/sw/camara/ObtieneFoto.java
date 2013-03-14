@@ -76,17 +76,17 @@ public class ObtieneFoto extends Activity{
 	    
 	    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 	  }	    
-	    /*
+	    
 	  @Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		preview.getHolder().removeCallback(preview);
-		preview.camera.stopPreview();
-		preview.camera.release();
+		//preview.getHolder().removeCallback(preview);
+		//preview.camera.stopPreview();
+		//preview.camera.release();
 		preview.camera = null;
 	}
-	*/
+	
 	 
 	  private void obtieneCoordenadas(){
 		  milocListener = new MiLocationListener();
