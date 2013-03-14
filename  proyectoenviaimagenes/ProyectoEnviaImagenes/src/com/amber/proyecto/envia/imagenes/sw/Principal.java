@@ -16,8 +16,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -35,17 +33,18 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
-import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class Principal extends Activity {
 	private LocationManager locationManager;
-	private LocationListener locationListener;
+	//private LocationListener locationListener;
 	private Button btnIniciar;
 	private ImageView ivConecta;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
+	private boolean gps_on;
+	private Location loc;
 	
 	
 
@@ -53,6 +52,7 @@ public class Principal extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
+		 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
 		if (conexionInternet() == true){
 			enviaImagenBD();
 			insertaCategoriasInternet();
@@ -63,9 +63,17 @@ public class Principal extends Activity {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
 		else {
-			 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
-			 //http://stackoverflow.com/questions/2021176/how-can-i-check-the-current-status-of-the-gps-receiver
 
+			 //http://stackoverflow.com/questions/2021176/how-can-i-check-the-current-status-of-the-gps-receiver
+			 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+			 gps_on =  locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			 //loc = null;
+		     request_updates();
+		     if (loc != null){
+		    	 btnIniciar.setVisibility(1);
+			    	btnIniciar.setOnClickListener(btnIniciarPres);
+		     }
+/*
 			 locationListener = new LocationListener() {
 
 			    public void onLocationChanged(Location location) {
@@ -75,6 +83,7 @@ public class Principal extends Activity {
 			        //btnIniciar.setVisibility(1);
 			    	btnIniciar.setVisibility(1);
 			    	btnIniciar.setOnClickListener(btnIniciarPres);
+			   
 			    	ivConecta = (ImageView)findViewById(R.id.ivConectar);
 			    }
 
@@ -85,15 +94,39 @@ public class Principal extends Activity {
 			};
 
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 1, locationListener);
-			/*
+			
 			if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude() > 0){
 				btnIniciar.setVisibility(1);
 				btnIniciar.setOnClickListener(btnIniciarPres);
-			}*/
-		
+			}
+	*/	
 		}
-		
+	
 	}
+	
+	private void request_updates() {
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            // GPS is enabled on device so lets add a loopback for this locationmanager
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0, locationListener);
+            Log.i("Gps","encontrado GPS");
+        }      
+    }
+
+    LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            // Each time the location is changed we assign loc
+            loc = location;
+		     if (loc != null){
+		    	 btnIniciar.setVisibility(1);
+			     btnIniciar.setOnClickListener(btnIniciarPres);
+		     }
+        }
+
+         // Need these even if they do nothing. Can't remember why.
+         public void onProviderDisabled(String arg0) {}
+         public void onProviderEnabled(String provider) {}
+         public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
 	
 	
 	
@@ -118,6 +151,18 @@ public class Principal extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.principal, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onRestart() {
+		// TODO Auto-generated method stub
+		super.onRestart();
+		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		
+		if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude() > 0){
+			btnIniciar.setVisibility(1);
+			btnIniciar.setOnClickListener(btnIniciarPres);
+		}			
 	}
 	
 	private void utilizarGPS(){
@@ -192,7 +237,7 @@ public class Principal extends Activity {
 						SoapObject result =  (SoapObject) envelope.bodyIn;
 		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
 		                
-						Log.i("result",spResul.toString());
+						Log.i("resultado",spResul.toString());
 						
 					}
 					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas", Toast.LENGTH_LONG).show();
@@ -210,9 +255,10 @@ public class Principal extends Activity {
 			finally{
 				
 			}
+			
 			bd.borraImagenes();
-
 		}
+		
 		bd.close();
 	}
 	

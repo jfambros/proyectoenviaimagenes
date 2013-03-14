@@ -71,7 +71,7 @@ public class EnviaImagenSW extends Activity{
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
-    private BD bd;
+
 	
 
     @Override
@@ -154,7 +154,7 @@ public class EnviaImagenSW extends Activity{
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
-				bd = new BD(EnviaImagenSW.this);
+			    BD bd = new BD(EnviaImagenSW.this);
 				
 				bd.insertaImagen(nombreImagen, imagenCodificada, latitud, longitud, idCat, etComentario.getText().toString());
 				bd.close();
@@ -164,7 +164,7 @@ public class EnviaImagenSW extends Activity{
 		}
 	};
 	private void categoriasSinInternet(){
-    	bd = new BD(this); 
+    	BD bd = new BD(this); 
     	SQLiteDatabase sqlite = bd.getWritableDatabase();
     	listaCategoria = new ArrayList<Categoria>();
     	listaCategoria = bd.obtieneCategorias();

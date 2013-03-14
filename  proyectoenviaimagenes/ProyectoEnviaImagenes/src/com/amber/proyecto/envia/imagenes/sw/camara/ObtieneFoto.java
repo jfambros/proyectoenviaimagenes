@@ -87,6 +87,7 @@ public class ObtieneFoto extends Activity{
 		preview.camera = null;
 	}
 	*/
+	 
 	  private void obtieneCoordenadas(){
 		  milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);		  
@@ -104,7 +105,7 @@ public class ObtieneFoto extends Activity{
 		    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
 		    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
 		    try {
-		    	Thread.sleep (3000);
+		    	Thread.sleep (2000);
 		    	} catch (Exception e) {
 		    	// Mensaje en caso de que falle
 		    	}
