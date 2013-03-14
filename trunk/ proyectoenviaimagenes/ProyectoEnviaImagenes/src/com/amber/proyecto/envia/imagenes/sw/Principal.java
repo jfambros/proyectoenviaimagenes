@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -63,6 +64,8 @@ public class Principal extends Activity {
 		}
 		else {
 			 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+			 //http://stackoverflow.com/questions/2021176/how-can-i-check-the-current-status-of-the-gps-receiver
+
 			 locationListener = new LocationListener() {
 
 			    public void onLocationChanged(Location location) {
@@ -81,7 +84,7 @@ public class Principal extends Activity {
 			    
 			};
 
-			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 1, locationListener);
 			/*
 			if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude() > 0){
 				btnIniciar.setVisibility(1);
@@ -91,6 +94,8 @@ public class Principal extends Activity {
 		}
 		
 	}
+	
+	
 	
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
