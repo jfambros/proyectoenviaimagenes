@@ -84,7 +84,7 @@ public class ObtieneFoto extends Activity{
 		//preview.getHolder().removeCallback(preview);
 		//preview.camera.stopPreview();
 		//preview.camera.release();
-		preview.camera = null;
+		//preview.camera = null;
 	}
 	
 	 
@@ -105,7 +105,8 @@ public class ObtieneFoto extends Activity{
 		    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
 		    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
 		    try {
-		    	Thread.sleep (2000);
+		    	Toast.makeText(ObtieneFoto.this, "Guardando imagen", Toast.LENGTH_LONG).show();
+		    	Thread.sleep (3000);
 		    	} catch (Exception e) {
 		    	// Mensaje en caso de que falle
 		    	}

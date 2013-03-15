@@ -78,8 +78,9 @@ public class EnviaImagenSW extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enviaimagensw);
-        
+        nombreImagen = null;
         //obtenemos el nombre de la imagen
+        
         bundle = getIntent().getExtras();
         ruta = bundle.getString("ruta");        
         nombreImagen = bundle.getString("nombreImagen");
@@ -132,6 +133,13 @@ public class EnviaImagenSW extends Activity{
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.principal, menu);
         return true;
+    }
+    
+    @Override
+    protected void onPause() {
+    	// TODO Auto-generated method stub
+    	super.onPause();
+    	imagenCodificada = null;
     }
     
 	
@@ -282,7 +290,7 @@ public class EnviaImagenSW extends Activity{
 	private void codificaImagen(){
 		Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
 		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 80, bao);
 		byte [] ba = bao.toByteArray();
 		imagenCodificada = Base64.encodeBytes(ba);
 	}
