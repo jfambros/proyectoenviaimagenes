@@ -54,7 +54,7 @@ public class Principal extends Activity {
 		setContentView(R.layout.principal);
 		 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
 		if (conexionInternet() == true){
-			enviaImagenBD();
+			//enviaImagenBD();
 			insertaCategoriasInternet();
 			
 		}
