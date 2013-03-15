@@ -105,7 +105,7 @@ public class Principal extends Activity {
 			BD bd = new BD(this);
 			if (bd.cuentaRegImagenes() >0 ){
 			
-				enviaImagenBD();
+				//enviaImagenBD();
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
 			}
 			
