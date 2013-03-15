@@ -122,6 +122,8 @@ public class BD extends SQLiteOpenHelper{
 		 return imagenes;
 	}
 	
+	
+	
 	public int cuentaRegImagenes(){
 		int total;
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -147,6 +149,12 @@ public class BD extends SQLiteOpenHelper{
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.execSQL("delete from "+nombreTablaCategorias);
 		
+	}
+	
+	public void borraImagen(String NombImagen){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.execSQL("delete from "+nombreTablaImagenes+" where nombreImagen = '"+NombImagen+"';");
+			
 	}
 
 	public void borraImagenes(){
