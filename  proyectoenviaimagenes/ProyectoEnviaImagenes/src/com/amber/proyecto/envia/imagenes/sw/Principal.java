@@ -33,16 +33,17 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
+import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class Principal extends Activity {
 	private LocationManager locationManager;
-	//private LocationListener locationListener;
 	private Button btnIniciar;
-	private ImageView ivConecta;
+	//private ImageView ivConecta;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
+	private String URL = "http://"+HOST+"/pags/servicios.php";
 	private boolean gps_on;
 	private Location loc;
 	
@@ -53,11 +54,7 @@ public class Principal extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
 		 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
-		if (conexionInternet() == true){
-			//enviaImagenBD();
-			insertaCategoriasInternet();
-			
-		}
+		verificaInternetBD();
 		utilizarGPS();
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
@@ -103,7 +100,22 @@ public class Principal extends Activity {
 		}
 	
 	}
-	
+	private void verificaInternetBD(){
+		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
+			BD bd = new BD(this);
+			if (bd.cuentaRegImagenes() >0 ){
+			
+				enviaImagenBD();
+				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
+			}
+			
+			bd.close();
+		}
+		else{
+			Toast.makeText(this, "Servidor no se encontró", Toast.LENGTH_LONG).show();
+		}
+		
+	}
 	private void request_updates() {
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             // GPS is enabled on device so lets add a loopback for this locationmanager
@@ -157,12 +169,21 @@ public class Principal extends Activity {
 	protected void onRestart() {
 		// TODO Auto-generated method stub
 		super.onRestart();
-		locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		Log.i("On restart", "restaurando");
+		verificaInternetBD();
+		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
+		}
 		
+		btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+		locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0, locationListener);
+		/*
 		if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude() > 0){
 			btnIniciar.setVisibility(1);
 			btnIniciar.setOnClickListener(btnIniciarPres);
-		}			
+		}
+		*/			
 	}
 	
 	private void utilizarGPS(){
@@ -200,20 +221,31 @@ public class Principal extends Activity {
 		return imagenes;
 	}
 	*/
+	private boolean verificaRegBD(){
+		BD bd = new BD(this);
+		if (bd.cuentaRegImagenes() > 0 ){
+			bd.close();
+			return true;
+		}
+		else{
+			bd.close();
+			return false;
+		}
+	}
 	private void enviaImagenBD(){
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
 		String METHOD_NAME = "enviaImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		String URL = "http://"+HOST+"/pags/servicios.php";
 		ArrayList<Imagen> imagenes = new ArrayList<Imagen>();
-		BD bd = new BD(Principal.this);
-		if (bd.cuentaRegImagenes() != 0){
+		BD bd = new BD(this);
+		
+		if (bd.cuentaRegImagenes() > 0){
 			imagenes = bd.obtieneImagenes();
-			request = new SoapObject(NAMESPACE, METHOD_NAME);
+			
 			try{
 				
 					for (int i = 0; i<imagenes.size(); i++){
-						 
+						request = new SoapObject(NAMESPACE, METHOD_NAME); 
 						request.addProperty("nombreImagen", imagenes.get(i).getNombreImagen());
 						request.addProperty("contenido", imagenes.get(i).getContenidoImagen());
 						request.addProperty("latitud", Double.toString(imagenes.get(i).getLatitud()));
@@ -237,6 +269,8 @@ public class Principal extends Activity {
 						SoapObject result =  (SoapObject) envelope.bodyIn;
 		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
 		                
+		                bd.borraImagen(imagenes.get(i).getNombreImagen());
+		                
 						Log.i("resultado",spResul.toString());
 						
 					}
@@ -256,7 +290,7 @@ public class Principal extends Activity {
 				
 			}
 			
-			bd.borraImagenes();
+			
 		}
 		
 		bd.close();
@@ -266,10 +300,9 @@ public class Principal extends Activity {
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneCategorias"; 
 		String METHOD_NAME = "obtieneCategorias";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		String URL = "http://"+Variables.HOST+"/pags/servicios.php";
 		SoapSerializationEnvelope envelope;
         HttpTransportSE httpt;
-        BD bd = new BD(Principal.this);
+        BD bd = new BD(this);
      
         try{
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
@@ -292,17 +325,8 @@ public class Principal extends Activity {
      catch(Exception err){
     	 
      }
+     bd.close();
 	}
+
 		
-	private boolean conexionInternet() {
-		ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-			return true;
-		}
-
-		return false;
-	}
 }

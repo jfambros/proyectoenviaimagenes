@@ -51,6 +51,7 @@ import android.widget.Toast;
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
+import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class EnviaImagenSW extends Activity{
@@ -71,6 +72,8 @@ public class EnviaImagenSW extends Activity{
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
+    private String URL = "http://"+HOST+"/pags/servicios.php";
+    private BD bd;
 
 	
 
@@ -78,6 +81,7 @@ public class EnviaImagenSW extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enviaimagensw);
+        bd = new BD(getBaseContext());
         nombreImagen = null;
         //obtenemos el nombre de la imagen
         
@@ -113,7 +117,7 @@ public class EnviaImagenSW extends Activity{
         
    
     	obtenerDireccion();    
-        if (conexionInternet() == true){
+        if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true){
             obtieneCategorias();
         }else{
         	categoriasSinInternet();
@@ -157,12 +161,11 @@ public class EnviaImagenSW extends Activity{
     private OnClickListener btnEnviarPres = new OnClickListener() {
 		
 		public void onClick(View v) {
-			if (conexionInternet() == true){
+			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
 				enviaImagen();
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
-			    BD bd = new BD(EnviaImagenSW.this);
 				
 				bd.insertaImagen(nombreImagen, imagenCodificada, latitud, longitud, idCat, etComentario.getText().toString());
 				bd.close();
@@ -172,8 +175,6 @@ public class EnviaImagenSW extends Activity{
 		}
 	};
 	private void categoriasSinInternet(){
-    	BD bd = new BD(this); 
-    	SQLiteDatabase sqlite = bd.getWritableDatabase();
     	listaCategoria = new ArrayList<Categoria>();
     	listaCategoria = bd.obtieneCategorias();
     	bd.close();
@@ -216,7 +217,7 @@ public class EnviaImagenSW extends Activity{
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneCategorias"; 
 		String METHOD_NAME = "obtieneCategorias";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		String URL = "http://"+Variables.HOST+"/pags/servicios.php";
+		
 		SoapSerializationEnvelope envelope;
         HttpTransportSE httpt;
         SoapObject result;
@@ -299,7 +300,6 @@ public class EnviaImagenSW extends Activity{
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
 		String METHOD_NAME = "enviaImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		String URL = "http://"+HOST+"/pags/servicios.php";
 		try{
 					request = new SoapObject(NAMESPACE, METHOD_NAME); 
 					request.addProperty("nombreImagen", nombreImagen);
@@ -407,17 +407,7 @@ private File createImageFile() throws IOException {
 	 
 	 */
 	
-	private boolean conexionInternet() {
-		ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		NetworkInfo netInfo = cm.getActiveNetworkInfo();
-
-		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
-		return true;
-		}
-
-		return false;
-	}
 	
 	
 	private void mensaje(String titulo, String msj){
