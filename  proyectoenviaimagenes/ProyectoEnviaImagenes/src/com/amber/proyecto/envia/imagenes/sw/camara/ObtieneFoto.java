@@ -211,9 +211,6 @@ public class ObtieneFoto extends Activity{
 	        .show();   
 		}
 	  
-	  private void espera(){
-		  
-	  }
 		
 	  
 }

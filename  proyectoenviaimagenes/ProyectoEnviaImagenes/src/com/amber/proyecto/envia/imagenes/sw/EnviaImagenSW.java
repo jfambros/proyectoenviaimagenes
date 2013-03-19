@@ -23,16 +23,12 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -52,6 +48,7 @@ import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
+import com.amber.proyecto.envia.imagenes.sw.utils.DivideImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class EnviaImagenSW extends Activity{
@@ -72,8 +69,11 @@ public class EnviaImagenSW extends Activity{
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
+    private String partes[] = new String[9];
     private String URL = "http://"+HOST+"/pags/servicios.php";
     private BD bd;
+    private int imagenW;
+    private int imagenH;
 
 	
 
@@ -90,7 +90,8 @@ public class EnviaImagenSW extends Activity{
         nombreImagen = bundle.getString("nombreImagen");
         latitud = bundle.getDouble("latitud");
         longitud = bundle.getDouble("longitud");
-        codificaImagen();
+        //codificaImagen();
+        codificaImagenSinInternet();
         
         tvLatitud = (TextView) findViewById(R.id.tvLatitud);
         tvLongitud = (TextView) findViewById(R.id.tvLongitud);
@@ -103,7 +104,13 @@ public class EnviaImagenSW extends Activity{
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 2;
         Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
+        
         imagen.setImageBitmap(bm);
+        
+        Bitmap bm2 = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
+        
+        imagenW = bm2.getWidth();
+        imagenH = bm2.getHeight();
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
@@ -167,7 +174,8 @@ public class EnviaImagenSW extends Activity{
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
 				
-				bd.insertaImagen(nombreImagen, imagenCodificada, latitud, longitud, idCat, etComentario.getText().toString());
+				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString());
+				bd.insertaContenido(nombreImagen, partes);
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
 			}
@@ -288,12 +296,27 @@ public class EnviaImagenSW extends Activity{
 		
 	}
 	
-	private void codificaImagen(){
+	private void codificaImagenInternet(){
 		Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
 		ByteArrayOutputStream bao = new ByteArrayOutputStream();
 		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 80, bao);
 		byte [] ba = bao.toByteArray();
 		imagenCodificada = Base64.encodeBytes(ba);
+	}
+	
+	private void codificaImagenSinInternet(){
+		Bitmap arregloBM[] = new Bitmap[9];
+		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
+		arregloBM = divide.divideBitmap();
+		Log.i("Tamaño","#"+arregloBM.length);
+		for (int i=0; i<arregloBM.length; i++){
+			ByteArrayOutputStream bao = new ByteArrayOutputStream();
+			arregloBM[i].compress(Bitmap.CompressFormat.JPEG, 90, bao);
+			byte [] ba = bao.toByteArray();
+			partes[i] = Base64.encodeBytes(ba);
+			Log.i("Parte # "+i,partes[i]);
+		}
+		
 	}
 	
 	private void enviaImagen(){

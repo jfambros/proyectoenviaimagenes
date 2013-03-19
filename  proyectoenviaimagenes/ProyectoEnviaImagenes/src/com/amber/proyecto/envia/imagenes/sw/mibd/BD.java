@@ -16,14 +16,29 @@ public class BD extends SQLiteOpenHelper{
 	private static final String nombreBD = "enviaimagen.db";
 	private static final String nombreTablaCategorias = "categorias";
 	private static final String nombreTablaImagenes = "imagenes";
+	private static final String nombreTablaContenido = "contenido";
 	private static final String tablaImagenes = "create table "+ nombreTablaImagenes+"(" +
 			"nombreImagen text not null, " +
-			"contenidoImagen text not null, " +
 			"latitud real not null," +
 			"longitud real not null," +
 			"idCategoria integer not null," +
 			"comentario text," +
 			"constraint nombrePK primary key(nombreImagen) );";
+	private static final String tablaContenido = "create table "+nombreTablaContenido+"("+
+			"nombreImagen text not null, "+
+			"parte1 text not null, "+
+			"parte2 text not null, "+
+			"parte3 text not null, "+
+			"parte4 text not null, "+
+			"parte5 text not null, "+
+			"parte6 text not null, "+
+			"parte7 text not null, "+
+			"parte8 text not null, "+
+			"parte9 text not null, "+			
+			"constraint nombreImagenPK primary key(nombreImagen)," +
+			"constraint nombreImagenFK foreign key(nombreImagen) " +
+			"references "+nombreTablaImagenes+"(nombreImagen) );";
+			
 	private static final String tablaCategorias = "create table "+nombreTablaCategorias+ "(" +
 			"idCategoria integer not null," +
 			"nombreCategoria text not null," +
@@ -42,6 +57,7 @@ public class BD extends SQLiteOpenHelper{
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(tablaCategorias);
 		db.execSQL(tablaImagenes);
+		db.execSQL(tablaContenido);
 		insertaCategorias(db);	
 	}
 
@@ -83,7 +99,8 @@ public class BD extends SQLiteOpenHelper{
 		ContentValues cv = new ContentValues();
 		cv.put("idCategoria", idCategoria);
 		cv.put("nombreCategoria", nombreCategoria);
-		db.insert(nombreTablaCategorias, null, cv);				
+		db.insert(nombreTablaCategorias, null, cv);	
+		db.close();
 	}
 	
 	public ArrayList<Categoria> obtieneCategorias(){
@@ -99,6 +116,7 @@ public class BD extends SQLiteOpenHelper{
 		   } while (cursor.moveToNext());
 		}
 			  cursor.close();
+			  db.close();
 		 return categorias;
 	}
 	
@@ -110,36 +128,37 @@ public class BD extends SQLiteOpenHelper{
 	        do {
 	        	Imagen ima = new Imagen();
 	        	ima.setNombreImagen(cursor.getString(0));
-	        	ima.setContenidoImagen(cursor.getString(1));
-	        	ima.setLatitud(cursor.getDouble(2));
-	        	ima.setLongitud(cursor.getDouble(3));
-	        	ima.setIdCategoria(cursor.getInt(4));
-	        	ima.setComentario(cursor.getString(5));
+	        	ima.setLatitud(cursor.getDouble(1));
+	        	ima.setLongitud(cursor.getDouble(2));
+	        	ima.setIdCategoria(cursor.getInt(3));
+	        	ima.setComentario(cursor.getString(4));
 			    imagenes.add(ima);
 		   } while (cursor.moveToNext());
 		}
 			  cursor.close();
+			  db.close();
 		 return imagenes;
 	}
 	
 	public Imagen obtieneImagenBorra(){
 		SQLiteDatabase db = this.getReadableDatabase();
     	Imagen ima = new Imagen();
-		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" top 1", null);
+		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" limit 1", null);
 		if (cursor.moveToFirst()) {
 	        do {
 
 	        	ima.setNombreImagen(cursor.getString(0));
-	        	ima.setContenidoImagen(cursor.getString(1));
-	        	ima.setLatitud(cursor.getDouble(2));
-	        	ima.setLongitud(cursor.getDouble(3));
-	        	ima.setIdCategoria(cursor.getInt(4));
-	        	ima.setComentario(cursor.getString(5));
+	        	ima.setLatitud(cursor.getDouble(1));
+	        	ima.setLongitud(cursor.getDouble(2));
+	        	ima.setIdCategoria(cursor.getInt(3));
+	        	ima.setComentario(cursor.getString(4));
 			    borraImagen(cursor.getString(0));
+			    borraContenido(cursor.getString(0));
 		   } while (cursor.moveToNext());
 		}
 		
 			  cursor.close();
+			  db.close();
 		 return ima;
 	}
 	
@@ -152,36 +171,62 @@ public class BD extends SQLiteOpenHelper{
 		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes, null);
 		total = cursor.getCount();
 		cursor.close();
+		db.close();
 		return total;
 	}
 	
-	public void insertaImagen(String nombreImagen, String contenidoImagen, double latitud, double longitud, int idCategoria, String comentario){
+	public void insertaContenido(String nombreImagen, String[] contenido){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("nombreImagen", nombreImagen);
-		cv.put("contenidoImagen", contenidoImagen);
+		cv.put("parte1", contenido[0]);
+		cv.put("parte2", contenido[1]);
+		cv.put("parte3", contenido[2]);
+		cv.put("parte4", contenido[3]);
+		cv.put("parte5", contenido[4]);
+		cv.put("parte6", contenido[5]);
+		cv.put("parte7", contenido[6]);
+		cv.put("parte8", contenido[7]);
+		cv.put("parte9", contenido[8]);		
+		db.insert(nombreTablaContenido, null, cv);
+		db.close();
+	}
+	public void insertaImagen(String nombreImagen, double latitud, double longitud, int idCategoria, String comentario){
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("nombreImagen", nombreImagen);
 		cv.put("latitud", latitud);
 		cv.put("longitud", longitud);
 		cv.put("idCategoria", idCategoria);
 		cv.put("comentario", comentario);
 		db.insert(nombreTablaImagenes, null, cv);
+		db.close();
 	}
 	
 	public void borraCategorias(){
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.execSQL("delete from "+nombreTablaCategorias);
+		db.close();
 		
 	}
 	
-	public void borraImagen(String NombImagen){
+	public void borraImagen(String nombImagen){
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.execSQL("delete from "+nombreTablaImagenes+" where nombreImagen = '"+NombImagen+"';");
+		db.execSQL("delete from "+nombreTablaImagenes+" where nombreImagen = '"+nombImagen+"';");
+		db.close();
 			
+	}
+	
+	public void borraContenido(String nombreImagen){
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.execSQL("delete from "+nombreTablaContenido+" where nombreImagen = '"+nombreImagen+"';");
+		db.close();		
 	}
 
 	public void borraImagenes(){
 		SQLiteDatabase db = this.getWritableDatabase();
-		db.execSQL("delete from "+nombreTablaImagenes);		
+		db.execSQL("delete from "+nombreTablaImagenes);
+		db.close();
 	}
 	
 

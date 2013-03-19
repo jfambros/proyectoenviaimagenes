@@ -1,7 +1,6 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ksoap2.SoapEnvelope;
@@ -13,14 +12,11 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -28,7 +24,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
@@ -104,12 +99,15 @@ public class Principal extends Activity {
 		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
 			BD bd = new BD(this);
 			if (bd.cuentaRegImagenes() >0 ){
-			
-				//enviaImagenBD();
+				bd.close();
+				enviaImagenBD();
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
 			}
+			else{
+				bd.close();
+			}
 			
-			bd.close();
+
 		}
 		else{
 			Toast.makeText(this, "Servidor no se encontró", Toast.LENGTH_LONG).show();
@@ -185,6 +183,12 @@ public class Principal extends Activity {
 		}
 		*/			
 	}
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		
+	}
 	
 	private void utilizarGPS(){
 		locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
@@ -254,7 +258,8 @@ public class Principal extends Activity {
 						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 						request.addProperty("comentario", imagenes.getComentario());						
 						request.addProperty("categoria", imagenes.getIdCategoria());							
-
+						
+						Log.i("Imagen obtenida", imagenes.getNombreImagen()+" Contenido:"+ imagenes.getContenidoImagen());
 					    
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
@@ -276,7 +281,7 @@ public class Principal extends Activity {
 						Log.i("resultado",spResul.toString());
 						
 					}
-					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas", Toast.LENGTH_LONG).show();
+					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
 			    }
 		
 		    catch (IOException e) {
