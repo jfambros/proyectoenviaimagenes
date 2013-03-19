@@ -122,6 +122,28 @@ public class BD extends SQLiteOpenHelper{
 		 return imagenes;
 	}
 	
+	public Imagen obtieneImagenBorra(){
+		SQLiteDatabase db = this.getReadableDatabase();
+    	Imagen ima = new Imagen();
+		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" top 1", null);
+		if (cursor.moveToFirst()) {
+	        do {
+
+	        	ima.setNombreImagen(cursor.getString(0));
+	        	ima.setContenidoImagen(cursor.getString(1));
+	        	ima.setLatitud(cursor.getDouble(2));
+	        	ima.setLongitud(cursor.getDouble(3));
+	        	ima.setIdCategoria(cursor.getInt(4));
+	        	ima.setComentario(cursor.getString(5));
+			    borraImagen(cursor.getString(0));
+		   } while (cursor.moveToNext());
+		}
+		
+			  cursor.close();
+		 return ima;
+	}
+	
+	
 	
 	
 	public int cuentaRegImagenes(){

@@ -236,22 +236,24 @@ public class Principal extends Activity {
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
 		String METHOD_NAME = "enviaImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		ArrayList<Imagen> imagenes = new ArrayList<Imagen>();
+		Imagen imagenes = new Imagen();
 		BD bd = new BD(this);
+		int total = bd.cuentaRegImagenes() ;
 		
-		if (bd.cuentaRegImagenes() > 0){
-			imagenes = bd.obtieneImagenes();
+		if ( total > 0){
+			//imagenes = bd.obtieneImagenes();
 			
 			try{
 				
-					for (int i = 0; i<imagenes.size(); i++){
+					for (int i = 0; i<total; i++){
 						request = new SoapObject(NAMESPACE, METHOD_NAME); 
-						request.addProperty("nombreImagen", imagenes.get(i).getNombreImagen());
-						request.addProperty("contenido", imagenes.get(i).getContenidoImagen());
-						request.addProperty("latitud", Double.toString(imagenes.get(i).getLatitud()));
-						request.addProperty("longitud", Double.toString(imagenes.get(i).getLongitud()));
-						request.addProperty("comentario", imagenes.get(i).getComentario());						
-						request.addProperty("categoria", imagenes.get(i).getIdCategoria());							
+						imagenes = bd.obtieneImagenBorra();
+						request.addProperty("nombreImagen", imagenes.getNombreImagen());
+						request.addProperty("contenido", imagenes.getContenidoImagen());
+						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
+						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
+						request.addProperty("comentario", imagenes.getComentario());						
+						request.addProperty("categoria", imagenes.getIdCategoria());							
 
 					    
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
@@ -269,7 +271,7 @@ public class Principal extends Activity {
 						SoapObject result =  (SoapObject) envelope.bodyIn;
 		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
 		                
-		                bd.borraImagen(imagenes.get(i).getNombreImagen());
+		                //bd.borraImagen(imagenes.get(i).getNombreImagen());
 		                
 						Log.i("resultado",spResul.toString());
 						
