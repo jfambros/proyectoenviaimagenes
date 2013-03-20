@@ -38,6 +38,7 @@ public class Principal extends Activity {
 	//private ImageView ivConecta;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
+	private int tam = Variables.tamArreglo;
 	private String URL = "http://"+HOST+"/pags/servicios.php";
 	private boolean gps_on;
 	private Location loc;
@@ -99,9 +100,11 @@ public class Principal extends Activity {
 		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
 			BD bd = new BD(this);
 			if (bd.cuentaRegImagenes() >0 ){
+				//Log.i("total reg bd",Integer.toString(bd.cuentaRegImagenes()));
+				//enviaImagenBD(); 
+				Log.i("contenido", bd.obtieneContenidoSinInt(tam));
+				Toast.makeText(this, "Servidor encontrado, enviando imágenes", Toast.LENGTH_LONG).show();
 				bd.close();
-				enviaImagenBD();
-				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
 			}
 			else{
 				bd.close();

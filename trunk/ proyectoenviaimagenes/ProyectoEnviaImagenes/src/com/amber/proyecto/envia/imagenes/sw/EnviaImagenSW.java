@@ -66,10 +66,11 @@ public class EnviaImagenSW extends Activity{
 	private ImageView ivAtrasEnvia;
 	private EditText etComentario;
 	private String HOST = Variables.HOST;
+	private int tamanio = Variables.tamArreglo;
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
-    private String partes[] = new String[9];
+    private String partes[] = new String[tamanio];
     private String URL = "http://"+HOST+"/pags/servicios.php";
     private BD bd;
     private int imagenW;
@@ -91,7 +92,7 @@ public class EnviaImagenSW extends Activity{
         latitud = bundle.getDouble("latitud");
         longitud = bundle.getDouble("longitud");
         //codificaImagen();
-        codificaImagenSinInternet();
+        
         
         tvLatitud = (TextView) findViewById(R.id.tvLatitud);
         tvLongitud = (TextView) findViewById(R.id.tvLongitud);
@@ -111,6 +112,8 @@ public class EnviaImagenSW extends Activity{
         
         imagenW = bm2.getWidth();
         imagenH = bm2.getHeight();
+        
+        Log.i("width, heigth",imagenW+" "+imagenH);
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
@@ -169,11 +172,12 @@ public class EnviaImagenSW extends Activity{
 		
 		public void onClick(View v) {
 			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
+				codificaImagenInternet();
 				enviaImagen();
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
-				
+				codificaImagenSinInternet();
 				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString());
 				bd.insertaContenido(nombreImagen, partes);
 				bd.close();
@@ -305,13 +309,12 @@ public class EnviaImagenSW extends Activity{
 	}
 	
 	private void codificaImagenSinInternet(){
-		Bitmap arregloBM[] = new Bitmap[9];
+		ArrayList<Bitmap> arregloBM = new ArrayList<Bitmap>();
 		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
-		arregloBM = divide.divideBitmap();
-		Log.i("Tamaño","#"+arregloBM.length);
-		for (int i=0; i<arregloBM.length; i++){
+		arregloBM = divide.divideBitmap(tamanio);
+		for (int i=0; i<arregloBM.size(); i++){
 			ByteArrayOutputStream bao = new ByteArrayOutputStream();
-			arregloBM[i].compress(Bitmap.CompressFormat.JPEG, 90, bao);
+			arregloBM.get(i).compress(Bitmap.CompressFormat.JPEG, 90, bao);
 			byte [] ba = bao.toByteArray();
 			partes[i] = Base64.encodeBytes(ba);
 			Log.i("Parte # "+i,partes[i]);
@@ -441,6 +444,7 @@ private File createImageFile() throws IOException {
         .setPositiveButton("Tomar otra foto", new DialogInterface.OnClickListener() {
         	public void onClick(DialogInterface dialog, int whichButton) {
         		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         		intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
         		startActivity(intent);
         		setResult(RESULT_OK);
@@ -449,6 +453,7 @@ private File createImageFile() throws IOException {
         .setNeutralButton("Ir a inicio", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
         		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         		intent.setClass(EnviaImagenSW.this, Principal.class);
         		startActivity(intent);
         		setResult(RESULT_OK);				
