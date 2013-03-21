@@ -34,15 +34,7 @@ public class BD extends SQLiteOpenHelper{
 			"parte5 text not null, "+
 			"parte6 text not null, "+
 			"parte7 text not null, "+
-			"parte8 text not null, "+
-			"parte9 text not null, "+
-			"parte10 text not null, "+
-			"parte11 text not null, "+
-			"parte12 text not null, "+
-			"parte13 text not null, "+
-			"parte14 text not null, "+
-			"parte15 text not null, "+
-			"parte16 text not null, "+			
+			"parte8 text not null, "+		
 			"constraint nombreImagenPK primary key(nombreImagen)," +
 			"constraint nombreImagenFK foreign key(nombreImagen) " +
 			"references "+nombreTablaImagenes+"(nombreImagen) );";
@@ -213,15 +205,7 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("parte5", contenido[4]);
 		cv.put("parte6", contenido[5]);
 		cv.put("parte7", contenido[6]);
-		cv.put("parte8", contenido[7]);
-		cv.put("parte9", contenido[8]);
-		cv.put("parte10", contenido[9]);
-		cv.put("parte11", contenido[10]);
-		cv.put("parte12", contenido[11]);
-		cv.put("parte13", contenido[12]);
-		cv.put("parte14", contenido[13]);
-		cv.put("parte15", contenido[14]);
-		cv.put("parte16", contenido[15]);		
+		cv.put("parte8", contenido[7]);		
 		db.insert(nombreTablaContenido, null, cv);
 		db.close();
 	}

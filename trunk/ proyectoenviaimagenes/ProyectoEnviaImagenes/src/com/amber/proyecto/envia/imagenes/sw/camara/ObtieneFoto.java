@@ -33,7 +33,7 @@ public class ObtieneFoto extends Activity{
 	private FrameLayout frameLayout;
 	private LocationManager milocManager;
 	private LocationListener milocListener;
-	private String nombreImagen;
+	private String nombreImagen = "FT"+System.currentTimeMillis(); ;
 	private double latitud;
 	private double longitud;
 	private String coordenadas;
@@ -58,7 +58,6 @@ public class ObtieneFoto extends Activity{
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
 
-	    nombreImagen = "FT"+System.currentTimeMillis(); 
 	    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
 	    if(!folder.exists()){
 	      folder.mkdirs();
@@ -93,6 +92,12 @@ public class ObtieneFoto extends Activity{
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);		  
 	  }
 
+	  private void cierraCam(){
+			preview.getHolder().removeCallback(preview);
+			preview.camera.stopPreview();
+			//preview.camera.release();
+			preview.camera = null;  
+	  }
 	  private OnClickListener framePres = new OnClickListener() {
 			
 		public void onClick(View v) {
@@ -110,17 +115,20 @@ public class ObtieneFoto extends Activity{
 		    	} catch (Exception e) {
 		    	// Mensaje en caso de que falle
 		    	}
-			  //abrimos la actividad que env�a la imagen
-			  Intent intent = new Intent();
-			  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
-			  intent.putExtra("ruta", ruta);
-			  intent.putExtra("nombreImagen", nombreImagen);
-			  Log.i("nombreImagen", ruta+nombreImagen);
-			  intent.putExtra("latitud", latitud);
-			  intent.putExtra("longitud", longitud);
-			  //Log.i("coor;:", locCoordenadas.toString()+":");
-			  
-			  startActivity(intent);		
+		    finally{
+		    	
+				  //abrimos la actividad que env�a la imagen
+		    	cierraCam();
+				  Intent intent = new Intent();
+				  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
+				  intent.putExtra("ruta", ruta);
+				  intent.putExtra("nombreImagen", nombreImagen);
+				  intent.putExtra("latitud", latitud);
+				  intent.putExtra("longitud", longitud);
+				  //Log.i("coor;:", locCoordenadas.toString()+":");
+				  
+				  startActivity(intent);
+		    }
 		}
 	  };
 	  // Called when shutter is opened
@@ -164,6 +172,7 @@ public class ObtieneFoto extends Activity{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
+			data = null;
 	      }
 	    }
 	  };	

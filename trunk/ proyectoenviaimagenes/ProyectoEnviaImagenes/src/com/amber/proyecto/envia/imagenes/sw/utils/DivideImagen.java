@@ -1,6 +1,9 @@
 package com.amber.proyecto.envia.imagenes.sw.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+
+import com.amber.proyecto.envia.imagenes.sw.Base64;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,7 +19,7 @@ public class DivideImagen {
 	}
 	
 	public ArrayList<Bitmap> divideBitmap(int chunkNumbers)	{
-		
+		String imagenes[] = new String[chunkNumbers];
 	     //For the number of rows and columns of the grid to be displayed
         int rows,cols;
   
@@ -30,7 +33,6 @@ public class DivideImagen {
   
         Bitmap bitmapOrg = BitmapFactory.decodeFile(imagen+".jpg");
 		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmapOrg, bitmapOrg.getWidth(), bitmapOrg.getHeight(), true);
-        
         rows = cols = (int) Math.sqrt(chunkNumbers);
         chunkHeight = bitmapOrg.getHeight()/rows;
         chunkWidth = bitmapOrg.getWidth()/cols;
@@ -40,12 +42,86 @@ public class DivideImagen {
         for(int x=0; x<rows; x++){
             int xCoord = 0;
             for(int y=0; y<cols; y++){
-                chunkedImages.add(Bitmap.createBitmap(scaledBitmap, xCoord, yCoord, chunkWidth, chunkHeight));
+            	Bitmap nuevoBM = Bitmap.createBitmap(scaledBitmap, xCoord, yCoord, chunkWidth, chunkHeight);
+                chunkedImages.add(nuevoBM);
+     
                 xCoord += chunkWidth;
+                //nuevoBM.recycle();
+                nuevoBM = null;
             }
+        
+            
             yCoord += chunkHeight;
         }
+        
+        /*
+         * ByteArrayOutputStream bao = new ByteArrayOutputStream();
+			arregloBM.get(i).compress(Bitmap.CompressFormat.JPEG, 90, bao);
+			byte [] ba = bao.toByteArray();
+			partes[i] = Base64.encodeBytes(ba);
+         */
+        
+        bitmapOrg.recycle();
+        scaledBitmap.recycle();
+        bitmapOrg = null;
+        scaledBitmap = null;
+        System.gc();
         return chunkedImages;
+	}
+	
+	
+	public String[] divideBitmapArr(int chunkNumbers)	{
+		String partes[] = new String[chunkNumbers];
+	     //For the number of rows and columns of the grid to be displayed
+        int rows,cols;
+        int i=0;
+  
+        //For height and width of the small image chunks 
+        int chunkHeight,chunkWidth;
+  
+        //To store all the small image chunks in bitmap format in this list 
+        //ArrayList<Bitmap> chunkedImages = new ArrayList<Bitmap>(chunkNumbers);
+  
+        //Getting the scaled bitmap of the source image
+  
+        Bitmap bitmapOrg = BitmapFactory.decodeFile(imagen+".jpg");
+		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmapOrg, bitmapOrg.getWidth(), bitmapOrg.getHeight(), true);
+        rows = cols = (int) Math.sqrt(chunkNumbers);
+        chunkHeight = bitmapOrg.getHeight()/rows;
+        chunkWidth = bitmapOrg.getWidth()/cols;
+  
+        //xCoord and yCoord are the pixel positions of the image chunks
+        int yCoord = 0;
+        for(int x=0; x<rows; x++){
+            int xCoord = 0;
+            for(int y=0; y<cols; y++){
+            	Bitmap nuevoBM = Bitmap.createBitmap(scaledBitmap, xCoord, yCoord, chunkWidth, chunkHeight);
+            	ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            	nuevoBM.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+            	byte [] ba = bao.toByteArray();
+    			partes[i] = Base64.encodeBytes(ba);
+    			i++;
+                //nuevoBM.recycle();
+                nuevoBM = null;
+            }
+        
+            
+            yCoord += chunkHeight;
+        }
+        
+        /*
+         * 
+			arregloBM.get(i).compress(Bitmap.CompressFormat.JPEG, 90, bao);
+			byte [] ba = bao.toByteArray();
+			partes[i] = Base64.encodeBytes(ba);
+         */
+        
+        bitmapOrg.recycle();
+        scaledBitmap.recycle();
+        bitmapOrg = null;
+        scaledBitmap = null;
+        System.gc();
+        return partes;
 	}	
 		/*
 		int rows,cols;

@@ -46,6 +46,7 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
+import com.amber.proyecto.envia.imagenes.sw.utils.BitMapLoader;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.DivideImagen;
@@ -75,13 +76,18 @@ public class EnviaImagenSW extends Activity{
     private BD bd;
     private int imagenW;
     private int imagenH;
+    private Bitmap bm ;
+    
+    private int navid = R.id.ivImagen;
 
 	
-
+//http://androidactivity.wordpress.com/2011/09/24/solution-for-outofmemoryerror-bitmap-size-exceeds-vm-budget/
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.enviaimagensw);
+
+        
         bd = new BD(getBaseContext());
         nombreImagen = null;
         //obtenemos el nombre de la imagen
@@ -100,20 +106,24 @@ public class EnviaImagenSW extends Activity{
         tvLatitud.setText(latitud+" ");
         tvLongitud.setText(longitud+" ");
         
+       
         imagen = (ImageView)findViewById(R.id.ivImagen);
         //nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
+        
         BitmapFactory.Options options = new BitmapFactory.Options();
+        
         options.inSampleSize = 2;
-        Bitmap bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
+        bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
         
-        imagen.setImageBitmap(bm);
-        
-        Bitmap bm2 = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
+        imagen.setImageBitmap(BitMapLoader.loadBitmap(ruta+nombreImagen+".jpg", 100, 100));
+        /*
+        bm2 = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
         
         imagenW = bm2.getWidth();
         imagenH = bm2.getHeight();
-        
-        Log.i("width, heigth",imagenW+" "+imagenH);
+        bm2.recycle();
+        */
+        //Log.i("width, heigth",imagenW+" "+imagenH);
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
@@ -126,7 +136,7 @@ public class EnviaImagenSW extends Activity{
 		etComentario = (EditText)findViewById(R.id.etComentario);
         
    
-    	obtenerDireccion();    
+    	//obtenerDireccion();    
         if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true){
             obtieneCategorias();
         }else{
@@ -135,6 +145,14 @@ public class EnviaImagenSW extends Activity{
         	
         
         
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	// TODO Auto-generated method stub
+    	super.onDestroy();
+    	//liberaBM();
+    	System.gc();
     }
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -171,6 +189,7 @@ public class EnviaImagenSW extends Activity{
     private OnClickListener btnEnviarPres = new OnClickListener() {
 		
 		public void onClick(View v) {
+
 			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
 				codificaImagenInternet();
 				enviaImagen();
@@ -186,6 +205,12 @@ public class EnviaImagenSW extends Activity{
 			mensaje("Aviso", "¿Qué deseas realizar?");
 		}
 	};
+	
+	private void liberaBM(){
+        imagen.setImageBitmap(null);
+        bm.recycle();
+
+	}
 	private void categoriasSinInternet(){
     	listaCategoria = new ArrayList<Categoria>();
     	listaCategoria = bd.obtieneCategorias();
@@ -309,6 +334,10 @@ public class EnviaImagenSW extends Activity{
 	}
 	
 	private void codificaImagenSinInternet(){
+		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
+		partes = divide.divideBitmapArr(tamanio);
+
+		/*
 		ArrayList<Bitmap> arregloBM = new ArrayList<Bitmap>();
 		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
 		arregloBM = divide.divideBitmap(tamanio);
@@ -317,9 +346,12 @@ public class EnviaImagenSW extends Activity{
 			arregloBM.get(i).compress(Bitmap.CompressFormat.JPEG, 90, bao);
 			byte [] ba = bao.toByteArray();
 			partes[i] = Base64.encodeBytes(ba);
-			Log.i("Parte # "+i,partes[i]);
+			arregloBM.get(i).recycle();
+			//Log.i("Parte # "+i,partes[i]);
 		}
-		
+		arregloBM.clear();	
+		arregloBM = null;
+		*/
 	}
 	
 	private void enviaImagen(){
@@ -443,15 +475,17 @@ private File createImageFile() throws IOException {
         .setCancelable(false)
         .setPositiveButton("Tomar otra foto", new DialogInterface.OnClickListener() {
         	public void onClick(DialogInterface dialog, int whichButton) {
+    			liberaBM();
         		Intent intent = new Intent();
         		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         		intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
         		startActivity(intent);
-        		setResult(RESULT_OK);
+        		finish();
         	}
         })
         .setNeutralButton("Ir a inicio", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
+				liberaBM();
         		Intent intent = new Intent();
         		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         		intent.setClass(EnviaImagenSW.this, Principal.class);
