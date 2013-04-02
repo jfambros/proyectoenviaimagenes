@@ -34,7 +34,8 @@ public class BD extends SQLiteOpenHelper{
 			"parte5 text not null, "+
 			"parte6 text not null, "+
 			"parte7 text not null, "+
-			"parte8 text not null, "+		
+			"parte8 text not null, "+
+			"parte9 text not null, "+
 			"constraint nombreImagenPK primary key(nombreImagen)," +
 			"constraint nombreImagenFK foreign key(nombreImagen) " +
 			"references "+nombreTablaImagenes+"(nombreImagen) );";
@@ -140,26 +141,23 @@ public class BD extends SQLiteOpenHelper{
 		 return imagenes;
 	}
 	
-	public String obtieneContenidoSinInt(int tot){
+	public String obtieneContenidoSinInt(int tot, String nombreImagen){
 		SQLiteDatabase db = this.getReadableDatabase();
 		String contenido="";
-		int cont = 1;
-		Cursor cur = db.rawQuery("SELECT * from "+nombreTablaImagenes+" limit 1", null);
-		if(cur.moveToFirst()){
 			for (int i=0; i<tot; i++){
-			   Cursor cursor = db.rawQuery("SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+cur.getString(0)+"'", null);
-			   Log.i("query", "SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+cur.getString(0)+"'");
+			   Cursor cursor = db.rawQuery("SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+nombreImagen+"'", null);
+			   //Log.i("query", "SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+nombreImagen+"'");
+
 			   if (cursor.moveToFirst()) {
-				   contenido += cursor.getString(0);
+				   contenido.concat(cursor.getString(0));
+				   //Log.i("Parte"+(i+1),cursor.getString(0));
 			   }
 			   cursor.close();
-			}
-			cur.close();
 		}
 		return contenido;
 	}
 	
-	public Imagen obtieneImagenBorra(){
+	public Imagen obtieneImagenBorra(int tot){
 		SQLiteDatabase db = this.getReadableDatabase();
     	Imagen ima = new Imagen();
 		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" limit 1", null);
@@ -171,6 +169,7 @@ public class BD extends SQLiteOpenHelper{
 	        	ima.setLongitud(cursor.getDouble(2));
 	        	ima.setIdCategoria(cursor.getInt(3));
 	        	ima.setComentario(cursor.getString(4));
+	        	ima.setContenidoImagen(obtieneContenidoSinInt(tot, cursor.getString(0)));	        	
 			    borraImagen(cursor.getString(0));
 			    borraContenido(cursor.getString(0));
 		   } while (cursor.moveToNext());
@@ -205,7 +204,8 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("parte5", contenido[4]);
 		cv.put("parte6", contenido[5]);
 		cv.put("parte7", contenido[6]);
-		cv.put("parte8", contenido[7]);		
+		cv.put("parte8", contenido[7]);
+		cv.put("parte9", contenido[8]);
 		db.insert(nombreTablaContenido, null, cv);
 		db.close();
 	}

@@ -3,13 +3,11 @@ package com.amber.proyecto.envia.imagenes.sw.utils;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-import com.amber.proyecto.envia.imagenes.sw.Base64;
-
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.widget.ImageView;
+import android.util.Log;
+
+import com.amber.proyecto.envia.imagenes.sw.Base64;
 
 
 public class DivideImagen {
@@ -97,15 +95,18 @@ public class DivideImagen {
             for(int y=0; y<cols; y++){
             	Bitmap nuevoBM = Bitmap.createBitmap(scaledBitmap, xCoord, yCoord, chunkWidth, chunkHeight);
             	ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            	nuevoBM.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+            	nuevoBM.compress(Bitmap.CompressFormat.JPEG, 100, bao);
             	byte [] ba = bao.toByteArray();
     			partes[i] = Base64.encodeBytes(ba);
-    			i++;
+    	        //Log.i("Partes", "#"+i+" "+partes[i]);    			
+    			i++; 
+
                 //nuevoBM.recycle();
+                xCoord += chunkWidth;
                 nuevoBM = null;
             }
-        
-            
+       
+         
             yCoord += chunkHeight;
         }
         
@@ -115,7 +116,7 @@ public class DivideImagen {
 			byte [] ba = bao.toByteArray();
 			partes[i] = Base64.encodeBytes(ba);
          */
-        
+
         bitmapOrg.recycle();
         scaledBitmap.recycle();
         bitmapOrg = null;
