@@ -197,7 +197,7 @@ public class EnviaImagenSW extends Activity{
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
 				codificaImagenSinInternet();
-				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString());
+				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString()+" ");
 				bd.insertaContenido(nombreImagen, partes);
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
@@ -328,7 +328,7 @@ public class EnviaImagenSW extends Activity{
 	private void codificaImagenInternet(){
 		Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
 		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 80, bao);
+		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
 		byte [] ba = bao.toByteArray();
 		imagenCodificada = Base64.encodeBytes(ba);
 	}

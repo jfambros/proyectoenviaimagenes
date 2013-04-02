@@ -101,8 +101,8 @@ public class Principal extends Activity {
 			BD bd = new BD(this);
 			if (bd.cuentaRegImagenes() >0 ){
 				//Log.i("total reg bd",Integer.toString(bd.cuentaRegImagenes()));
-				//enviaImagenBD(); 
-				Log.i("contenido", bd.obtieneContenidoSinInt(tam));
+				enviaImagenBD(tam); 
+				//Log.i("contenido", bd.obtieneContenidoSinInt(tam));
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes", Toast.LENGTH_LONG).show();
 				bd.close();
 			}
@@ -239,11 +239,11 @@ public class Principal extends Activity {
 			return false;
 		}
 	}
-	private void enviaImagenBD(){
+	private void enviaImagenBD(int tot){
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
 		String METHOD_NAME = "enviaImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		Imagen imagenes = new Imagen();
+
 		BD bd = new BD(this);
 		int total = bd.cuentaRegImagenes() ;
 		
@@ -253,17 +253,19 @@ public class Principal extends Activity {
 			try{
 				
 					for (int i = 0; i<total; i++){
-						request = new SoapObject(NAMESPACE, METHOD_NAME); 
-						imagenes = bd.obtieneImagenBorra();
+						SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); 
+						Imagen imagenes = new Imagen();
+						imagenes = bd.obtieneImagenBorra(tot);
+						
 						request.addProperty("nombreImagen", imagenes.getNombreImagen());
 						request.addProperty("contenido", imagenes.getContenidoImagen());
 						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 						request.addProperty("comentario", imagenes.getComentario());						
-						request.addProperty("categoria", imagenes.getIdCategoria());							
+						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));							
 						
 						Log.i("Imagen obtenida", imagenes.getNombreImagen()+" Contenido:"+ imagenes.getContenidoImagen());
-					    
+					    Log.i("Más datos:"," Lat:"+imagenes.getLatitud()+" Long: "+imagenes.getLongitud()+" cat: "+imagenes.getIdCategoria()+" Comentario: "+imagenes.getComentario());
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
