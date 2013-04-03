@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW;
 import com.amber.proyecto.envia.imagenes.sw.Principal;
 import com.amber.proyecto.envia.imagenes.sw.R;
+import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class ObtieneFoto extends Activity{
 	private ManejoFoto preview;
@@ -38,7 +39,7 @@ public class ObtieneFoto extends Activity{
 	private double longitud;
 	private String coordenadas;
 	private Location locCoordenadas;
-	private String ruta;
+	private String ruta = Variables.ruta;
 	private File archivo;
 	private FileOutputStream archivoAlmacenado;
 
@@ -62,7 +63,7 @@ public class ObtieneFoto extends Activity{
 	    if(!folder.exists()){
 	      folder.mkdirs();
 	    }
-		ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) +File.separator;
+		 
 		
 		archivo = new File(ruta,nombreImagen+".jpg");
 
