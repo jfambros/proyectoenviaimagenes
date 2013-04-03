@@ -58,7 +58,7 @@ public class BD extends SQLiteOpenHelper{
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(tablaCategorias);
 		db.execSQL(tablaImagenes);
-		db.execSQL(tablaContenido);
+		//db.execSQL(tablaContenido);
 		insertaCategorias(db);	
 	}
 
@@ -143,7 +143,7 @@ public class BD extends SQLiteOpenHelper{
 	
 	public String obtieneContenidoSinInt(int tot, String nombreImagen){
 
-		StringBuilder contenido= new StringBuilder();
+		StringBuilder contenido = new StringBuilder();
 			for (int i=0; i<tot; i++){
                SQLiteDatabase db = this.getReadableDatabase();
 			   Cursor cursor = db.rawQuery("SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+nombreImagen+"'", null);
@@ -151,12 +151,12 @@ public class BD extends SQLiteOpenHelper{
 
 			   if (cursor.moveToFirst()) {
 					   contenido.append(cursor.getString(0));
-					   Log.i("Parte"+(i+1),contenido.toString());
+					   Log.i("Parte"+(i+1),contenido.toString()+" tam:"+contenido.length());
 			   }
 			   cursor.close();
 		}
 
-			Log.i("Contenido total: ",contenido.toString());
+			Log.i("Contenido total: ",contenido.toString()+" tam final: "+contenido.length());
 		return contenido.toString();
 	}
 	
@@ -172,9 +172,9 @@ public class BD extends SQLiteOpenHelper{
 	        	ima.setLongitud(cursor.getDouble(2));
 	        	ima.setIdCategoria(cursor.getInt(3));
 	        	ima.setComentario(cursor.getString(4));
-	        	ima.setContenidoImagen(obtieneContenidoSinInt(tot, cursor.getString(0)));	        	
+        	
 			    borraImagen(cursor.getString(0));
-			    borraContenido(cursor.getString(0));
+			    //borraContenido(cursor.getString(0));
 		   } while (cursor.moveToNext());
 		}
 		

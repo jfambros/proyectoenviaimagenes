@@ -2,7 +2,6 @@ package com.amber.proyecto.envia.imagenes.sw.utils;
 
 public class Imagen {
 	private String nombreImagen;
-	private String contenidoImagen;
 	private double latitud;
 	private double longitud;
 	private int idCategoria;
@@ -12,12 +11,6 @@ public class Imagen {
 	}
 	public void setNombreImagen(String nombreImagen) {
 		this.nombreImagen = nombreImagen;
-	}
-	public String getContenidoImagen() {
-		return contenidoImagen;
-	}
-	public void setContenidoImagen(String contenidoImagen) {
-		this.contenidoImagen = contenidoImagen;
 	}
 	public double getLatitud() {
 		return latitud;

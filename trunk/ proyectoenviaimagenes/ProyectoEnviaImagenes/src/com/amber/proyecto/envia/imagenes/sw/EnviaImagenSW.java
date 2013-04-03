@@ -48,6 +48,7 @@ import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.BitMapLoader;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
+import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.DivideImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
@@ -191,14 +192,16 @@ public class EnviaImagenSW extends Activity{
 		public void onClick(View v) {
 
 			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
-				codificaImagenInternet();
+				CodificaImagen codificaImagen = new CodificaImagen();
+				imagenCodificada = codificaImagen.codificaImagenInternet(ruta, nombreImagen);
+				//codificaImagenInternet();
 				enviaImagen();
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
-				codificaImagenSinInternet();
+				//codificaImagenSinInternet();
 				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString()+" ");
-				bd.insertaContenido(nombreImagen, partes);
+				//bd.insertaContenido(nombreImagen, partes);
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
 			}
@@ -325,13 +328,7 @@ public class EnviaImagenSW extends Activity{
 		
 	}
 	
-	private void codificaImagenInternet(){
-		Bitmap bitmapOrg = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
-		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		bitmapOrg.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-		byte [] ba = bao.toByteArray();
-		imagenCodificada = Base64.encodeBytes(ba);
-	}
+
 	
 	private void codificaImagenSinInternet(){
 		DivideImagen divide = new DivideImagen(ruta+nombreImagen);

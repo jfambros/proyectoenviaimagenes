@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
+import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
@@ -254,18 +255,24 @@ public class Principal extends Activity {
 				
 					for (int i = 0; i<total; i++){
 						SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); 
+
 						Imagen imagenes = new Imagen();
+						CodificaImagen codificaImagen = new CodificaImagen();
+						
 						imagenes = bd.obtieneImagenBorra(tot);
+						String contenido = codificaImagen.codificaImagenInternet(Variables.ruta, imagenes.getNombreImagen()); 
+						
 						
 						request.addProperty("nombreImagen", imagenes.getNombreImagen());
-						request.addProperty("contenido", imagenes.getContenidoImagen());
+						request.addProperty("contenido", contenido);
 						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 						request.addProperty("comentario", imagenes.getComentario());						
 						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));							
 						
-						Log.i("Imagen obtenida", imagenes.getNombreImagen()+" Contenido:"+ imagenes.getContenidoImagen());
-					    Log.i("Más datos: "," Lat:"+imagenes.getLatitud()+" Long: "+imagenes.getLongitud()+" cat: "+imagenes.getIdCategoria()+" Comentario: "+imagenes.getComentario());
+						Log.i("contenido,",contenido);
+						Log.i("Tam ", contenido.length()+" ");
+					    //Log.i("Más datos: "," Lat:"+imagenes.getLatitud()+" Long: "+imagenes.getLongitud()+" cat: "+imagenes.getIdCategoria()+" Comentario: "+imagenes.getComentario());
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
