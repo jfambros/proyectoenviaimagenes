@@ -97,7 +97,7 @@ public class Principal extends Activity {
 	
 	}
 	private void verificaInternetBD(){
-		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
+		if (Conexiones.conexionInternet(this) == true /*&& Conexiones.respondeServidor(URL) == true */){
 			BD bd = new BD(this);
 			if (bd.cuentaRegImagenes() >0 ){
 				//Log.i("total reg bd",Integer.toString(bd.cuentaRegImagenes()));
@@ -265,7 +265,7 @@ public class Principal extends Activity {
 						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));							
 						
 						Log.i("Imagen obtenida", imagenes.getNombreImagen()+" Contenido:"+ imagenes.getContenidoImagen());
-					    Log.i("Más datos:"," Lat:"+imagenes.getLatitud()+" Long: "+imagenes.getLongitud()+" cat: "+imagenes.getIdCategoria()+" Comentario: "+imagenes.getComentario());
+					    Log.i("Más datos: "," Lat:"+imagenes.getLatitud()+" Long: "+imagenes.getLongitud()+" cat: "+imagenes.getIdCategoria()+" Comentario: "+imagenes.getComentario());
 						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
@@ -288,7 +288,7 @@ public class Principal extends Activity {
 					}
 					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
 			    }
-		
+
 		    catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -297,7 +297,7 @@ public class Principal extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+	
 			finally{
 				
 			}

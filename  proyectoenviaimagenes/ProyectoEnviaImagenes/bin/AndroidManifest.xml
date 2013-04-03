@@ -34,7 +34,7 @@
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto"
             android:label="Capturar foto" android:screenOrientation="landscape"></activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW"
-            android:label="Enviando imagen"></activity>
+            android:label="Enviando imagen" android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
