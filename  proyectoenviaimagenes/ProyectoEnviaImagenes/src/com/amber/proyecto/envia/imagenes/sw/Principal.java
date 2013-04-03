@@ -30,7 +30,9 @@ import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
+import com.amber.proyecto.envia.imagenes.sw.utils.DatosImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
+import com.amber.proyecto.envia.imagenes.sw.utils.SoapObjectArray;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class Principal extends Activity {
@@ -98,13 +100,17 @@ public class Principal extends Activity {
 	
 	}
 	private void verificaInternetBD(){
-		if (Conexiones.conexionInternet(this) == true /*&& Conexiones.respondeServidor(URL) == true */){
+		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
 			BD bd = new BD(this);
 			if (bd.cuentaRegImagenes() >0 ){
+
+				
 				//Log.i("total reg bd",Integer.toString(bd.cuentaRegImagenes()));
-				enviaImagenBD(tam); 
+				//enviaImagenBD(tam);
+				enviaImagenArrayBD();
+				
 				//Log.i("contenido", bd.obtieneContenidoSinInt(tam));
-				Toast.makeText(this, "Servidor encontrado, enviando imágenes", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
 				bd.close();
 			}
 			else{
@@ -180,12 +186,7 @@ public class Principal extends Activity {
 		btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
 		locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0, locationListener);
-		/*
-		if (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude() > 0){
-			btnIniciar.setVisibility(1);
-			btnIniciar.setOnClickListener(btnIniciarPres);
-		}
-		*/			
+	
 	}
 	@Override
 	protected void onPause() {
@@ -217,71 +218,123 @@ public class Principal extends Activity {
         })
         .show();   
 	}
-	
 
-	/*
-	private ArrayList<Imagen> obtieneValoresBD(){
-		BD bd = new BD(Principal.this);
-		SQLiteDatabase sqLite = bd.getReadableDatabase();
-		ArrayList<Imagen> imagenes = new ArrayList<Imagen>();
-		imagenes = bd.obtieneImagenes();
-		bd.close();
-		return imagenes;
-	}
-	*/
-	private boolean verificaRegBD(){
-		BD bd = new BD(this);
-		if (bd.cuentaRegImagenes() > 0 ){
-			bd.close();
-			return true;
-		}
-		else{
-			bd.close();
-			return false;
-		}
-	}
-	private void enviaImagenBD(int tot){
-		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
-		String METHOD_NAME = "enviaImagen";
+	private void enviaImagenArrayBD(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImaArreglo"; 
+		String METHOD_NAME = "recibeImaArreglo";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-
 		BD bd = new BD(this);
 		int total = bd.cuentaRegImagenes() ;
+		SoapObject request;
+		SoapSerializationEnvelope envelope;
+		HttpTransportSE aht;
+		
+		CodificaImagen codificaImagen = new CodificaImagen();
+		DatosImagen datosImagen = new DatosImagen();
+
 		
 		if ( total > 0){
 			//imagenes = bd.obtieneImagenes();
+			Imagen imagenes = new Imagen();
 			
 			try{
 				
 					for (int i = 0; i<total; i++){
-						SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME); 
-
-						Imagen imagenes = new Imagen();
-						CodificaImagen codificaImagen = new CodificaImagen();
+						 request = new SoapObject(NAMESPACE, METHOD_NAME); 
+						 imagenes = bd.obtieneImagenBorra();
 						
-						imagenes = bd.obtieneImagenBorra(tot);
-						String contenido = codificaImagen.codificaImagenInternet(Variables.ruta, imagenes.getNombreImagen()); 
+
+						
+						request.addProperty("nombreImagen", imagenes.getNombreImagen());
+						
+						datosImagen = codificaImagen.divideBitmapArr(tam, Variables.ruta+imagenes.getNombreImagen());						
+						
+						request.addProperty("contenido", datosImagen.getPartes());
+						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
+						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
+						request.addProperty("comentario", imagenes.getComentario());						
+						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));	
+						request.addProperty("width", Integer.toString(datosImagen.getWidth()));
+						request.addProperty("heigth", Integer.toString(datosImagen.getHeigth()));
+						envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+						
+						envelope.dotNet = false;
+												
+						envelope.setOutputSoapObject(request);
+	
+						aht = new HttpTransportSE(URL); 
+	
+						aht.call(SOAP_ACTION, envelope);
+						
+						SoapObject result =  (SoapObject) envelope.bodyIn;
+		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
+		                
+		                //bd.borraImagen(imagenes.get(i).getNombreImagen());
+		                
+						Log.i("resultado",spResul.toString());
+						
+					}
+					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
+			    }
+
+		    catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				
+			}catch (XmlPullParserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
+			finally{
+				
+			}
+			
+			
+		}
+		
+		bd.close();	
+	}
+	
+	private void enviaImagenBD(int tot){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
+		String METHOD_NAME = "enviaImagen";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		BD bd = new BD(this);
+		int total = bd.cuentaRegImagenes() ;
+		CodificaImagen codificaImagen = new CodificaImagen();
+		SoapObject request;
+		SoapSerializationEnvelope envelope;
+		HttpTransportSE aht;
+		
+		if ( total > 0){
+			//imagenes = bd.obtieneImagenes();
+			Imagen imagenes = new Imagen();
+			
+			try{
+				
+					for (int i = 0; i<total; i++){
+						 request = new SoapObject(NAMESPACE, METHOD_NAME); 
+
+						
+
+						
+						imagenes = bd.obtieneImagenBorra();
 						
 						
 						request.addProperty("nombreImagen", imagenes.getNombreImagen());
-						request.addProperty("contenido", contenido);
+						request.addProperty("contenido", codificaImagen.codificaImagenInternet(Variables.ruta, imagenes.getNombreImagen()));
 						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 						request.addProperty("comentario", imagenes.getComentario());						
 						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));							
-						
-						Log.i("contenido,",contenido);
-						Log.i("Tam ", contenido.length()+" ");
-					    //Log.i("Más datos: "," Lat:"+imagenes.getLatitud()+" Long: "+imagenes.getLongitud()+" cat: "+imagenes.getIdCategoria()+" Comentario: "+imagenes.getComentario());
-						SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+						envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
-						
-
-						
+												
 						envelope.setOutputSoapObject(request);
 	
-						HttpTransportSE aht = new HttpTransportSE(URL); 
+						aht = new HttpTransportSE(URL); 
 	
 						aht.call(SOAP_ACTION, envelope);
 						

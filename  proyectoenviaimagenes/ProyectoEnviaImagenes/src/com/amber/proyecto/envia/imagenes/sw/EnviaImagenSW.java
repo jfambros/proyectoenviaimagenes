@@ -1,6 +1,5 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -72,14 +71,12 @@ public class EnviaImagenSW extends Activity{
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
-    private String partes[] = new String[tamanio];
     private String URL = "http://"+HOST+"/pags/servicios.php";
     private BD bd;
-    private int imagenW;
-    private int imagenH;
+
     private Bitmap bm ;
     
-    private int navid = R.id.ivImagen;
+    private String partes[] = new String[tamanio];
 
 	
 //http://androidactivity.wordpress.com/2011/09/24/solution-for-outofmemoryerror-bitmap-size-exceeds-vm-budget/
@@ -116,15 +113,8 @@ public class EnviaImagenSW extends Activity{
         options.inSampleSize = 2;
         bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
         
-        imagen.setImageBitmap(BitMapLoader.loadBitmap(ruta+nombreImagen+".jpg", 100, 100));
-        /*
-        bm2 = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg");
-        
-        imagenW = bm2.getWidth();
-        imagenH = bm2.getHeight();
-        bm2.recycle();
-        */
-        //Log.i("width, heigth",imagenW+" "+imagenH);
+        //imagen.setImageBitmap(BitMapLoader.loadBitmap(ruta+nombreImagen+".jpg", 100, 100));
+        imagen.setImageBitmap(bm);
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
@@ -137,7 +127,7 @@ public class EnviaImagenSW extends Activity{
 		etComentario = (EditText)findViewById(R.id.etComentario);
         
    
-    	//obtenerDireccion();    
+    	obtenerDireccion();    
         if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true){
             obtieneCategorias();
         }else{
@@ -334,21 +324,6 @@ public class EnviaImagenSW extends Activity{
 		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
 		partes = divide.divideBitmapArr(tamanio);
 
-		/*
-		ArrayList<Bitmap> arregloBM = new ArrayList<Bitmap>();
-		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
-		arregloBM = divide.divideBitmap(tamanio);
-		for (int i=0; i<arregloBM.size(); i++){
-			ByteArrayOutputStream bao = new ByteArrayOutputStream();
-			arregloBM.get(i).compress(Bitmap.CompressFormat.JPEG, 90, bao);
-			byte [] ba = bao.toByteArray();
-			partes[i] = Base64.encodeBytes(ba);
-			arregloBM.get(i).recycle();
-			//Log.i("Parte # "+i,partes[i]);
-		}
-		arregloBM.clear();	
-		arregloBM = null;
-		*/
 	}
 	
 	private void enviaImagen(){
