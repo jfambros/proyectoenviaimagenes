@@ -142,19 +142,22 @@ public class BD extends SQLiteOpenHelper{
 	}
 	
 	public String obtieneContenidoSinInt(int tot, String nombreImagen){
-		SQLiteDatabase db = this.getReadableDatabase();
-		String contenido="";
+
+		StringBuilder contenido= new StringBuilder();
 			for (int i=0; i<tot; i++){
+               SQLiteDatabase db = this.getReadableDatabase();
 			   Cursor cursor = db.rawQuery("SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+nombreImagen+"'", null);
 			   //Log.i("query", "SELECT parte"+(i+1)+" from "+nombreTablaContenido+ " where nombreImagen = '"+nombreImagen+"'");
 
 			   if (cursor.moveToFirst()) {
-				   contenido.concat(cursor.getString(0));
-				   //Log.i("Parte"+(i+1),cursor.getString(0));
+					   contenido.append(cursor.getString(0));
+					   Log.i("Parte"+(i+1),contenido.toString());
 			   }
 			   cursor.close();
 		}
-		return contenido;
+
+			Log.i("Contenido total: ",contenido.toString());
+		return contenido.toString();
 	}
 	
 	public Imagen obtieneImagenBorra(int tot){
