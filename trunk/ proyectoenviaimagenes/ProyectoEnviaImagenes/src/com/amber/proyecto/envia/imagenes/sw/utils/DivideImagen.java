@@ -110,13 +110,6 @@ public class DivideImagen {
             yCoord += chunkHeight;
         }
         
-        /*
-         * 
-			arregloBM.get(i).compress(Bitmap.CompressFormat.JPEG, 90, bao);
-			byte [] ba = bao.toByteArray();
-			partes[i] = Base64.encodeBytes(ba);
-         */
-
         bitmapOrg.recycle();
         scaledBitmap.recycle();
         bitmapOrg = null;

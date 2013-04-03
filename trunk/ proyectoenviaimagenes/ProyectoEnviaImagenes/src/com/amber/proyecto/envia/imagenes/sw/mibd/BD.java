@@ -160,7 +160,7 @@ public class BD extends SQLiteOpenHelper{
 		return contenido.toString();
 	}
 	
-	public Imagen obtieneImagenBorra(int tot){
+	public Imagen obtieneImagenBorra(){
 		SQLiteDatabase db = this.getReadableDatabase();
     	Imagen ima = new Imagen();
 		Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" limit 1", null);
