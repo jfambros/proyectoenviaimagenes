@@ -1,6 +1,7 @@
 package com.amber.proyecto.envia.imagenes.sw.utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,21 +20,25 @@ public class CodificaImagen {
 		return Base64.encodeBytes(ba);
 	}
 	
-	public DatosImagen divideBitmapArr(int chunkNumbers, String imagen)	{
-		String partes[] = new String[chunkNumbers];
+	public DatosImagen divideBitmapArr(int chunkNumbers, String imagen) throws IOException	{
         int rows,cols;
-        int i=0;
+        ContenidoArray contenidoArray = new ContenidoArray();
 
         int chunkHeight,chunkWidth;
   
         Bitmap bitmapOrg = BitmapFactory.decodeFile(imagen+".jpg");
 		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmapOrg, bitmapOrg.getWidth(), bitmapOrg.getHeight(), true);
-		Bitmap nuevoBM;
+		Bitmap nuevoBM ;
 		ByteArrayOutputStream bao;
 		byte [] ba;
         rows = cols = (int) Math.sqrt(chunkNumbers);
         chunkHeight = bitmapOrg.getHeight()/rows;
         chunkWidth = bitmapOrg.getWidth()/cols;
+        
+        DatosImagen datosImagen = new DatosImagen();
+        datosImagen.setWidth(bitmapOrg.getWidth());
+        datosImagen.setHeigth(bitmapOrg.getHeight());
+        bitmapOrg.recycle();
   
         int yCoord = 0;
         for(int x=0; x<rows; x++){
@@ -43,25 +48,28 @@ public class CodificaImagen {
             	bao = new ByteArrayOutputStream();
             	nuevoBM.compress(Bitmap.CompressFormat.JPEG, 100, bao);
             	ba = bao.toByteArray();
-    			partes[i] = Base64.encodeBytes(ba);
-    			//Log.i("Parte"+i, partes[i]);
-    			i++; 
+    			contenidoArray.add(Base64.encodeBytes(ba));
                 xCoord += chunkWidth;
-                nuevoBM = null;
+                //Log.i("contenido", Base64.encodeBytes(ba));
+                bao.flush();
+                bao.close();
+                //nuevoBM.recycle();
+                System.gc();
             }
          
             yCoord += chunkHeight;
         }
         
-        DatosImagen datosImagen = new DatosImagen();
-        datosImagen.setWidth(bitmapOrg.getWidth());
-        datosImagen.setHeigth(bitmapOrg.getHeight());
-        datosImagen.setPartes(partes);
         
+        datosImagen.setPartes(contenidoArray);
+        
+        //contenidoArray.clear();
         bitmapOrg.recycle();
         scaledBitmap.recycle();
         bitmapOrg = null;
         scaledBitmap = null;
+
+        nuevoBM = null;
         System.gc();
         
         return datosImagen;

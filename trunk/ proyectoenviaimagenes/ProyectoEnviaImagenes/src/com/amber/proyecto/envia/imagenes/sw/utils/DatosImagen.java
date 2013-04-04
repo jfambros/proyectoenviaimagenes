@@ -3,7 +3,8 @@ package com.amber.proyecto.envia.imagenes.sw.utils;
 public class DatosImagen {
 	private int width;
 	private int heigth;
-	private String[] partes;
+	private ContenidoArray parte;
+	
 	public int getWidth() {
 		return width;
 	}
@@ -16,11 +17,11 @@ public class DatosImagen {
 	public void setHeigth(int heigth) {
 		this.heigth = heigth;
 	}
-	public String[] getPartes() {
-		return partes;
+	public ContenidoArray getPartes() {
+		return parte;
 	}
-	public void setPartes(String[] partes) {
-		this.partes = partes;
+	public void setPartes(ContenidoArray parte) {
+		this.parte = parte;
 	}
 	
 }
