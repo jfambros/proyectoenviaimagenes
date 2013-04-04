@@ -14,6 +14,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -45,11 +46,11 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
-import com.amber.proyecto.envia.imagenes.sw.utils.BitMapLoader;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
-import com.amber.proyecto.envia.imagenes.sw.utils.DivideImagen;
+import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
+import com.amber.proyecto.envia.imagenes.sw.utils.DatosImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class EnviaImagenSW extends Activity{
@@ -62,7 +63,6 @@ public class EnviaImagenSW extends Activity{
 	private double longitud;
 	private TextView tvLatitud;
 	private TextView tvLongitud;
-	private String imagenCodificada;
 	private ImageView imagen;
 	private ImageView ivAtrasEnvia;
 	private EditText etComentario;
@@ -76,7 +76,6 @@ public class EnviaImagenSW extends Activity{
 
     private Bitmap bm ;
     
-    private String partes[] = new String[tamanio];
 
 	
 //http://androidactivity.wordpress.com/2011/09/24/solution-for-outofmemoryerror-bitmap-size-exceeds-vm-budget/
@@ -106,14 +105,12 @@ public class EnviaImagenSW extends Activity{
         
        
         imagen = (ImageView)findViewById(R.id.ivImagen);
-        //nombreImagen = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/"+nombreImagen;
         
         BitmapFactory.Options options = new BitmapFactory.Options();
         
         options.inSampleSize = 2;
         bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
         
-        //imagen.setImageBitmap(BitMapLoader.loadBitmap(ruta+nombreImagen+".jpg", 100, 100));
         imagen.setImageBitmap(bm);
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
@@ -162,7 +159,6 @@ public class EnviaImagenSW extends Activity{
     protected void onPause() {
     	// TODO Auto-generated method stub
     	super.onPause();
-    	imagenCodificada = null;
     }
     
 	
@@ -182,16 +178,11 @@ public class EnviaImagenSW extends Activity{
 		public void onClick(View v) {
 
 			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
-				CodificaImagen codificaImagen = new CodificaImagen();
-				imagenCodificada = codificaImagen.codificaImagenInternet(ruta, nombreImagen);
-				//codificaImagenInternet();
 				enviaImagen();
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
-				//codificaImagenSinInternet();
 				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString()+" ");
-				//bd.insertaContenido(nombreImagen, partes);
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
 			}
@@ -230,7 +221,6 @@ public class EnviaImagenSW extends Activity{
                             int position, 
                             long id) {
                         Categoria cat = listaCategoria.get(position);
-                        //Log.i("Pais seleccionado", d.getNombrePais());
                         idCat = cat.getIdCategoria();
                         Log.i("categoria seleccionada", Integer.toString(cat.getIdCategoria()));
                     }
@@ -250,7 +240,6 @@ public class EnviaImagenSW extends Activity{
 		
 		SoapSerializationEnvelope envelope;
         HttpTransportSE httpt;
-        SoapObject result;
 
 
         ArrayList<String> nombresCategorias;
@@ -264,7 +253,6 @@ public class EnviaImagenSW extends Activity{
         envelope.dotNet = false;
         envelope.setOutputSoapObject(request);
         httpt.call(SOAP_ACTION, envelope);
-        result = (SoapObject)envelope.bodyIn;
         SoapObject result2 =  (SoapObject) envelope.getResponse();
         listaCategoria = new ArrayList<Categoria>();
         nombresCategorias = new ArrayList<String>();
@@ -320,30 +308,40 @@ public class EnviaImagenSW extends Activity{
 	
 
 	
-	private void codificaImagenSinInternet(){
-		DivideImagen divide = new DivideImagen(ruta+nombreImagen);
-		partes = divide.divideBitmapArr(tamanio);
-
-	}
 	
 	private void enviaImagen(){
-		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaImagen"; 
-		String METHOD_NAME = "enviaImagen";
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImaArreglo"; 
+		String METHOD_NAME = "recibeImaArreglo";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		PropertyInfo propiedades = new PropertyInfo();
+		
+		CodificaImagen codificaImagen = new CodificaImagen();
+		DatosImagen datosImagen = new DatosImagen();
+		
+		
 		try{
 					request = new SoapObject(NAMESPACE, METHOD_NAME); 
 					request.addProperty("nombreImagen", nombreImagen);
-					request.addProperty("contenido", imagenCodificada);
+					
+					datosImagen = codificaImagen.divideBitmapArr(tamanio, Variables.ruta+nombreImagen);
+					propiedades.setName("contenido");
+					propiedades.setValue(datosImagen.getPartes());
+					propiedades.setType(datosImagen.getPartes().getClass());
+					
+					request.addProperty(propiedades);
 					request.addProperty("latitud", tvLatitud.getText().toString());
 					request.addProperty("longitud", tvLongitud.getText().toString());
 					request.addProperty("comentario", etComentario.getText().toString());
-					request.addProperty("categoria", idCat);					
+					request.addProperty("categoria", idCat);
+					request.addProperty("width", Integer.toString(datosImagen.getWidth()));
+					request.addProperty("heigth", Integer.toString(datosImagen.getHeigth()));
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					
 					envelope.dotNet = false;
 					
 					envelope.setOutputSoapObject(request);
+					envelope.addMapping(NAMESPACE, "contenido", new ContenidoArray().getClass());
 
 					HttpTransportSE aht = new HttpTransportSE(URL); 
 
@@ -420,25 +418,7 @@ public class EnviaImagenSW extends Activity{
 
 
 	}
-	/*//grabar nombre imagen
-private File createImageFile() throws IOException {
-    // Create an image file name
-    String timeStamp = 
-        new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-    String imageFileName = JPEG_FILE_PREFIX + timeStamp + "_";
-    File image = File.createTempFile(
-        imageFileName, 
-        JPEG_FILE_SUFFIX, 
-        getAlbumDir()
-    );
-    mCurrentPhotoPath = image.getAbsolutePath();
-    return image;
-}	 * 
-	 
-	 */
-	
 
-	
 	
 	private void mensaje(String titulo, String msj){
         new AlertDialog.Builder(EnviaImagenSW.this)
@@ -462,7 +442,7 @@ private File createImageFile() throws IOException {
         		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         		intent.setClass(EnviaImagenSW.this, Principal.class);
         		startActivity(intent);
-        		setResult(RESULT_OK);				
+        		finish();
 			}
 		})
 		
