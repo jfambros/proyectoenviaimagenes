@@ -2,6 +2,7 @@ package com.amber.proyecto.envia.imagenes.sw.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,7 +29,7 @@ public class CodificaImagen {
   
         Bitmap bitmapOrg = BitmapFactory.decodeFile(imagen+".jpg");
 		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmapOrg, bitmapOrg.getWidth(), bitmapOrg.getHeight(), true);
-		Bitmap nuevoBM ;
+		WeakReference<Bitmap> nuevoBM ;
 		ByteArrayOutputStream bao;
 		byte [] ba;
         rows = cols = (int) Math.sqrt(chunkNumbers);
@@ -44,9 +45,9 @@ public class CodificaImagen {
         for(int x=0; x<rows; x++){
             int xCoord = 0;
             for(int y=0; y<cols; y++){
-            	nuevoBM = Bitmap.createBitmap(scaledBitmap, xCoord, yCoord, chunkWidth, chunkHeight);
+            	nuevoBM = new WeakReference<Bitmap>(Bitmap.createBitmap(scaledBitmap, xCoord, yCoord, chunkWidth, chunkHeight));
             	bao = new ByteArrayOutputStream();
-            	nuevoBM.compress(Bitmap.CompressFormat.JPEG, 100, bao);
+            	nuevoBM.get().compress(Bitmap.CompressFormat.JPEG, 100, bao);
             	ba = bao.toByteArray();
     			contenidoArray.add(Base64.encodeBytes(ba));
                 xCoord += chunkWidth;
