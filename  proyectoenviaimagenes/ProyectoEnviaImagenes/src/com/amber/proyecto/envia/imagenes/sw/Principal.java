@@ -76,10 +76,13 @@ public class Principal extends Activity {
 	}
 	private void verificaInternetBD(){
 		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
+			
 			BD bd = new BD(this);
-			if (bd.cuentaRegImagenes() >0 ){
-
-				enviaImagenArrayBD();
+			int tot = bd.cuentaRegImagenes();
+			if (tot > 0){
+				for (int i=0;i<tot;i++){
+					enviaImagenArrayBD();
+				}
 
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
 				bd.close();
@@ -195,7 +198,7 @@ public class Principal extends Activity {
 		String METHOD_NAME = "recibeImaArreglo";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
 		BD bd = new BD(this);
-		int total = bd.cuentaRegImagenes() ;
+		
 		SoapObject request;
 		SoapSerializationEnvelope envelope;
 		HttpTransportSE aht;
@@ -205,13 +208,12 @@ public class Principal extends Activity {
 		DatosImagen datosImagen = new DatosImagen();
 
 		
-		if ( total > 0){
 			//imagenes = bd.obtieneImagenes();
 			Imagen imagenes = new Imagen();
 			
 			try{
 				
-					for (int i = 0; i<total; i++){
+					
 						 request = new SoapObject(NAMESPACE, METHOD_NAME); 
 						 imagenes = bd.obtieneImagenBorra();
 						
@@ -254,7 +256,7 @@ public class Principal extends Activity {
 						imagenes = null;
 						System.gc();
 						
-					}
+			
 					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
 			    }
 
@@ -272,9 +274,6 @@ public class Principal extends Activity {
 			}
 			
 			
-		}
-		
-		bd.close();	
 	}
 	
 	private void insertaCategoriasInternet(){
