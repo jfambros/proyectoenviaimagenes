@@ -38,7 +38,7 @@ public class EnviaArchivoHttp implements Runnable{
             String Tag="fSnd";
             try
             {
-                    Log.e(Tag,"Starting Http File Sending to URL");
+                    Log.i(Tag,"Starting Http File Sending to URL");
 
                     // Open a HTTP connection to the URL
                     HttpURLConnection conn = (HttpURLConnection)connectURL.openConnection();
@@ -66,7 +66,7 @@ public class EnviaArchivoHttp implements Runnable{
                     dos.writeBytes("Content-Disposition: form-data; name=\"uploadedfile\";filename=\"" + nombreArchivo +"\"" + lineEnd);
                     dos.writeBytes(lineEnd);
 
-                    Log.e(Tag,"Headers are written");
+                    Log.i(Tag,"Headers are written");
 
                     // create a buffer of maximum size
                     int bytesAvailable = fileInputStream.available();
@@ -93,7 +93,7 @@ public class EnviaArchivoHttp implements Runnable{
                         
                     dos.flush();
                         
-                    Log.e(Tag,"File Sent, Response: "+String.valueOf(conn.getResponseCode()));
+                    Log.i(Tag,"File Sent, Response: "+String.valueOf(conn.getResponseCode()));
                          
                     InputStream is = conn.getInputStream();
                         

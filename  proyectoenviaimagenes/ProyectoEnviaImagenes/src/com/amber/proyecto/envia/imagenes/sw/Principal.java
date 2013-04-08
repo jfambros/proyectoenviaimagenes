@@ -1,10 +1,11 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
 import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -13,12 +14,16 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -29,10 +34,9 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
-import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
-import com.amber.proyecto.envia.imagenes.sw.utils.DatosImagen;
+import com.amber.proyecto.envia.imagenes.sw.utils.EnviaArchivoHttp;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -42,10 +46,11 @@ public class Principal extends Activity {
 	//private ImageView ivConecta;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
-	private int tam = Variables.tamArreglo;
 	private String URL = "http://"+HOST+"/pags/servicios.php";
 	private boolean gps_on;
 	private Location loc;
+	private MediaPlayer mediaPlayerSonido;
+	private boolean activado = false;
 	
 	
 
@@ -67,8 +72,7 @@ public class Principal extends Activity {
 			 //loc = null;
 		     request_updates();
 		     if (loc != null){
-		    	 btnIniciar.setVisibility(1);
-			    	btnIniciar.setOnClickListener(btnIniciarPres);
+		    	 mostrar();
 		     }
 
 		}
@@ -76,15 +80,12 @@ public class Principal extends Activity {
 	}
 	private void verificaInternetBD(){
 		if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true ){
-			
 			BD bd = new BD(this);
 			int tot = bd.cuentaRegImagenes();
 			if (tot > 0){
 				for (int i=0;i<tot;i++){
-					enviaImagenArrayBD();
-
+					enviaImagenBD();
 				}
-
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
 				bd.close();
 			}
@@ -112,8 +113,7 @@ public class Principal extends Activity {
             // Each time the location is changed we assign loc
             loc = location;
 		     if (loc != null){
-		    	 btnIniciar.setVisibility(1);
-			     btnIniciar.setOnClickListener(btnIniciarPres);
+		    	 mostrar();
 		     }
         }
 
@@ -127,7 +127,7 @@ public class Principal extends Activity {
 	
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return false;
+            this.finish();
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -181,6 +181,17 @@ public class Principal extends Activity {
 	       startActivity(settingsIntent);		
 	}
 	
+	private void mostrar(){
+   	 	btnIniciar.setVisibility(1);
+	    btnIniciar.setOnClickListener(btnIniciarPres);
+	    if (activado == false){
+	    	sonido("sonido");
+	    	Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+	    	v.vibrate(2000);
+	    	activado = true;
+	    }
+	}
+	
 	private void mensaje(String titulo, String msj){
         new AlertDialog.Builder(Principal.this)
         .setTitle(titulo)
@@ -194,23 +205,17 @@ public class Principal extends Activity {
         .show();   
 	}
 
-	private void enviaImagenArrayBD(){
-		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImaArreglo"; 
-		String METHOD_NAME = "recibeImaArreglo";
+	private void enviaImagenBD(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
+		String METHOD_NAME = "recibeImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
 		BD bd = new BD(this);
 		
-		SoapObject request;
 		SoapSerializationEnvelope envelope;
 		HttpTransportSE aht;
-		PropertyInfo propiedades = new PropertyInfo();
-		
-		CodificaImagen codificaImagen = new CodificaImagen();
-		ContenidoArray datosImagen = new ContenidoArray();
 
-		
-			//imagenes = bd.obtieneImagenes();
-			Imagen imagenes = new Imagen();
+
+		Imagen imagenes = new Imagen();
 			
 			try{
 				
@@ -218,25 +223,15 @@ public class Principal extends Activity {
 						 request = new SoapObject(NAMESPACE, METHOD_NAME); 
 						 imagenes = bd.obtieneImagenBorra();
 						
-
-							datosImagen = codificaImagen.codificaImagenBytes(tam, Variables.ruta+imagenes.getNombreImagen(), 10000);
-							Log.i("Num de partes", datosImagen.size()+". ");
-						
 						request.addProperty("nombreImagen", imagenes.getNombreImagen());
 						
-						//datosImagen = codificaImagen.divideBitmapArr(tam, Variables.ruta+imagenes.getNombreImagen());
 
-						propiedades.setName("contenido");
-						propiedades.setValue(datosImagen);
-						propiedades.setType(datosImagen.getClass());
-						//Log.i("Parte 1",datosImagen.getPartes().get(0));
-						request.addProperty(propiedades);
+						enviaImagenHttp(imagenes.getNombreImagen());
+						
 						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 						request.addProperty("comentario", imagenes.getComentario());						
-						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));	
-						request.addProperty("width", "200");
-						request.addProperty("heigth", "300");
+						request.addProperty("idCategoria", Integer.toString(imagenes.getIdCategoria()));	
 						envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
@@ -245,7 +240,6 @@ public class Principal extends Activity {
 						envelope.addMapping(NAMESPACE, "contenido", new ContenidoArray().getClass());
 	
 						aht = new HttpTransportSE(URL);
-					      //System.out.println("CHUNK_SIZE: "+CHUNK_SIZE);
 	
 						aht.call(SOAP_ACTION, envelope);
 						
@@ -254,7 +248,6 @@ public class Principal extends Activity {
 		                
 		                
 						Log.i("resultado",spResul.toString());
-						datosImagen = null;
 						request = null;
 						imagenes = null;
 						System.gc();
@@ -277,6 +270,26 @@ public class Principal extends Activity {
 			}
 			
 			
+	}
+	
+	private void enviaImagenHttp(String nombreImagen){
+		try {
+		    // Set your file path here
+		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen+".jpg");
+
+		    // Set your server page url (and the file title/description)
+		    EnviaArchivoHttp enviaArchivo = new EnviaArchivoHttp ("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen);
+
+		    enviaArchivo.envia(fstrm);
+		    
+		    fstrm.close();
+
+		  } catch (FileNotFoundException e) {
+		    // Error: File not found
+		  } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	private void insertaCategoriasInternet(){
@@ -311,5 +324,24 @@ public class Principal extends Activity {
      bd.close();
 	}
 
+	 OnCompletionListener completionList = new OnCompletionListener() {
+         
+         public void onCompletion(MediaPlayer mp) {
+                 mediaPlayerSonido.release();
+         }
+ };
+	private void sonido(String sSonidoAnimal){
+
+        int resIDSonido = getResources().getIdentifier(sSonidoAnimal, "raw", getPackageName());
+        if (mediaPlayerSonido != null){
+                mediaPlayerSonido.release();
+        }
+        mediaPlayerSonido = null;
+        mediaPlayerSonido = new MediaPlayer();
+        mediaPlayerSonido = MediaPlayer.create(Principal.this, resIDSonido);
+        mediaPlayerSonido.start();
+        mediaPlayerSonido.setLooping(false);
+        mediaPlayerSonido.setOnCompletionListener(completionList);
+} 
 		
 }
