@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,14 +71,13 @@ public class EnviaImagenSW extends Activity{
 	private ImageView ivAtrasEnvia;
 	private EditText etComentario;
 	private String HOST = Variables.HOST;
-	private int tamanio = Variables.tamArreglo;
 	private Spinner spinnCategorias;
     private ArrayList<Categoria> listaCategoria;
     private int idCat;
     private String URL = "http://"+HOST+"/pags/servicios.php";
     private BD bd;
 
-    private Bitmap bm ;
+    private WeakReference<Bitmap> bm ;
     
 
 	
@@ -112,9 +112,9 @@ public class EnviaImagenSW extends Activity{
         BitmapFactory.Options options = new BitmapFactory.Options();
         
         options.inSampleSize = 2;
-        bm = BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options);
+        bm = new WeakReference<Bitmap> (BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options));
         
-        imagen.setImageBitmap(bm);
+        imagen.setImageBitmap(bm.get());
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
@@ -128,17 +128,13 @@ public class EnviaImagenSW extends Activity{
         
    
     	//obtenerDireccion();
-		categoriasSinInternet();
-		/*
+		//categoriasSinInternet();
+		
         if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true){
             obtieneCategorias();
         }else{
         	categoriasSinInternet();
         }
-        */
-        	
-        
-        
     }
     
     @Override
@@ -198,44 +194,49 @@ public class EnviaImagenSW extends Activity{
 	
 	private void liberaBM(){
         imagen.setImageBitmap(null);
-        bm.recycle();
+        bm.get().recycle();
 
 	}
 	private void categoriasSinInternet(){
     	listaCategoria = new ArrayList<Categoria>();
     	listaCategoria = bd.obtieneCategorias();
     	bd.close();
-    	ArrayList<String> aLCategorias = new ArrayList<String>();
-    	for (int i= 0; i<listaCategoria.size(); i++){
-    		aLCategorias.add(listaCategoria.get(i).getNombreCategoria());
+    	if (listaCategoria.size() > 0){
+	    	ArrayList<String> aLCategorias = new ArrayList<String>();
+	    	for (int i= 0; i<listaCategoria.size(); i++){
+	    		aLCategorias.add(listaCategoria.get(i).getNombreCategoria());
+	    	}
+	    	
+	    	ArrayAdapter<String> adapterCategoria = new ArrayAdapter<String>( 
+	                this,
+	                android.R.layout.simple_spinner_item, aLCategorias
+	                 );
+	        adapterCategoria.setDropDownViewResource(
+	                android.R.layout.simple_spinner_dropdown_item);
+	        
+	            spinnCategorias.setAdapter(adapterCategoria);
+	                spinnCategorias.setSelection(0);
+	            spinnCategorias.setOnItemSelectedListener(
+	                new AdapterView.OnItemSelectedListener() {
+	                    public void onItemSelected(
+	                            AdapterView<?> parent, 
+	                            View view, 
+	                            int position, 
+	                            long id) {
+	                        Categoria cat = listaCategoria.get(position);
+	                        idCat = cat.getIdCategoria();
+	                        Log.i("categoria seleccionada", Integer.toString(cat.getIdCategoria()));
+	                    }
+	
+	                                        public void onNothingSelected(AdapterView<?> arg0) {
+	                                        
+	                                        }
+	                }
+	            );
     	}
-    	
-    	ArrayAdapter<String> adapterCategoria = new ArrayAdapter<String>( 
-                this,
-                android.R.layout.simple_spinner_item, aLCategorias
-                 );
-        adapterCategoria.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item);
-        
-            spinnCategorias.setAdapter(adapterCategoria);
-                spinnCategorias.setSelection(0);
-            spinnCategorias.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    public void onItemSelected(
-                            AdapterView<?> parent, 
-                            View view, 
-                            int position, 
-                            long id) {
-                        Categoria cat = listaCategoria.get(position);
-                        idCat = cat.getIdCategoria();
-                        Log.i("categoria seleccionada", Integer.toString(cat.getIdCategoria()));
-                    }
-
-                                        public void onNothingSelected(AdapterView<?> arg0) {
-                                        
-                                        }
-                }
-            );
+    	else{
+    		categoriasSinInternet();
+    	}
 	}
 
 	
@@ -303,52 +304,35 @@ public class EnviaImagenSW extends Activity{
                 }
             );
             
-    }
-    catch(Exception err){
-        Log.e("Error en llena paises", err.toString());
-    }
-        
-		
-		
+        }
+        	catch(Exception err){
+        		Log.e("Error en llena paises", err.toString());
+        	}
 	}
 	
-
-	
-	
 	private void enviaImagen(){
-		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImaArreglo"; 
-		String METHOD_NAME = "recibeImaArreglo";
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#recibeImagen"; 
+		String METHOD_NAME = "recibeImagen";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
-		PropertyInfo propiedades = new PropertyInfo();
-		
-		CodificaImagen codificaImagen = new CodificaImagen();
-		ContenidoArray datosImagen = new ContenidoArray();
+				
+		enviaImagenHttp();
 		
 		
 		try{
 					request = new SoapObject(NAMESPACE, METHOD_NAME); 
 					request.addProperty("nombreImagen", nombreImagen);
 					
-					//datosImagen = codificaImagen.divideBitmapArr(tamanio, Variables.ruta+nombreImagen);
-					datosImagen = codificaImagen.codificaImagenBytes(15, Variables.ruta+nombreImagen, 10000);
-					propiedades.setName("contenido");
-					propiedades.setValue(datosImagen);
-					propiedades.setType(datosImagen.getClass());
-					
-					request.addProperty(propiedades);
 					request.addProperty("latitud", tvLatitud.getText().toString());
 					request.addProperty("longitud", tvLongitud.getText().toString());
 					request.addProperty("comentario", etComentario.getText().toString());
-					request.addProperty("categoria", idCat);
-					request.addProperty("width", "200");
-					request.addProperty("heigth", "300");
+					request.addProperty("idCategoria", Integer.toString(idCat));
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					
 					envelope.dotNet = false;
 					
 					envelope.setOutputSoapObject(request);
-					envelope.addMapping(NAMESPACE, "contenido", new ContenidoArray().getClass());
+					
 
 					HttpTransportSE aht = new HttpTransportSE(URL); 
 
