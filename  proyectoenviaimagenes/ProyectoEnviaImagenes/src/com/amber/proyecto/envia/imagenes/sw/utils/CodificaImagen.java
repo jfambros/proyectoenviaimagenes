@@ -1,7 +1,12 @@
 package com.amber.proyecto.envia.imagenes.sw.utils;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import android.graphics.Bitmap;
@@ -75,6 +80,73 @@ public class CodificaImagen {
         
         return datosImagen;
 	}	
+	
+	
+	public ContenidoArray codificaImagenBytes(int chunkNumbers, String nombreImagen, int CHUNK_SIZE){
+		
+		File willBeRead = new File (nombreImagen+".jpg");
+		int FILE_SIZE = (int) willBeRead.length();
+		//ArrayList<String> nameList = new ArrayList<String> ();
+		int NUMBER_OF_CHUNKS = 0;
+		byte[] temporary = null;
+		ContenidoArray contenidoArray = new ContenidoArray();
+
+		/*
+		WeakReference<Bitmap> bitmapOrg = new WeakReference<Bitmap>(BitmapFactory.decodeFile(nombreImagen+".jpg"));
+		
+        datosImagen.setWidth(bitmapOrg.get().getWidth());
+        datosImagen.setHeigth(bitmapOrg.get().getHeight());
+        bitmapOrg.get().recycle();
+		*/
+		
+		try {
+			   InputStream inStream = null;
+			   int totalBytesRead = 0;
+			   
+			   try {
+			    inStream = new BufferedInputStream ( new FileInputStream( willBeRead ));
+			    
+			    while ( totalBytesRead < FILE_SIZE ){
+			     String PART_NAME ="data"+NUMBER_OF_CHUNKS+".bin";
+			     int bytesRemaining = FILE_SIZE-totalBytesRead;
+			     if ( bytesRemaining < CHUNK_SIZE ) // Remaining Data Part is Smaller Than CHUNK_SIZE
+			                // CHUNK_SIZE is assigned to remain volume
+			     {
+			      CHUNK_SIZE = bytesRemaining;
+			      //System.out.println("CHUNK_SIZE: "+CHUNK_SIZE);
+			     }
+			     temporary = new byte[CHUNK_SIZE]; //Temporary Byte Array
+			     int bytesRead = inStream.read(temporary, 0, CHUNK_SIZE);
+			     
+			     contenidoArray.add(Base64.encodeBytes(temporary));
+			     //Log.i("Parte ",Base64.encodeBytes(temporary));
+			     if ( bytesRead > 0) // If bytes read is not empty
+			     {
+			      totalBytesRead += bytesRead;
+			      NUMBER_OF_CHUNKS++;
+			     }
+			     
+			     //write(temporary, "D://"+PART_NAME);
+			     //nameList.add("D://"+PART_NAME);
+			     //System.out.println("Total Bytes Read: "+totalBytesRead);
+			    }
+			    
+			   }
+			   finally {
+			    inStream.close();
+			   }
+		
+
+		
+		}
+		catch (FileNotFoundException ex){
+		 ex.printStackTrace();
+		}
+		catch (IOException ex){
+		 ex.printStackTrace();
+		}
+		return contenidoArray;
+	}
 
 	
 }

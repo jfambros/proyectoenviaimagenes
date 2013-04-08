@@ -1,5 +1,7 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -50,7 +53,7 @@ import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
-import com.amber.proyecto.envia.imagenes.sw.utils.DatosImagen;
+import com.amber.proyecto.envia.imagenes.sw.utils.EnviaArchivoHttp;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class EnviaImagenSW extends Activity{
@@ -124,12 +127,15 @@ public class EnviaImagenSW extends Activity{
 		etComentario = (EditText)findViewById(R.id.etComentario);
         
    
-    	obtenerDireccion();    
+    	//obtenerDireccion();
+		categoriasSinInternet();
+		/*
         if (Conexiones.conexionInternet(this) == true && Conexiones.respondeServidor(URL) == true){
             obtieneCategorias();
         }else{
         	categoriasSinInternet();
         }
+        */
         	
         
         
@@ -316,25 +322,26 @@ public class EnviaImagenSW extends Activity{
 		PropertyInfo propiedades = new PropertyInfo();
 		
 		CodificaImagen codificaImagen = new CodificaImagen();
-		DatosImagen datosImagen = new DatosImagen();
+		ContenidoArray datosImagen = new ContenidoArray();
 		
 		
 		try{
 					request = new SoapObject(NAMESPACE, METHOD_NAME); 
 					request.addProperty("nombreImagen", nombreImagen);
 					
-					datosImagen = codificaImagen.divideBitmapArr(tamanio, Variables.ruta+nombreImagen);
+					//datosImagen = codificaImagen.divideBitmapArr(tamanio, Variables.ruta+nombreImagen);
+					datosImagen = codificaImagen.codificaImagenBytes(15, Variables.ruta+nombreImagen, 10000);
 					propiedades.setName("contenido");
-					propiedades.setValue(datosImagen.getPartes());
-					propiedades.setType(datosImagen.getPartes().getClass());
+					propiedades.setValue(datosImagen);
+					propiedades.setType(datosImagen.getClass());
 					
 					request.addProperty(propiedades);
 					request.addProperty("latitud", tvLatitud.getText().toString());
 					request.addProperty("longitud", tvLongitud.getText().toString());
 					request.addProperty("comentario", etComentario.getText().toString());
 					request.addProperty("categoria", idCat);
-					request.addProperty("width", Integer.toString(datosImagen.getWidth()));
-					request.addProperty("heigth", Integer.toString(datosImagen.getHeigth()));
+					request.addProperty("width", "200");
+					request.addProperty("heigth", "300");
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					
@@ -447,5 +454,25 @@ public class EnviaImagenSW extends Activity{
 		})
 		
         .show();   
+	}
+	
+	private void enviaImagenHttp(){
+		try {
+		    // Set your file path here
+		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen+".jpg");
+
+		    // Set your server page url (and the file title/description)
+		    EnviaArchivoHttp enviaArchivo = new EnviaArchivoHttp ("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen);
+
+		    enviaArchivo.envia(fstrm);
+		    
+		    fstrm.close();
+
+		  } catch (FileNotFoundException e) {
+		    // Error: File not found
+		  } catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 }
