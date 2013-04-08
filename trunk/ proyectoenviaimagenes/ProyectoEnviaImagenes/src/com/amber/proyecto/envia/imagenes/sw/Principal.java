@@ -82,6 +82,7 @@ public class Principal extends Activity {
 			if (tot > 0){
 				for (int i=0;i<tot;i++){
 					enviaImagenArrayBD();
+
 				}
 
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
@@ -205,7 +206,7 @@ public class Principal extends Activity {
 		PropertyInfo propiedades = new PropertyInfo();
 		
 		CodificaImagen codificaImagen = new CodificaImagen();
-		DatosImagen datosImagen = new DatosImagen();
+		ContenidoArray datosImagen = new ContenidoArray();
 
 		
 			//imagenes = bd.obtieneImagenes();
@@ -218,22 +219,24 @@ public class Principal extends Activity {
 						 imagenes = bd.obtieneImagenBorra();
 						
 
+							datosImagen = codificaImagen.codificaImagenBytes(tam, Variables.ruta+imagenes.getNombreImagen(), 10000);
+							Log.i("Num de partes", datosImagen.size()+". ");
 						
 						request.addProperty("nombreImagen", imagenes.getNombreImagen());
 						
-						datosImagen = codificaImagen.divideBitmapArr(tam, Variables.ruta+imagenes.getNombreImagen());
+						//datosImagen = codificaImagen.divideBitmapArr(tam, Variables.ruta+imagenes.getNombreImagen());
 
 						propiedades.setName("contenido");
-						propiedades.setValue(datosImagen.getPartes());
-						propiedades.setType(datosImagen.getPartes().getClass());
+						propiedades.setValue(datosImagen);
+						propiedades.setType(datosImagen.getClass());
 						//Log.i("Parte 1",datosImagen.getPartes().get(0));
 						request.addProperty(propiedades);
 						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 						request.addProperty("comentario", imagenes.getComentario());						
 						request.addProperty("categoria", Integer.toString(imagenes.getIdCategoria()));	
-						request.addProperty("width", Integer.toString(datosImagen.getWidth()));
-						request.addProperty("heigth", Integer.toString(datosImagen.getHeigth()));
+						request.addProperty("width", "200");
+						request.addProperty("heigth", "300");
 						envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 						
 						envelope.dotNet = false;
@@ -242,7 +245,7 @@ public class Principal extends Activity {
 						envelope.addMapping(NAMESPACE, "contenido", new ContenidoArray().getClass());
 	
 						aht = new HttpTransportSE(URL);
-
+					      //System.out.println("CHUNK_SIZE: "+CHUNK_SIZE);
 	
 						aht.call(SOAP_ACTION, envelope);
 						
