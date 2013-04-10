@@ -14,6 +14,13 @@
         android:layout_height="wrap_content"
         android:text="Aplicación para obtener las coordenadas GPS de una foto" />
     
+    <View android:id="@+id/vLinea1Prin"
+        android:layout_width="fill_parent"
+		android:layout_height="20dip"
+		android:layout_below="@+id/tvTituloPrin"
+		android:background="#FFFFFF"
+    ></View>    
+   <!--  
     <Button 
         android:id="@+id/btnIniciaCamara"
         android:layout_width="wrap_content"
@@ -22,29 +29,78 @@
         android:layout_centerHorizontal="true"
         android:visibility="invisible"
         android:text="Iniciar"/>
-    
-    <ImageView android:id="@+id/ivConectar"
+     -->
+    <ImageView android:id="@+id/ivtomarFoto" 
+        android:src="@drawable/tomarfoto48x48"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/vLinea1Prin"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:src="@drawable/conectar48x48"
-        android:layout_below="@id/btnIniciaCamara"
-        />
+        android:visibility="invisible"        
+     />
+    <TextView android:id="@+id/tvTomarFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tomar foto"
+        android:layout_below="@+id/ivtomarFoto"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"         
+    />
+    
     <View android:id="@+id/vLinea3Prin"
         android:layout_width="fill_parent"
-		android:layout_height="10dip"
-		android:layout_below="@id/ivConectar"
-		android:background="#FFFFFF"/>
+		android:layout_height="20dip"
+		android:layout_below="@+id/tvTomarFoto"
+		android:background="#FFFFFF"
+    ></View>
+    <TableLayout
+    android:id="@+id/tableLayoutPrin"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/vLinea3Prin"
+    android:stretchColumns="1" >
+ 
+    <!-- 2 columns -->
+		    <TableRow
+		        android:id="@+id/tRFila1Prin"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+				android:gravity="center">
+				<ImageView android:id="@+id/ivAlmacenaBD" 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/almacena48x48"
+				    />
+				<ImageView android:id="@+id/ivMapa" 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/mapa248x48"/>	
+				<ImageView android:id="@+id/ivConfigura" 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/configura48x48"/>					    			
+		    </TableRow>
+		    <TableRow
+		        android:id="@+id/tRFila2Prin"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		         android:gravity="center"
+		       >
+				<TextView android:text="Enviar imagenes"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:gravity="center"
+				    />
+				<TextView android:text="Buscar"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity= "center"/>
+				<TextView android:text="Configurar"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center"/>									    			
+		    </TableRow>		    
+	    </TableLayout>
     
-    <ImageView android:id="@+id/ivActualizaBD"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@id/vLinea3Prin"
-        android:visibility="invisible"
-        android:src="@drawable/actualizabd48x48"
-        />
-
+    
 </RelativeLayout>
