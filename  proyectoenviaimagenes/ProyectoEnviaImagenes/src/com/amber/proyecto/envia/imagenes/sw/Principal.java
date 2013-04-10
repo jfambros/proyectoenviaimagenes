@@ -1,5 +1,6 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,6 +31,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
@@ -43,6 +46,9 @@ import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 public class Principal extends Activity {
 	private LocationManager locationManager;
 	private Button btnIniciar;
+	private ImageView ivTomarFoto;
+	private TextView tvTomarFoto;
+	private ImageView ivEnviaImagenes;
 	//private ImageView ivConecta;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
@@ -52,14 +58,15 @@ public class Principal extends Activity {
 	private MediaPlayer mediaPlayerSonido;
 	private boolean activado = false;
 	
-	
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
-		 btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
-		verificaInternetBD();
+		ivTomarFoto = (ImageView)findViewById(R.id.ivtomarFoto);
+		tvTomarFoto = (TextView)findViewById(R.id.tvTomarFoto);
+		
+		ivEnviaImagenes = (ImageView)findViewById(R.id.ivAlmacenaBD);
+		ivEnviaImagenes.setOnClickListener(ivEnviaImagenesPres);
+
 		utilizarGPS();
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
@@ -69,7 +76,6 @@ public class Principal extends Activity {
 			 //http://stackoverflow.com/questions/2021176/how-can-i-check-the-current-status-of-the-gps-receiver
 			 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 			 gps_on =  locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-			 //loc = null;
 		     request_updates();
 		     if (loc != null){
 		    	 mostrar();
@@ -90,6 +96,7 @@ public class Principal extends Activity {
 				bd.close();
 			}
 			else{
+				Toast.makeText(this, "No existen registros en la base de datos", Toast.LENGTH_LONG).show();
 				bd.close();
 			}
 			
@@ -132,13 +139,21 @@ public class Principal extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
-	private OnClickListener btnIniciarPres = new OnClickListener() {
+	private OnClickListener ivIniciarPres = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
 			intent.setClass(Principal.this,ObtieneFoto.class);
 			startActivity(intent);
+		}
+	};
+	
+	private OnClickListener ivEnviaImagenesPres = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			verificaInternetBD();
 		}
 	};
 	@Override
@@ -153,12 +168,14 @@ public class Principal extends Activity {
 		// TODO Auto-generated method stub
 		super.onRestart();
 		Log.i("On restart", "restaurando");
-		verificaInternetBD();
+		//verificaInternetBD();
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
 		
-		btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+		//btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
+		ivTomarFoto = (ImageView)findViewById(R.id.ivtomarFoto);
+		tvTomarFoto = (TextView)findViewById(R.id.tvTomarFoto);
 		locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0, locationListener);
 	
@@ -182,8 +199,9 @@ public class Principal extends Activity {
 	}
 	
 	private void mostrar(){
-   	 	btnIniciar.setVisibility(1);
-	    btnIniciar.setOnClickListener(btnIniciarPres);
+		ivTomarFoto.setVisibility(1);
+		tvTomarFoto.setVisibility(1);
+		ivTomarFoto.setOnClickListener(ivIniciarPres);
 	    if (activado == false){
 	    	sonido("sonido");
 	    	Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -213,61 +231,58 @@ public class Principal extends Activity {
 		
 		SoapSerializationEnvelope envelope;
 		HttpTransportSE aht;
-
-
 		Imagen imagenes = new Imagen();
 			
-			try{
+		try{
+			request = new SoapObject(NAMESPACE, METHOD_NAME); 
+			imagenes = bd.obtieneImagenBorra();
+			File verifica = new File(Variables.ruta+imagenes.getNombreImagen()+Variables.tipoArchivo);
+			if (verifica.exists()){
+				request.addProperty("nombreImagen", imagenes.getNombreImagen());
+				enviaImagenHttp(imagenes.getNombreImagen());
+				request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
+				request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
+				request.addProperty("comentario", imagenes.getComentario());						
+				request.addProperty("idCategoria", Integer.toString(imagenes.getIdCategoria()));	
+				envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 				
-					
-						 request = new SoapObject(NAMESPACE, METHOD_NAME); 
-						 imagenes = bd.obtieneImagenBorra();
-						
-						request.addProperty("nombreImagen", imagenes.getNombreImagen());
-						
+				envelope.dotNet = false;
+										
+				envelope.setOutputSoapObject(request);
+				envelope.addMapping(NAMESPACE, "contenido", new ContenidoArray().getClass());
 
-						enviaImagenHttp(imagenes.getNombreImagen());
-						
-						request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
-						request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
-						request.addProperty("comentario", imagenes.getComentario());						
-						request.addProperty("idCategoria", Integer.toString(imagenes.getIdCategoria()));	
-						envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-						
-						envelope.dotNet = false;
-												
-						envelope.setOutputSoapObject(request);
-						envelope.addMapping(NAMESPACE, "contenido", new ContenidoArray().getClass());
+				aht = new HttpTransportSE(URL);
+
+				aht.call(SOAP_ACTION, envelope);
+				
+				SoapObject result =  (SoapObject) envelope.bodyIn;
+                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
+                
+                
+				Log.i("resultado",spResul.toString());
+				request = null;
+				imagenes = null;
+				System.gc();
+				
 	
-						aht = new HttpTransportSE(URL);
-	
-						aht.call(SOAP_ACTION, envelope);
-						
-						SoapObject result =  (SoapObject) envelope.bodyIn;
-		                SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
-		                
-		                
-						Log.i("resultado",spResul.toString());
-						request = null;
-						imagenes = null;
-						System.gc();
-						
+				Toast.makeText(Principal.this, "¡Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
+			}
+			else{
+				Toast.makeText(Principal.this, "¡No se encuentra el archivo!", Toast.LENGTH_LONG).show();
+			}
+		}
+	    catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			
-					Toast.makeText(Principal.this, "Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
-			    }
+		}catch (XmlPullParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		    catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				
-			}catch (XmlPullParserException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	
-			finally{
-				
-			}
+		finally{
+			
+		}
 			
 			
 	}
@@ -330,6 +345,8 @@ public class Principal extends Activity {
                  mediaPlayerSonido.release();
          }
  };
+ 
+ 
 	private void sonido(String sSonidoAnimal){
 
         int resIDSonido = getResources().getIdentifier(sSonidoAnimal, "raw", getPackageName());
