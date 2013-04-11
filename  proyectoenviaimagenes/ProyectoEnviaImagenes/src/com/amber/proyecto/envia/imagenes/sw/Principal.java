@@ -45,11 +45,9 @@ import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class Principal extends Activity {
 	private LocationManager locationManager;
-	private Button btnIniciar;
 	private ImageView ivTomarFoto;
 	private TextView tvTomarFoto;
 	private ImageView ivEnviaImagenes;
-	//private ImageView ivConecta;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
 	private String URL = "http://"+HOST+"/pags/servicios.php";
@@ -168,12 +166,10 @@ public class Principal extends Activity {
 		// TODO Auto-generated method stub
 		super.onRestart();
 		Log.i("On restart", "restaurando");
-		//verificaInternetBD();
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
 		
-		//btnIniciar = (Button)findViewById(R.id.btnIniciaCamara);
 		ivTomarFoto = (ImageView)findViewById(R.id.ivtomarFoto);
 		tvTomarFoto = (TextView)findViewById(R.id.tvTomarFoto);
 		locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
@@ -347,9 +343,9 @@ public class Principal extends Activity {
  };
  
  
-	private void sonido(String sSonidoAnimal){
+	private void sonido(String sSonido){
 
-        int resIDSonido = getResources().getIdentifier(sSonidoAnimal, "raw", getPackageName());
+        int resIDSonido = getResources().getIdentifier(sSonido, "raw", getPackageName());
         if (mediaPlayerSonido != null){
                 mediaPlayerSonido.release();
         }
