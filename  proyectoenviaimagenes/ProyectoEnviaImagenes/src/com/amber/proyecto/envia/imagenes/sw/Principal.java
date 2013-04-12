@@ -66,6 +66,9 @@ public class Principal extends Activity {
 		ivEnviaImagenes.setOnClickListener(ivEnviaImagenesPres);
 
 		utilizarGPS();
+		if (verificaCantidad() == true){
+			Toast.makeText(this,"Existen imagenes en la base de datos", Toast.LENGTH_LONG).show();
+		}
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
@@ -151,6 +154,9 @@ public class Principal extends Activity {
 		
 		@Override
 		public void onClick(View v) {
+			if (verificaCantidad() == false){
+				Toast.makeText(Principal.this,"No hay imagenes en la base de datos", Toast.LENGTH_LONG).show();
+			}
 			verificaInternetBD();
 		}
 	};
@@ -165,6 +171,9 @@ public class Principal extends Activity {
 	protected void onRestart() {
 		// TODO Auto-generated method stub
 		super.onRestart();
+		if (verificaCantidad() == true){
+			Toast.makeText(Principal.this,"Existen registros en la base de datos", Toast.LENGTH_LONG).show();
+		}
 		Log.i("On restart", "restaurando");
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
@@ -355,6 +364,20 @@ public class Principal extends Activity {
         mediaPlayerSonido.start();
         mediaPlayerSonido.setLooping(false);
         mediaPlayerSonido.setOnCompletionListener(completionList);
-} 
+	}
+	
+	private boolean verificaCantidad(){
+		BD bd = new BD(this);
+		if (bd.cuentaRegImagenes() >0 ) {
+			bd.close();
+			return true;
+		}
+		else{
+			bd.close();
+			return false;
+		}
+
+		
+	}
 		
 }
