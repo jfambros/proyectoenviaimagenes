@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+        <LinearLayout
+        android:id="@+id/llEncabezadoBusca1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" 
+        android:background="#ff00c0ff">
+
+        <ImageView
+            android:id="@+id/ivAtrasBusca1"
+            android:src="@drawable/atras48x48" 
+            android:layout_width="48px"
+            android:layout_height="48px"/>
+    </LinearLayout>
+        <View android:id="@+id/vLinea1Busca"
+        android:layout_width="fill_parent"
+		android:layout_height="20dip"
+		android:layout_below="@+id/llEncabezadoBusca1"
+		android:background="#FFFFFF"
+    ></View>  
+    <TextView android:id="@+id/tvBusca1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vLinea1Busca"
+        android:text="Selecciona la(s) categoría(s) para realizar una búsqueda de los lugares de tu preferencia"/>
+    
+    
+    
+	 <CheckBox android:id="@+id/CheckBox1" android:layout_width="wrap_content"
+	  android:layout_height="wrap_content" android:text="CheckBox"
+	  android:layout_below="@+id/tvBusca1">
+	 </CheckBox>
+	 <TextView android:id="@+id/tvCheckBox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vLinea1Busca"
+        android:text=""/>
+    
+    
+    <!-- 
+    <TableLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="1">
+
+        <TableRow>
+            <FrameLayout 
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1">
+				
+            </FrameLayout>
+
+            <FrameLayout 
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1">
+                <ImageView android:layout_width="wrap_content" 
+                    android:layout_height="wrap_content" 
+                    android:src="@drawable/button_share_favorite_recipe" 
+                    android:id="@+id/buttonShareFavoriteRecipe"
+                    android:onClick="onClickShareFavoriteRecipe"
+                    android:layout_gravity="center_horizontal">
+                </ImageView>
+                </FrameLayout>
+            </TableRow>
+
+    </TableLayout>
+    
+     -->
+    <ImageView android:src="@drawable/busca148x48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/CheckBox1"/>
+
+</RelativeLayout>
