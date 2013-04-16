@@ -71,7 +71,7 @@
 				    android:layout_height="wrap_content"
 				    android:src="@drawable/almacena48x48"
 				    />
-				<ImageView android:id="@+id/ivMapa" 
+				<ImageView android:id="@+id/ivBuscaMapa" 
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:src="@drawable/mapa248x48"/>	

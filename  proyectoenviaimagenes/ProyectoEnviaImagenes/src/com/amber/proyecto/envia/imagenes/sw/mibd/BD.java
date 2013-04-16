@@ -134,7 +134,7 @@ public class BD extends SQLiteOpenHelper{
 			  db.close();
 		 return categorias;
 	}
-	
+
 	public ArrayList<Imagen> obtieneImagenes(){
 		SQLiteDatabase db = this.getReadableDatabase();
 		ArrayList<Imagen> imagenes = new ArrayList<Imagen>();

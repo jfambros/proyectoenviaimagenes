@@ -37,6 +37,8 @@
             android:label="Capturar foto" android:screenOrientation="landscape"></activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW"
             android:label="Enviando imagen" android:screenOrientation="portrait"></activity>
+		<activity android:name="com.amber.proyecto.envia.imagenes.sw.Busca"
+            android:label="Buscar lugares" android:screenOrientation="portrait"></activity>        
     </application>
 
 </manifest>

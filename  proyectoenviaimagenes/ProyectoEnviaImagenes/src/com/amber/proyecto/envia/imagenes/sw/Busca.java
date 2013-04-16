@@ -1,13 +1,27 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.SimpleCursorAdapter;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
+import android.widget.ImageView;
+import android.widget.ListView;
+
+import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
+import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 
 public class Busca extends Activity{
+	private ArrayList<Categoria> categorias = new ArrayList<Categoria>();
+	private ListView lista;
+	private ArrayList<String> opciones = new ArrayList<String>();
+	private ImageView ivBusca;
 
 	
 	@Override
@@ -15,32 +29,56 @@ public class Busca extends Activity{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.busca);
+		ivBusca = (ImageView)findViewById(R.id.ivBusca);
+		ivBusca.setOnClickListener(ivBuscaPres);
+		llenaCategorias();
+		lista = (ListView)findViewById(R.id.lvOpcionesBusca);
+		lista.setOnItemClickListener(listaPres);
 	}
 	
-	private void fillData() {
-	    Cursor c = mdbHelper.fetchAllNotes();
-	    startManagingCursor(c);
+	
+	private void llenaCategorias(){
+		BD bd = new BD(this);
+		categorias = bd.obtieneCategorias();
+		ArrayList<String> nombreCat = new ArrayList<String>();
+		for(int i=0; i<categorias.size(); i++){
+			nombreCat.add(categorias.get(i).getNombreCategoria());
+		}
+		
+		ArrayAdapter<String> contenidoLista = new ArrayAdapter<String>(this, 
+				android.R.layout.simple_list_item_multiple_choice,
+				nombreCat);
+		
+		ListView listaCat = (ListView)findViewById(R.id.lvOpcionesBusca);
+		listaCat.setAdapter(contenidoLista);
+	}
+	
 
-	    String[] from = new String[] { "nombreCategoria", "idCategoria" };
-	    int[] to = new int[] { R.id.text1, R.id.CheckBox1 };
+	private OnItemClickListener listaPres = new OnItemClickListener() {
 
-	    // Now create an array adapter and set it to display using our row
-	    SimpleCursorAdapter notes = new SimpleCursorAdapter(this, R.layout.notes_row, c, from, to);
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int posi,	long arg3) {
+			if (!((CheckedTextView)arg1).isChecked() && !opciones.contains(categorias.get(posi).getNombreCategoria())){
+				Log.i("Seleccionado", "Si");			
+				opciones.add(categorias.get(posi).getNombreCategoria());
+			}
+			if (opciones.contains(categorias.get(posi).getNombreCategoria()) && !((CheckedTextView)arg1).isChecked() ){
+				opciones.remove(categorias.get(posi).getNombreCategoria());
+			}
 
-	    notes.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-	      public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-	        int nCheckedIndex = cursor.getColumnIndexOrThrow(NotesDbAdapter.KEY_CHECK);
-	        if (columnIndex == nCheckedIndex) {
-	          CheckBox cb = (CheckBox) view;
-	          boolean bChecked = (cursor.getInt(nCheckedIndex) != 0);
-	          cb.setChecked(bChecked);
-	          return true;
-	        }
-	        return false;
-	      }
-	    });
-	    setListAdapter(notes);
+		}
+	};
+	
+	private OnClickListener ivBuscaPres = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			for (int i=0; i<opciones.size(); i++){
+				Log.i("opción "+i, opciones.get(i));
+			}
+			
+		}
+	};
 
-	  }
 
 }

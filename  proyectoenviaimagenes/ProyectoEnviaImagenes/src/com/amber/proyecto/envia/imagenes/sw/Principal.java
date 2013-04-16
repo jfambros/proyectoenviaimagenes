@@ -48,6 +48,7 @@ public class Principal extends Activity {
 	private ImageView ivTomarFoto;
 	private TextView tvTomarFoto;
 	private ImageView ivEnviaImagenes;
+	private ImageView ivBuscaMapa;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
 	private String URL = "http://"+HOST+"/pags/servicios.php";
@@ -55,6 +56,7 @@ public class Principal extends Activity {
 	private Location loc;
 	private MediaPlayer mediaPlayerSonido;
 	private boolean activado = false;
+	
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,6 +66,9 @@ public class Principal extends Activity {
 		
 		ivEnviaImagenes = (ImageView)findViewById(R.id.ivAlmacenaBD);
 		ivEnviaImagenes.setOnClickListener(ivEnviaImagenesPres);
+		
+		ivBuscaMapa = (ImageView)findViewById(R.id.ivBuscaMapa);
+		ivBuscaMapa.setOnClickListener(ivBuscaMapaPres);
 
 		utilizarGPS();
 		if (verificaCantidad() == true){
@@ -139,6 +144,17 @@ public class Principal extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
+    
+    private OnClickListener ivBuscaMapaPres = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(Principal.this, Busca.class);
+			startActivity(intent);
+			//Principal.this.finish();
+		}
+	};
 
 	private OnClickListener ivIniciarPres = new OnClickListener() {
 		
