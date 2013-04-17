@@ -59,10 +59,11 @@ public class Busca extends Activity{
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int posi,	long arg3) {
 			if (!((CheckedTextView)arg1).isChecked() && !opciones.contains(categorias.get(posi).getNombreCategoria())){
-				Log.i("Seleccionado", "Si");			
+				Log.i("Seleccionado", categorias.get(posi).getNombreCategoria());			
 				opciones.add(categorias.get(posi).getNombreCategoria());
 			}
-			if (opciones.contains(categorias.get(posi).getNombreCategoria()) && !((CheckedTextView)arg1).isChecked() ){
+			if (opciones.contains(categorias.get(posi).getNombreCategoria()) && ((CheckedTextView)arg1).isChecked() ){
+				Log.i("Borrado:", categorias.get(posi).getNombreCategoria());
 				opciones.remove(categorias.get(posi).getNombreCategoria());
 			}
 
