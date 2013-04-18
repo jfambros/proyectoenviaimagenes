@@ -197,7 +197,24 @@ public class BD extends SQLiteOpenHelper{
 		 return ima;
 	}
 	
-	
+	public void buscaLugares(ArrayList<String> lugares){
+		SQLiteDatabase db = this.getReadableDatabase();
+		StringBuffer query = new StringBuffer("SELECT * from "+nombreTablaImagenes+" categorias where idCategoria = ");
+		if (lugares.size() == 1){
+			query.append(lugares.get(0));
+		}else{
+			for (int i=1;i<=lugares.size(); i++ ){
+				query.append(lugares.get(i-1));
+				if (i<lugares.size()){
+					query.append(" or idCategoria =  ");
+				}
+			}
+		}
+			
+		Log.i("query final", query.toString());
+		db.close();
+		//Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" i, categorias c where " +
+	}
 	
 	
 	public int cuentaRegImagenes(){
