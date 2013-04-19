@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.utils.ImagenParcelable;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -58,12 +60,20 @@ public class Mapa extends android.support.v4.app.FragmentActivity {
 
 	    map.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
 	    
+	    map.setOnMarkerClickListener(markerListener);
+	    
 	    
 	  }
+	  
+	  private OnMarkerClickListener markerListener = new OnMarkerClickListener() {
+		
+		@Override
+		public boolean onMarkerClick(Marker marker) {
+			Toast.makeText(Mapa.this, marker.getSnippet(), Toast.LENGTH_LONG).show();
+			return false;
+		}
+	};
 
-	  public void imprimeLugares(){
-		  
-	  }
 	  @Override
 	  public boolean onCreateOptionsMenu(Menu menu) {
 
