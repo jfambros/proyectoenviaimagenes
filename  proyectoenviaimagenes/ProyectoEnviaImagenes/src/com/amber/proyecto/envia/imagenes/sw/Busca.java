@@ -2,6 +2,12 @@ package com.amber.proyecto.envia.imagenes.sw;
 
 import java.util.ArrayList;
 
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +25,9 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
+import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
+import com.amber.proyecto.envia.imagenes.sw.utils.ImagenParcelable;
+import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 public class Busca extends Activity{
 	private ArrayList<Categoria> categorias = new ArrayList<Categoria>();
@@ -26,6 +35,7 @@ public class Busca extends Activity{
 	private ArrayList<String> opciones = new ArrayList<String>();
 	private ImageView ivBusca;
 	private ImageView ivAtrasBusca;
+    private String URL = "http://"+Variables.HOST+"/pags/servicios.php";
 
 	
 	@Override
@@ -80,11 +90,11 @@ public class Busca extends Activity{
 			String opcion = Integer.toString(categorias.get(posi).getIdCategoria());
 			Log.i("número ",":"+posi);
 			if (!((CheckedTextView)arg1).isChecked() && !opciones.contains(opcion)){
-				Log.i("Seleccionado ", categorias.get(posi).getNombreCategoria());			
+				//Log.i("Seleccionado ", categorias.get(posi).getNombreCategoria());			
 				opciones.add(opcion);
 			}
 			if (opciones.contains(opcion) && ((CheckedTextView)arg1).isChecked() ){
-				Log.i("Borrado: ", categorias.get(posi).getNombreCategoria());
+				//Log.i("Borrado: ", categorias.get(posi).getNombreCategoria());
 				opciones.remove(opcion);
 			}
 
@@ -97,17 +107,93 @@ public class Busca extends Activity{
 			if (opciones.size() == 0){
 				Toast.makeText(Busca.this, "Selecciona al menos una opción", Toast.LENGTH_LONG).show();
 			}else{
-				BD bd = new BD(Busca.this);
-				bd.buscaLugares(opciones);
-				bd.close();
 				Intent intent = new Intent();
+				intent.putParcelableArrayListExtra("imagenes", obtieneImagenesSW());
 	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.setClass(Busca.this, Mapa.class);
 				startActivity(intent);
 				finish();
+				
+				/*
+				ArrayList<ImagenParcelable> imagenes = new ArrayList<ImagenParcelable>();
+				BD bd = new BD(Busca.this);
+				imagenes = bd.buscaLugares(opciones);
+				bd.close();
+				Intent intent = new Intent();
+				intent.putParcelableArrayListExtra("imagenes", imagenes);
+	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.setClass(Busca.this, Mapa.class);
+				startActivity(intent);
+				finish();
+				*/
 			}
 		}
 	};
+	
+	private String llenaQuery(ArrayList<String> lugares){
+		StringBuffer query = new StringBuffer("SELECT i.*, c.nombreCategoria from imagen i, categoria c where (i.idCategoria = ");
+		if (lugares.size() == 1){
+			query.append(lugares.get(0));
+		}else{
+			for (int i=1;i<=lugares.size(); i++ ){
+				query.append(lugares.get(i-1));
+				if (i<lugares.size()){
+					query.append(" or i.idCategoria =  ");
+				}
+			}
+		}
+		query.append(") and i.idCategoria = c.idCategoria");
+		Log.i("Query", query.toString());
+		return query.toString();
+	}
+	
+	private ArrayList<ImagenParcelable> obtieneImagenesSW(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneImagenes"; 
+		String METHOD_NAME = "obtieneImagenes";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		
+		SoapSerializationEnvelope envelope;
+        HttpTransportSE httpt;
+        ArrayList<ImagenParcelable> imagenParcelable = new ArrayList<ImagenParcelable>();
+        try{
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+            request.addProperty("opciones", llenaQuery(opciones));
+            httpt = new HttpTransportSE(URL);
+            envelope = new SoapSerializationEnvelope( SoapEnvelope.VER11 );
+            envelope.dotNet = false;
+            envelope.setOutputSoapObject(request);
+            httpt.call(SOAP_ACTION, envelope);
+            SoapObject result2 =  (SoapObject) envelope.getResponse();
+            
+            for(int cont=0; cont< result2.getPropertyCount(); cont ++){
+            	SoapObject resultados = (SoapObject) result2.getProperty(cont);
+            	//primitivas
+            	SoapPrimitive nombreImagen = (SoapPrimitive) resultados.getProperty("nombreImagen");
+            	SoapPrimitive latitud = (SoapPrimitive) resultados.getProperty("latitud");
+            	SoapPrimitive longitd = (SoapPrimitive) resultados.getProperty("longitud");
+            	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
+            	SoapPrimitive comentario = (SoapPrimitive) resultados.getProperty("comentario");
+            	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
+
+            	//Log.i("Datos: ", nombreImagen.toString()+" "+latitud.toString()+" "+longitd.toString()+" "+idCategoria.toString()+" "+comentario.toString());
+            	ImagenParcelable ip = new ImagenParcelable();
+            	ip.setNombreImagen(nombreImagen.toString());
+            	ip.setLatitud(Double.parseDouble(latitud.toString()));
+            	ip.setLongitud(Double.parseDouble(longitd.toString()));
+            	ip.setIdCategoria(Integer.parseInt(idCategoria.toString()));
+            	ip.setComentario(comentario.toString());
+            	ip.setNombreCategoria(nombreCategoria.toString());
+            	
+            	imagenParcelable.add(ip);
+         }
+            
+        }
+        catch (Exception err){
+        	Log.e("Error", err.toString());
+        }
+        
+        return imagenParcelable;
+	}
 	
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

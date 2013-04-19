@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
+import com.amber.proyecto.envia.imagenes.sw.utils.ImagenParcelable;
 
 public class BD extends SQLiteOpenHelper{
 	private static final String nombreBD = "enviaimagen.db";
@@ -204,9 +205,10 @@ public class BD extends SQLiteOpenHelper{
 		 return ima;
 	}
 	
-	public void buscaLugares(ArrayList<String> lugares){
+	public ArrayList<ImagenParcelable> buscaLugares(ArrayList<String> lugares){
 		SQLiteDatabase db = this.getReadableDatabase();
-		StringBuffer query = new StringBuffer("SELECT * from "+nombreTablaImagenes+" categorias where idCategoria = ");
+		ArrayList<ImagenParcelable> imagenes = new ArrayList<ImagenParcelable>();
+		StringBuffer query = new StringBuffer("SELECT * from "+nombreTablaImagenes+" where idCategoria = ");
 		if (lugares.size() == 1){
 			query.append(lugares.get(0));
 		}else{
@@ -217,10 +219,21 @@ public class BD extends SQLiteOpenHelper{
 				}
 			}
 		}
-			
-		Log.i("query final", query.toString());
+		Cursor cursor = db.rawQuery(query.toString(), null);	
+		if (cursor.moveToFirst()) {
+	        do {
+	        	ImagenParcelable ima = new ImagenParcelable();
+	        	ima.setNombreImagen(cursor.getString(0));
+	        	ima.setLatitud(cursor.getDouble(1));
+	        	ima.setLongitud(cursor.getDouble(2));
+	        	ima.setIdCategoria(cursor.getInt(3));
+	        	ima.setComentario(cursor.getString(4));
+			    imagenes.add(ima);
+		   } while (cursor.moveToNext());
+		}
+		cursor.close();
 		db.close();
-		//Cursor cursor = db.rawQuery("SELECT * from "+nombreTablaImagenes+" i, categorias c where " +
+		return imagenes;
 	}
 	
 	
