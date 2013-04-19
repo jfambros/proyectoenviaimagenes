@@ -80,7 +80,7 @@ public class Busca extends Activity{
 			String opcion = Integer.toString(categorias.get(posi).getIdCategoria());
 			Log.i("número ",":"+posi);
 			if (!((CheckedTextView)arg1).isChecked() && !opciones.contains(opcion)){
-				Log.i("Seleccionado", categorias.get(posi).getNombreCategoria());			
+				Log.i("Seleccionado ", categorias.get(posi).getNombreCategoria());			
 				opciones.add(opcion);
 			}
 			if (opciones.contains(opcion) && ((CheckedTextView)arg1).isChecked() ){
@@ -100,6 +100,11 @@ public class Busca extends Activity{
 				BD bd = new BD(Busca.this);
 				bd.buscaLugares(opciones);
 				bd.close();
+				Intent intent = new Intent();
+	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.setClass(Busca.this, Mapa.class);
+				startActivity(intent);
+				finish();
 			}
 		}
 	};
