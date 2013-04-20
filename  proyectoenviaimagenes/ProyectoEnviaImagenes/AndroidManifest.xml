@@ -52,11 +52,21 @@
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.Mapa"
             android:label="Mapa" android:screenOrientation="portrait"></activity>         
           
+          <!-- Rosita -->
+            
+		<meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyAHoIqFzE6GJ3T9FLMmpCLAatx4JMomi4M" />
+		  
+          
+          <!--
+            Casa
 		<meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDjMOSXZiJqg2h_aP36qSX-a6Hg0r_zR7c" />
-		 
+		  -->
 		 <!-- 
+		    Escuela
 		 <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyALKLzukMyBB5Ko5aTCv0pIjjX6UixM-hM" />
