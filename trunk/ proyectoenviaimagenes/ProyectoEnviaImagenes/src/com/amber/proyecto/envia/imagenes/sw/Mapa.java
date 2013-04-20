@@ -3,6 +3,7 @@ package com.amber.proyecto.envia.imagenes.sw;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -91,7 +92,13 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 		
 		@Override
 		public void onInfoWindowClick(Marker marker) {
-			Log.i("Seleccionado ", datosImagen.get(marker).getNombreImagen());
+			//Log.i("Seleccionado ", datosImagen.get(marker).getNombreImagen());
+			Intent intent = new Intent();
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setClass(Mapa.this, MuestraInfo.class);
+			intent.putExtra("imagen", datosImagen.get(marker).getNombreImagen());
+			startActivity(intent);
+			finish();
 		}
 	};
 
