@@ -31,6 +31,21 @@
         android:layout_below="@+id/vLinea1MuestraInfo"
         android:adjustViewBounds="true"
         android:layout_centerHorizontal="true"/>
+  
+        <View android:id="@+id/vLinea2MuestraInfo"
+        android:layout_below="@+id/ivImagenMuestraInfo" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		android:background="#FFFFFF"/>
+        
+        
+        <TextView android:id="@+id/ivComentarioMuestraInfo"
+            android:layout_below="@+id/vLinea2MuestraInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="HGola"/>
+        
         
         
  </RelativeLayout>   
