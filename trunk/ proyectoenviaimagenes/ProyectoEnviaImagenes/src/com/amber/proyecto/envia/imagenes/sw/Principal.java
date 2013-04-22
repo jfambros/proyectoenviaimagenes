@@ -259,8 +259,8 @@ public class Principal extends Activity {
 			imagenes = bd.obtieneImagenBorra();
 			File verifica = new File(Variables.ruta+imagenes.getNombreImagen()+Variables.tipoArchivo);
 			if (verifica.exists()){
-				request.addProperty("nombreImagen", imagenes.getNombreImagen());
-				enviaImagenHttp(imagenes.getNombreImagen());
+				request.addProperty("nombreImagen", imagenes.getNombreImagen()+Variables.tipoArchivo);
+				enviaImagenHttp(imagenes.getNombreImagen()+Variables.tipoArchivo);
 				request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 				request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 				request.addProperty("comentario", imagenes.getComentario());						
@@ -311,7 +311,7 @@ public class Principal extends Activity {
 	private void enviaImagenHttp(String nombreImagen){
 		try {
 		    // Set your file path here
-		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen+".jpg");
+		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen+Variables.tipoArchivo);
 
 		    // Set your server page url (and the file title/description)
 		    EnviaArchivoHttp enviaArchivo = new EnviaArchivoHttp ("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen);

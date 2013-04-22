@@ -107,12 +107,19 @@ public class Busca extends Activity{
 			if (opciones.size() == 0){
 				Toast.makeText(Busca.this, "Selecciona al menos una opción", Toast.LENGTH_LONG).show();
 			}else{
-				Intent intent = new Intent();
-				intent.putParcelableArrayListExtra("imagenes", obtieneImagenesSW());
-	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				intent.setClass(Busca.this, Mapa.class);
-				startActivity(intent);
-				finish();
+				ArrayList<ImagenParcelable> resultados = new ArrayList<ImagenParcelable>();
+				resultados = obtieneImagenesSW();
+				if (resultados.size() != 0){
+					Intent intent = new Intent();
+					intent.putParcelableArrayListExtra("imagenes", resultados);
+		    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					intent.setClass(Busca.this, Mapa.class);
+					startActivity(intent);
+					finish();
+				}
+				else{
+					Toast.makeText(Busca.this, "No hay registros", Toast.LENGTH_LONG).show();
+				}
 				
 				/*
 				ArrayList<ImagenParcelable> imagenes = new ArrayList<ImagenParcelable>();
@@ -163,30 +170,32 @@ public class Busca extends Activity{
             envelope.dotNet = false;
             envelope.setOutputSoapObject(request);
             httpt.call(SOAP_ACTION, envelope);
-            SoapObject result2 =  (SoapObject) envelope.getResponse();
-            
-            for(int cont=0; cont< result2.getPropertyCount(); cont ++){
-            	SoapObject resultados = (SoapObject) result2.getProperty(cont);
-            	//primitivas
-            	SoapPrimitive nombreImagen = (SoapPrimitive) resultados.getProperty("nombreImagen");
-            	SoapPrimitive latitud = (SoapPrimitive) resultados.getProperty("latitud");
-            	SoapPrimitive longitd = (SoapPrimitive) resultados.getProperty("longitud");
-            	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
-            	SoapPrimitive comentario = (SoapPrimitive) resultados.getProperty("comentario");
-            	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
 
-            	//Log.i("Datos: ", nombreImagen.toString()+" "+latitud.toString()+" "+longitd.toString()+" "+idCategoria.toString()+" "+comentario.toString());
-            	ImagenParcelable ip = new ImagenParcelable();
-            	ip.setNombreImagen(nombreImagen.toString());
-            	ip.setLatitud(Double.parseDouble(latitud.toString()));
-            	ip.setLongitud(Double.parseDouble(longitd.toString()));
-            	ip.setIdCategoria(Integer.parseInt(idCategoria.toString()));
-            	ip.setComentario(comentario.toString());
-            	ip.setNombreCategoria(nombreCategoria.toString());
-            	
-            	imagenParcelable.add(ip);
-         }
-            
+            SoapObject resultado =  (SoapObject) envelope.getResponse();
+            SoapObject resultado2 = (SoapObject) resultado.getProperty("imagenes");
+            if (resultado2.getPropertyCount() != 0){
+	            for(int cont=0; cont< resultado.getPropertyCount(); cont ++){
+	            	SoapObject resultados = (SoapObject) resultado.getProperty(cont);
+	            	//primitivas
+	            	SoapPrimitive nombreImagen = (SoapPrimitive) resultados.getProperty("nombreImagen");
+	            	SoapPrimitive latitud = (SoapPrimitive) resultados.getProperty("latitud");
+	            	SoapPrimitive longitd = (SoapPrimitive) resultados.getProperty("longitud");
+	            	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
+	            	SoapPrimitive comentario = (SoapPrimitive) resultados.getProperty("comentario");
+	            	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
+	
+	            	//Log.i("Datos: ", nombreImagen.toString()+" "+latitud.toString()+" "+longitd.toString()+" "+idCategoria.toString()+" "+comentario.toString());
+	            	ImagenParcelable ip = new ImagenParcelable();
+	            	ip.setNombreImagen(nombreImagen.toString());
+	            	ip.setLatitud(Double.parseDouble(latitud.toString()));
+	            	ip.setLongitud(Double.parseDouble(longitd.toString()));
+	            	ip.setIdCategoria(Integer.parseInt(idCategoria.toString()));
+	            	ip.setComentario(comentario.toString());
+	            	ip.setNombreCategoria(nombreCategoria.toString());
+	            	
+	            	imagenParcelable.add(ip);
+	         }
+            } 
         }
         catch (Exception err){
         	Log.e("Error", err.toString());

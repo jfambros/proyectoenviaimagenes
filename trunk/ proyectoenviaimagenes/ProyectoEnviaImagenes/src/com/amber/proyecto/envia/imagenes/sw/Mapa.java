@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -41,6 +40,11 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 	   
 	    map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa))
 	        .getMap();
+	    
+	    Marker oax = map.addMarker(new MarkerOptions().position(OAX)
+		        .title("Oaxaca")
+		         .snippet("Oaxaca de Juaŕez")
+		        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
 	    for (int i=0; i<imagenes.size(); i++){
 			  
@@ -55,10 +59,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 			  //map.addMarker(options)
 		  }
 	    
-	    Marker oax = map.addMarker(new MarkerOptions().position(OAX)
-	        .title("Oaxaca")
-	         .snippet("Oaxaca de Juaŕez")
-	        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+	    
 
 
 	    map.moveCamera(CameraUpdateFactory.newLatLngZoom(OAX, 12));
@@ -93,12 +94,14 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 		@Override
 		public void onInfoWindowClick(Marker marker) {
 			//Log.i("Seleccionado ", datosImagen.get(marker).getNombreImagen());
-			Intent intent = new Intent();
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			intent.setClass(Mapa.this, MuestraInfo.class);
-			intent.putExtra("nombreImagen", datosImagen.get(marker).getNombreImagen());
-			startActivity(intent);
-			finish();
+			if (!marker.getId().equals("m0")){
+				Intent intent = new Intent();
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.setClass(Mapa.this, MuestraInfo.class);
+				intent.putExtra("datosImagen", datosImagen.get(marker));
+				startActivity(intent);
+				finish();
+			}
 		}
 	};
 
