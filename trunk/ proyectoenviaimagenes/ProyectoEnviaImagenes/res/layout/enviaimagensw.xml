@@ -20,8 +20,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
         <ImageView
             android:id="@+id/ivAtrasEnvia"
             android:src="@drawable/atras48x48" 
-            android:layout_width="48px"
-            android:layout_height="48px"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
     
     <ImageView android:id="@+id/ivImagen"

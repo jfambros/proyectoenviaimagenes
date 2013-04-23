@@ -40,6 +40,7 @@ import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
 import com.amber.proyecto.envia.imagenes.sw.utils.EnviaArchivoHttp;
+import com.amber.proyecto.envia.imagenes.sw.utils.EnviaImagenHttp;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -257,10 +258,10 @@ public class Principal extends Activity {
 		try{
 			request = new SoapObject(NAMESPACE, METHOD_NAME); 
 			imagenes = bd.obtieneImagenBorra();
-			File verifica = new File(Variables.ruta+imagenes.getNombreImagen()+Variables.tipoArchivo);
+			File verifica = new File(Variables.ruta+imagenes.getNombreImagen());
 			if (verifica.exists()){
-				request.addProperty("nombreImagen", imagenes.getNombreImagen()+Variables.tipoArchivo);
-				enviaImagenHttp(imagenes.getNombreImagen()+Variables.tipoArchivo);
+				request.addProperty("nombreImagen", imagenes.getNombreImagen());
+				enviaImagenHttp(imagenes.getNombreImagen());
 				request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 				request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 				request.addProperty("comentario", imagenes.getComentario());						
@@ -311,11 +312,11 @@ public class Principal extends Activity {
 	private void enviaImagenHttp(String nombreImagen){
 		try {
 		    // Set your file path here
-		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen+Variables.tipoArchivo);
+		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen);
 
 		    // Set your server page url (and the file title/description)
-		    EnviaArchivoHttp enviaArchivo = new EnviaArchivoHttp ("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen);
-
+		   EnviaArchivoHttp enviaArchivo = new EnviaArchivoHttp ("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen);
+		    //new EnviaImagenHttp("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen).execute(fstrm);
 		    enviaArchivo.envia(fstrm);
 		    
 		    fstrm.close();

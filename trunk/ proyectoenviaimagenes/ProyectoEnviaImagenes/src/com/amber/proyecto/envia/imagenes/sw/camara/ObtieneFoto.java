@@ -65,16 +65,17 @@ public class ObtieneFoto extends Activity{
 	    }
 		 
 		
-		archivo = new File(ruta,nombreImagen+".jpg");
+		archivo = new File(ruta,nombreImagen+Variables.tipoArchivo);
 
 		
-		
-	    preview = new ManejoFoto(this); // <3>
-	    frameLayout = ((FrameLayout) findViewById(R.id.preview));
-	    frameLayout.addView(preview);// <4>
-	    frameLayout.setOnClickListener(framePres);
-	    
-	    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+			preview = new ManejoFoto(this); // <3>
+		    frameLayout = ((FrameLayout) findViewById(R.id.preview));
+		    frameLayout.addView(preview);// <4>
+		    frameLayout.setOnClickListener(framePres);
+		    
+		    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+	
 	  }	    
 	    
 	  @Override
@@ -123,7 +124,7 @@ public class ObtieneFoto extends Activity{
 				  Intent intent = new Intent();
 				  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
 				  intent.putExtra("ruta", ruta);
-				  intent.putExtra("nombreImagen", nombreImagen);
+				  intent.putExtra("nombreImagen", nombreImagen+Variables.tipoArchivo);
 				  intent.putExtra("latitud", latitud);
 				  intent.putExtra("longitud", longitud);
 				  //Log.i("coor;:", locCoordenadas.toString()+":");
@@ -174,9 +175,18 @@ public class ObtieneFoto extends Activity{
 			e.printStackTrace();
 		} finally {
 			data = null;
+			if (preview.camera !=null) {
+	              //stop the preview
+	              preview.camera.stopPreview();
+	              //release the camera
+	              preview.camera.release();
+	              //unbind the camera from this object
+	              preview.camera = null;
+	          }
 	      }
 	    }
-	  };	
+	  };
+	  
 	  
 	  public class MiLocationListener implements LocationListener
 	  {
