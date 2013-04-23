@@ -42,13 +42,13 @@
             </intent-filter>
         </activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto"
-            android:label="Capturar foto" android:screenOrientation="landscape"></activity>
+            android:label="Capturar foto" android:screenOrientation="landscape" ></activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW"
-            android:label="Enviando imagen" android:screenOrientation="portrait"></activity>
+            android:label="Enviando imagen" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>
 <activity android:name="com.amber.proyecto.envia.imagenes.sw.MuestraInfo"
-            android:label="Detalle" android:screenOrientation="portrait"></activity>        
+            android:label="Detalle" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>        
 		<activity android:name="com.amber.proyecto.envia.imagenes.sw.Busca"
-            android:label="Buscar lugares" android:screenOrientation="portrait"></activity> 
+            android:label="Buscar lugares" android:screenOrientation="portrait" android:launchMode="singleTask"></activity> 
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.Mapa"
             android:label="Mapa" android:screenOrientation="portrait"></activity>         
           

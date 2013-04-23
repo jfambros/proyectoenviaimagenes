@@ -17,7 +17,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -33,7 +32,6 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -51,9 +49,7 @@ import android.widget.Toast;
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
-import com.amber.proyecto.envia.imagenes.sw.utils.CodificaImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
-import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
 import com.amber.proyecto.envia.imagenes.sw.utils.EnviaArchivoHttp;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -106,13 +102,13 @@ public class EnviaImagenSW extends Activity{
         tvLatitud.setText(latitud+" ");
         tvLongitud.setText(longitud+" ");
         
-       
+       Log.i("Imagen", nombreImagen);
         imagen = (ImageView)findViewById(R.id.ivImagen);
         
         BitmapFactory.Options options = new BitmapFactory.Options();
         
         options.inSampleSize = 2;
-        bm = new WeakReference<Bitmap> (BitmapFactory.decodeFile(ruta+nombreImagen+".jpg", options));
+        bm = new WeakReference<Bitmap> (BitmapFactory.decodeFile(ruta+nombreImagen, options));
         
         imagen.setImageBitmap(bm.get());
         
@@ -443,8 +439,9 @@ public class EnviaImagenSW extends Activity{
 	private void enviaImagenHttp(){
 		try {
 		    // Set your file path here
-		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen+".jpg");
+		    FileInputStream fstrm = new FileInputStream(Variables.ruta+nombreImagen);
 
+		    //new EnviaImagenHttp("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen,fstrm).execute();
 		    // Set your server page url (and the file title/description)
 		    EnviaArchivoHttp enviaArchivo = new EnviaArchivoHttp ("http://"+Variables.HOST+"/pags/recibeimagen.php", nombreImagen);
 
