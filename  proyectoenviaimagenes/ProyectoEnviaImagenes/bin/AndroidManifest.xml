@@ -45,7 +45,7 @@
             android:label="Capturar foto" android:screenOrientation="landscape" ></activity>
         <activity android:name="com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW"
             android:label="Enviando imagen" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>
-<activity android:name="com.amber.proyecto.envia.imagenes.sw.MuestraInfo"
+		<activity android:name="com.amber.proyecto.envia.imagenes.sw.MuestraInfo"
             android:label="Detalle" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>        
 		<activity android:name="com.amber.proyecto.envia.imagenes.sw.Busca"
             android:label="Buscar lugares" android:screenOrientation="portrait" android:launchMode="singleTask"></activity> 
@@ -60,17 +60,18 @@
 		  Rosita -->
           
           <!--
-            Casa-->
+            
 		<meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyDjMOSXZiJqg2h_aP36qSX-a6Hg0r_zR7c" />
-		  
-		 <!-- 
+		  Casa-->
+		 
+		 <!-- Escuela	-->
 		    
 		 <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyALKLzukMyBB5Ko5aTCv0pIjjX6UixM-hM" />
-	Escuela	-->
+	
     </application>
 
 </manifest>

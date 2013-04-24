@@ -5,7 +5,12 @@ import java.util.HashMap;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.utils.ImagenParcelable;
@@ -21,6 +26,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class Mapa extends android.support.v4.app.FragmentActivity{
 	  //
+	private ImageView ivAtrasMapa;
+	private Button btnSatCalles;
+	private boolean satelite = false;
 	static final LatLng OAX = new LatLng(17.063021, -96.7202);
 	  private GoogleMap map;
 	  private Bundle bundle;
@@ -35,7 +43,11 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 	    bundle = getIntent().getExtras();
 	   imagenes = bundle.getParcelableArrayList("imagenes");
 	   
+	   btnSatCalles = (Button)findViewById(R.id.btnSateliteMapa);
+	   btnSatCalles.setOnClickListener(btnSatCallesPres);
 	   
+	   ivAtrasMapa = (ImageView)findViewById(R.id.ivAtrasMapa);
+	   ivAtrasMapa.setOnClickListener(ivAtrasMapaPres);
 	   //imprimeLugares();
 	   
 	    map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa))
@@ -43,7 +55,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 	    
 	    Marker oax = map.addMarker(new MarkerOptions().position(OAX)
 		        .title("Oaxaca")
-		         .snippet("Oaxaca de Juaŕez")
+		         .snippet("Oaxaca de Juárez")
 		        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
 	    for (int i=0; i<imagenes.size(); i++){
@@ -72,6 +84,33 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 	    
 	  }
 	  
+	  private OnClickListener ivAtrasMapaPres = new OnClickListener() {
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setClass(Mapa.this, Busca.class);
+			startActivity(intent);
+		}
+	};
+	  
+	  private OnClickListener btnSatCallesPres = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			if (satelite == false){
+				btnSatCalles.setText("  Mapa  ");
+				map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+				satelite = true;
+			}
+			else{
+				btnSatCalles.setText("Satélite");
+				map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				satelite = false;
+			}
+			
+		}
+	};
+	  
 	  private OnMarkerClickListener markerListener = new OnMarkerClickListener() {
 		
 		@Override
@@ -82,7 +121,13 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 	};
 	
 	
-
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
 	  @Override
 	  public boolean onCreateOptionsMenu(Menu menu) {
 
