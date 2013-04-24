@@ -42,6 +42,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,7 @@ public class EnviaImagenSW extends Activity{
 	private TextView tvLongitud;
 	private ImageView imagen;
 	private ImageView ivAtrasEnvia;
+	private RatingBar rbCalifica;
 	private EditText etComentario;
 	private String HOST = Variables.HOST;
 	private Spinner spinnCategorias;
@@ -121,7 +123,7 @@ public class EnviaImagenSW extends Activity{
         btnEnviar = (Button)findViewById(R.id.btnEnviarEI);
         btnEnviar.setOnClickListener(btnEnviarPres);
 		etComentario = (EditText)findViewById(R.id.etComentario);
-        
+		rbCalifica = (RatingBar)findViewById(R.id.ratingBarEnviaIma);
    
     	//obtenerDireccion();
 		//categoriasSinInternet();
@@ -174,7 +176,7 @@ public class EnviaImagenSW extends Activity{
     private OnClickListener btnEnviarPres = new OnClickListener() {
 		
 		public void onClick(View v) {
-
+			obtieneCalificacion();
 			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
 				enviaImagen();
 			}
@@ -187,7 +189,9 @@ public class EnviaImagenSW extends Activity{
 			mensaje("Aviso", "¿Qué deseas realizar?");
 		}
 	};
-	
+	private int obtieneCalificacion(){
+		return 0;
+	}
 	private void liberaBM(){
         imagen.setImageBitmap(null);
         bm.get().recycle();
