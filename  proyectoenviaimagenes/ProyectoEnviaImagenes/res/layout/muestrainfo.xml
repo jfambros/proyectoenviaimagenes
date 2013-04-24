@@ -37,15 +37,44 @@
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"/>
-        
-        
-        <TextView android:id="@+id/ivComentarioMuestraInfo"
+  
+        <TextView android:id="@+id/tvCategoriaMuestraInfo"
             android:layout_below="@+id/vLinea2MuestraInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:text="HGola"/>
+            android:textSize="18sp"
+            android:text="Categoría: "/>
         
+        <View android:id="@+id/vLinea3MuestraInfo"
+        android:layout_below="@+id/tvCategoriaMuestraInfo" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		android:background="#FFFFFF"/>
         
+        <TextView android:id="@+id/tvComentarioMuestraInfo"
+            android:layout_below="@+id/vLinea3MuestraInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="Comentario: "/>
+        
+     <LinearLayout
+        android:id="@+id/llPieMuestraInfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" 
+        android:background="#ff00c0ff">
+
+
+    <ImageView android:id="@+id/ivInicioMuestraInfo" 
+        android:src="@drawable/inicio48x48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        />
+    </LinearLayout>   
         
  </RelativeLayout>   
