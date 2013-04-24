@@ -111,11 +111,35 @@ xmlns:android="http://schemas.android.com/apk/res/android"
  	    android:lines="5"
  	android:layout_below="@id/tvECom"/>
  	
+ 	<View android:id="@+id/vLinea4EnviaImagen"
+        android:layout_below="@+id/etComentario" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		android:background="#FFFFFF"/>
+ 	<TextView android:id="@+id/tvCalificaEnviaIma" 
+ 	    android:text="Califícalo:" android:layout_width="wrap_content"
+ 	    android:layout_height="wrap_content"
+ 	    android:layout_below="@+id/vLinea4EnviaImagen"/> 	
+ 	 <RatingBar
+        android:id="@+id/ratingBarEnviaIma"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvCalificaEnviaIma"
+        android:numStars="4"
+        android:stepSize="1.0"
+        android:rating="2.0" />
+    
+ 	<View android:id="@+id/vLinea5EnviaImagen"
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		android:layout_below="@+id/ratingBarEnviaIma"
+		android:background="#FFFFFF"/> 	
+ 	
  	<Button android:id="@+id/btnEnviarEI"
  	    android:layout_width="wrap_content"
  	    android:layout_height="wrap_content"
  	    android:text="Enviar"
- 	    android:layout_below="@id/etComentario"
+ 	    android:layout_below="@+id/vLinea5EnviaImagen"
  	    android:layout_centerHorizontal="true"/>
 </RelativeLayout>
 </ScrollView>

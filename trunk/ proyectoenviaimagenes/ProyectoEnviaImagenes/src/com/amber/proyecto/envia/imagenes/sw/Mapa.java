@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,7 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class Mapa extends android.support.v4.app.FragmentActivity{
+public class Mapa extends android.support.v4.app.FragmentActivity implements LocationListener{
 	  //
 	private ImageView ivAtrasMapa;
 	private Button btnSatCalles;
@@ -71,7 +75,21 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 			  //map.addMarker(options)
 		  }
 	    
+	    map.setMyLocationEnabled(true);
+	    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+	    Criteria criteria = new Criteria();
 	    
+        // Getting the name of the best provider
+        String provider = locationManager.getBestProvider(criteria, true);
+
+        // Getting Current Location
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        if(location!=null){
+            onLocationChanged(location);
+        }
+        locationManager.requestLocationUpdates(provider, 20000, 0, this);
+    
 
 
 	    map.moveCamera(CameraUpdateFactory.newLatLngZoom(OAX, 12));
@@ -151,4 +169,34 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 		}
 	};
 
-}
+
+
+
+	public void onLocationChanged(Location location) {
+		double latitude = location.getLatitude();
+		 
+        // Getting longitude of the current location
+        double longitude = location.getLongitude();
+ 
+        // Creating a LatLng object for the current location
+        LatLng latLng = new LatLng(latitude, longitude);
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}}
