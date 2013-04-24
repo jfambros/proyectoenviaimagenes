@@ -37,4 +37,12 @@ public class MuestraImagen extends AsyncTask<String, Void, Bitmap> {
 		   
 	      bmImage.setImageBitmap(result);
 	  }
+	  
+	  @Override
+	protected void onPreExecute() {
+		// TODO Auto-generated method stub
+		super.onPreExecute();
+		
 	}
+	  
+}

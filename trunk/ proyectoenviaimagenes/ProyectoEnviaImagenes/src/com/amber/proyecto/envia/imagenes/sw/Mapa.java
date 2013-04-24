@@ -99,6 +99,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity{
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.setClass(Mapa.this, MuestraInfo.class);
 				intent.putExtra("datosImagen", datosImagen.get(marker));
+				intent.putParcelableArrayListExtra("imagenes", imagenes);
 				startActivity(intent);
 				finish();
 			}
