@@ -19,12 +19,14 @@ public class BD extends SQLiteOpenHelper{
 	private static final String nombreTablaCategorias = "categorias";
 	private static final String nombreTablaImagenes = "imagenes";
 	private static final String nombreTablaContenido = "contenido";
+	private static final String nombreTablaCorreo = "correo";
 	private static final String tablaImagenes = "create table "+ nombreTablaImagenes+"(" +
 			"nombreImagen text not null, " +
 			"latitud real not null," +
 			"longitud real not null," +
 			"idCategoria integer not null," +
 			"comentario text," +
+			"califica float,"+
 			"constraint nombrePK primary key(nombreImagen) );";
 	private static final String tablaContenido = "create table "+nombreTablaContenido+"("+
 			"nombreImagen text not null, "+
@@ -45,6 +47,13 @@ public class BD extends SQLiteOpenHelper{
 			"idCategoria integer not null," +
 			"nombreCategoria text not null," +
 			"constraint idCategoriaPK primary key(idCategoria) );";
+	
+	private static final String tablaCorreos = "create table "+nombreTablaCorreo+"(" +
+			"idCorreo integer primary key not null, +" +
+			"correoE text not null," +
+			"nombreImagen text," +
+			"constraint nombreImagenFK foreign key(nombreImagen) references " +
+			nombreTablaImagenes+"(nombreImagen))";
 
 	public BD(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
@@ -59,6 +68,7 @@ public class BD extends SQLiteOpenHelper{
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(tablaCategorias);
 		db.execSQL(tablaImagenes);
+		db.execSQL(tablaCorreos);
 		//db.execSQL(tablaContenido);
 		insertaCategorias(db);	
 	}
@@ -194,6 +204,7 @@ public class BD extends SQLiteOpenHelper{
 	        	ima.setLongitud(cursor.getDouble(2));
 	        	ima.setIdCategoria(cursor.getInt(3));
 	        	ima.setComentario(cursor.getString(4));
+	        	ima.setCalificacion(cursor.getFloat(5));
         	
 			    borraImagen(cursor.getString(0));
 			    //borraContenido(cursor.getString(0));
@@ -228,6 +239,7 @@ public class BD extends SQLiteOpenHelper{
 	        	ima.setLongitud(cursor.getDouble(2));
 	        	ima.setIdCategoria(cursor.getInt(3));
 	        	ima.setComentario(cursor.getString(4));
+	        	ima.setCalificacion(cursor.getFloat(5));
 			    imagenes.add(ima);
 		   } while (cursor.moveToNext());
 		}
@@ -263,7 +275,7 @@ public class BD extends SQLiteOpenHelper{
 		db.insert(nombreTablaContenido, null, cv);
 		db.close();
 	}
-	public void insertaImagen(String nombreImagen, double latitud, double longitud, int idCategoria, String comentario){
+	public void insertaImagen(String nombreImagen, double latitud, double longitud, int idCategoria, String comentario, float califica){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("nombreImagen", nombreImagen);
@@ -271,6 +283,7 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("longitud", longitud);
 		cv.put("idCategoria", idCategoria);
 		cv.put("comentario", comentario);
+		cv.put("califica", califica);
 		db.insert(nombreTablaImagenes, null, cv);
 		db.close();
 	}

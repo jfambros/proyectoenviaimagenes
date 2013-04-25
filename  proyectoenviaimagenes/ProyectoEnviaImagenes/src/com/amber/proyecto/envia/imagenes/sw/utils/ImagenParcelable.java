@@ -10,6 +10,15 @@ public class ImagenParcelable implements Parcelable{
 	private int idCategoria;
 	private String comentario;
 	private String nombreCategoria;
+	private float calificacion;
+
+	public float getCalificacion() {
+		return calificacion;
+	}
+
+	public void setCalificacion(float calificacion) {
+		this.calificacion = calificacion;
+	}
 
 	public String getNombreCategoria() {
 		return nombreCategoria;

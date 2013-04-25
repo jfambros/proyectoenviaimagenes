@@ -48,6 +48,7 @@ public class Principal extends Activity {
 	private LocationManager locationManager;
 	private ImageView ivTomarFoto;
 	private TextView tvTomarFoto;
+	private TextView tvEnviaImagenes;
 	private ImageView ivEnviaImagenes;
 	private ImageView ivBuscaMapa;
 	private SoapObject request;
@@ -68,13 +69,16 @@ public class Principal extends Activity {
 		ivEnviaImagenes = (ImageView)findViewById(R.id.ivAlmacenaBD);
 		ivEnviaImagenes.setOnClickListener(ivEnviaImagenesPres);
 		
+		tvEnviaImagenes = (TextView)findViewById(R.id.tvEnviaImagenes);
+		
+		
 		ivBuscaMapa = (ImageView)findViewById(R.id.ivBuscaMapa);
 		ivBuscaMapa.setOnClickListener(ivBuscaMapaPres);
+		
+		tvEnviaImagenes.setText("Enviar imagen("+verificaCantidad()+")");
 
 		utilizarGPS();
-		if (verificaCantidad() == true){
-			Toast.makeText(this,"Existen imagenes en la base de datos", Toast.LENGTH_LONG).show();
-		}
+
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}
@@ -171,7 +175,7 @@ public class Principal extends Activity {
 		
 		@Override
 		public void onClick(View v) {
-			if (verificaCantidad() == false){
+			if (verificaCantidad() == 0){
 				Toast.makeText(Principal.this,"No hay imagenes en la base de datos", Toast.LENGTH_LONG).show();
 			}
 			verificaInternetBD();
@@ -188,9 +192,8 @@ public class Principal extends Activity {
 	protected void onRestart() {
 		// TODO Auto-generated method stub
 		super.onRestart();
-		if (verificaCantidad() == true){
-			Toast.makeText(Principal.this,"Existen registros en la base de datos", Toast.LENGTH_LONG).show();
-		}
+
+		tvEnviaImagenes.setText("Enviar imagen("+verificaCantidad()+")");
 		Log.i("On restart", "restaurando");
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
@@ -265,7 +268,8 @@ public class Principal extends Activity {
 				request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 				request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 				request.addProperty("comentario", imagenes.getComentario());						
-				request.addProperty("idCategoria", Integer.toString(imagenes.getIdCategoria()));	
+				request.addProperty("idCategoria", Integer.toString(imagenes.getIdCategoria()));
+				request.addProperty("calificacion", Float.toString(imagenes.getCalificacion()));
 				envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 				
 				envelope.dotNet = false;
@@ -383,18 +387,13 @@ public class Principal extends Activity {
         mediaPlayerSonido.setOnCompletionListener(completionList);
 	}
 	
-	private boolean verificaCantidad(){
+	private int verificaCantidad(){
 		BD bd = new BD(this);
-		if (bd.cuentaRegImagenes() >0 ) {
-			bd.close();
-			return true;
-		}
-		else{
-			bd.close();
-			return false;
-		}
+		int cant = bd.cuentaRegImagenes();
+		bd.close();
+		return cant;
 
-		
+
 	}
 		
 }
