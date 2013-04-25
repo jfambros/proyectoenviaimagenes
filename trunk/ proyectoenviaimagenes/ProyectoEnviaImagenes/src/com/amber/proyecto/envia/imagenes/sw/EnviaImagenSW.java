@@ -43,6 +43,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,7 @@ public class EnviaImagenSW extends Activity{
 	private String nombreImagen;
 	private double latitud;
 	private double longitud;
+	private float califica;
 	private TextView tvLatitud;
 	private TextView tvLongitud;
 	private ImageView imagen;
@@ -124,6 +126,7 @@ public class EnviaImagenSW extends Activity{
         btnEnviar.setOnClickListener(btnEnviarPres);
 		etComentario = (EditText)findViewById(R.id.etComentario);
 		rbCalifica = (RatingBar)findViewById(R.id.ratingBarEnviaIma);
+		rbCalifica.setOnRatingBarChangeListener(rbCalificaPres);
    
     	//obtenerDireccion();
 		//categoriasSinInternet();
@@ -157,10 +160,16 @@ public class EnviaImagenSW extends Activity{
     
     @Override
     protected void onPause() {
-    	// TODO Auto-generated method stub
     	super.onPause();
     }
     
+    private OnRatingBarChangeListener rbCalificaPres = new OnRatingBarChangeListener() {
+	
+		public void onRatingChanged(RatingBar ratingBar, float rating,
+				boolean fromUser) {
+			califica = rating;
+		}
+	};
 	
     private OnClickListener ivAtrasEnviaPres = new OnClickListener() {
 		
@@ -182,7 +191,7 @@ public class EnviaImagenSW extends Activity{
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
-				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString()+" ");
+				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString()+" ",califica);
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
 			}
@@ -326,6 +335,7 @@ public class EnviaImagenSW extends Activity{
 					request.addProperty("longitud", tvLongitud.getText().toString());
 					request.addProperty("comentario", etComentario.getText().toString());
 					request.addProperty("idCategoria", Integer.toString(idCat));
+					request.addProperty("Calificacion",Float.toString(califica));
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					

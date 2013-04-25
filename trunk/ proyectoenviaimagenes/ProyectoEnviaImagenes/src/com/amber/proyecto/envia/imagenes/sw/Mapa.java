@@ -108,6 +108,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.setClass(Mapa.this, Busca.class);
 			startActivity(intent);
+			finish();
 		}
 	};
 	  

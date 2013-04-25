@@ -6,6 +6,14 @@ public class Imagen {
 	private double longitud;
 	private int idCategoria;
 	private String comentario;
+	private float calificacion;
+	
+	public float getCalificacion() {
+		return calificacion;
+	}
+	public void setCalificacion(float calificacion) {
+		this.calificacion = calificacion;
+	}
 	public String getNombreImagen() {
 		return nombreImagen;
 	}
