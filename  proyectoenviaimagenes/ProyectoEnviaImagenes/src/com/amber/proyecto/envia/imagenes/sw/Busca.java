@@ -173,6 +173,7 @@ public class Busca extends Activity{
 
             SoapObject resultado =  (SoapObject) envelope.getResponse();
             SoapObject resultado2 = (SoapObject) resultado.getProperty("imagenes");
+            Log.i("Total", resultado2.getPropertyCount()+"");
             if (resultado2.getPropertyCount() != 0){
 	            for(int cont=0; cont< resultado.getPropertyCount(); cont ++){
 	            	SoapObject resultados = (SoapObject) resultado.getProperty(cont);

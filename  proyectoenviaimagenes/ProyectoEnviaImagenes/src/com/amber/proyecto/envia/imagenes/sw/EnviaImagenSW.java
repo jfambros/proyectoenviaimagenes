@@ -333,7 +333,7 @@ public class EnviaImagenSW extends Activity{
 					
 					request.addProperty("latitud", tvLatitud.getText().toString());
 					request.addProperty("longitud", tvLongitud.getText().toString());
-					request.addProperty("comentario", etComentario.getText().toString());
+					request.addProperty("comentario", etComentario.getText().toString()+" ");
 					request.addProperty("idCategoria", Integer.toString(idCat));
 					request.addProperty("Calificacion",Float.toString(califica));
 				    
