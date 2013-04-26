@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
     
         <LinearLayout
         android:id="@+id/llEncabezadoMuestraInfo1"
@@ -18,9 +20,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-    
+ <ScrollView
+android:layout_width="match_parent"
+android:layout_height="0dp"
+android:layout_weight="1"
+>
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
         <View android:id="@+id/vLinea1MuestraInfo"
-        android:layout_below="@+id/llEncabezadoMuestraInfo1" 
+
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"/>
@@ -58,6 +67,24 @@
             android:textSize="18sp"
             android:text="Comentario: "/>
         
+        <View  android:id="@+id/vLinea4MuestraInfo"
+        android:layout_below="@+id/tvComentarioMuestraInfo" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"
+		android:background="#FFFFFF"/>
+        
+        <RatingBar
+        android:id="@+id/ratingBarMuestraInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/vLinea4MuestraInfo"
+        android:numStars="4"
+        android:stepSize="1.0"
+        android:rating="2.0" 
+        android:isIndicator="true"/>
+          
+        </RelativeLayout>
+   </ScrollView>   
      <LinearLayout
         android:id="@+id/llPieMuestraInfo"
         android:layout_width="fill_parent"
@@ -77,4 +104,4 @@
         />
     </LinearLayout>   
         
- </RelativeLayout>   
+ </LinearLayout>   

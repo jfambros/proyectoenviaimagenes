@@ -75,7 +75,7 @@ public class Principal extends Activity {
 		ivBuscaMapa = (ImageView)findViewById(R.id.ivBuscaMapa);
 		ivBuscaMapa.setOnClickListener(ivBuscaMapaPres);
 		
-		tvEnviaImagenes.setText("Enviar imagen("+verificaCantidad()+")");
+		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
 
 		utilizarGPS();
 
@@ -104,6 +104,7 @@ public class Principal extends Activity {
 					enviaImagenBD();
 				}
 				Toast.makeText(this, "Servidor encontrado, enviando imágenes!", Toast.LENGTH_LONG).show();
+				tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
 				bd.close();
 			}
 			else{
@@ -193,8 +194,7 @@ public class Principal extends Activity {
 		// TODO Auto-generated method stub
 		super.onRestart();
 
-		tvEnviaImagenes.setText("Enviar imagen("+verificaCantidad()+")");
-		Log.i("On restart", "restaurando");
+		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
 		}

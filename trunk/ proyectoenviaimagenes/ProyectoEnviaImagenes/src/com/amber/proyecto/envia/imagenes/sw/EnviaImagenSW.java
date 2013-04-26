@@ -63,7 +63,7 @@ public class EnviaImagenSW extends Activity{
 	private String nombreImagen;
 	private double latitud;
 	private double longitud;
-	private float califica;
+	private float califica = 2;
 	private TextView tvLatitud;
 	private TextView tvLongitud;
 	private ImageView imagen;
@@ -335,7 +335,7 @@ public class EnviaImagenSW extends Activity{
 					request.addProperty("longitud", tvLongitud.getText().toString());
 					request.addProperty("comentario", etComentario.getText().toString()+" ");
 					request.addProperty("idCategoria", Integer.toString(idCat));
-					request.addProperty("Calificacion",Float.toString(califica));
+					request.addProperty("calificacion",Float.toString(califica));
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					

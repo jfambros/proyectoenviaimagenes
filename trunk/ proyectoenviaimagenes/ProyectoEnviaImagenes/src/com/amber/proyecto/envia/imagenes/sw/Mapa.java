@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -38,6 +39,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 	  private Bundle bundle;
 	  private ArrayList<ImagenParcelable> imagenes = new ArrayList<ImagenParcelable>();
 	  private HashMap<Marker, ImagenParcelable> datosImagen = new HashMap<Marker, ImagenParcelable>();
+	 private String queryFinal;
 
 	  @Override
 	  protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 
 	    bundle = getIntent().getExtras();
 	   imagenes = bundle.getParcelableArrayList("imagenes");
+	   queryFinal = bundle.getString("queryFinal");
 	   
 	   btnSatCalles = (Button)findViewById(R.id.btnSateliteMapa);
 	   btnSatCalles.setOnClickListener(btnSatCallesPres);
@@ -63,7 +66,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 		        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
 	    for (int i=0; i<imagenes.size(); i++){
-			  
+			  Log.i("imagen #",i+".");
 			  Marker mark = map.addMarker(new MarkerOptions().position(
 					  new LatLng(imagenes.get(i).getLatitud(), imagenes.get(i).getLongitud()))
 				.title("Categoría: "+imagenes.get(i).getNombreCategoria())
@@ -163,7 +166,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.setClass(Mapa.this, MuestraInfo.class);
 				intent.putExtra("datosImagen", datosImagen.get(marker));
-				intent.putParcelableArrayListExtra("imagenes", imagenes);
+				intent.putExtra("queryFinal", queryFinal);
 				startActivity(intent);
 				finish();
 			}

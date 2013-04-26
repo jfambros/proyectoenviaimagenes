@@ -104,6 +104,7 @@ public class ImagenParcelable implements Parcelable{
 		dest.writeInt(idCategoria);
 		dest.writeString(comentario);
 		dest.writeString(nombreCategoria);
+		dest.writeFloat(calificacion);
 		
 	}
 	
@@ -114,6 +115,7 @@ public class ImagenParcelable implements Parcelable{
 		idCategoria = in.readInt();
 		comentario = in.readString();
 		nombreCategoria = in.readString();
+		calificacion = in.readFloat();
 	}
 
 }

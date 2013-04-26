@@ -3,6 +3,13 @@ package com.amber.proyecto.envia.imagenes.sw;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -17,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.amber.proyecto.envia.imagenes.sw.utils.ImagenParcelable;
@@ -29,8 +37,10 @@ public class MuestraInfo extends Activity{
 	private TextView tvCategoria;
 	private ImageView ivAtrasMuestraInfo;
 	private ImageView ivInicioMuestraInfo;
+	private RatingBar rbMuestraInfo;
 	private ImagenParcelable datosImagen = new ImagenParcelable();
 	private String ruta = "http://"+Variables.HOST+"/pags/";
+    private String URL = "http://"+Variables.HOST+"/pags/servicios.php";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -53,6 +63,8 @@ public class MuestraInfo extends Activity{
 		ivInicioMuestraInfo = (ImageView) findViewById(R.id.ivInicioMuestraInfo);
 		ivInicioMuestraInfo.setOnClickListener(ivInicioMuestraPres);
 			        
+		rbMuestraInfo = (RatingBar)findViewById(R.id.ratingBarMuestraInfo);
+		rbMuestraInfo.setRating(datosImagen.getCalificacion());
 		//Log.i("nombreImagen ",datosImagen.getNombreImagen()+" "+datosImagen.getNombreCategoria());
 	}
 	
@@ -60,7 +72,7 @@ public class MuestraInfo extends Activity{
 
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			intent.putParcelableArrayListExtra("imagenes", bundle.getParcelableArrayList("imagenes"));
+			intent.putParcelableArrayListExtra("imagenes", obtieneImagenesSW());
     		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     		intent.setClass(MuestraInfo.this, Mapa.class);
     		startActivity(intent);
@@ -169,6 +181,58 @@ public class MuestraInfo extends Activity{
 			pDialog.setProgress(Integer.parseInt(values[0]));			
 		}
 		  
+	}
+	
+	
+	private ArrayList<ImagenParcelable> obtieneImagenesSW(){
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#obtieneImagenes"; 
+		String METHOD_NAME = "obtieneImagenes";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
+		
+		SoapSerializationEnvelope envelope;
+        HttpTransportSE httpt;
+        ArrayList<ImagenParcelable> imagenParcelable = new ArrayList<ImagenParcelable>();
+        try{
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+            request.addProperty("opciones", bundle.getString("queryFinal"));
+            httpt = new HttpTransportSE(URL);
+            envelope = new SoapSerializationEnvelope( SoapEnvelope.VER11 );
+            envelope.dotNet = false;
+            envelope.setOutputSoapObject(request);
+            httpt.call(SOAP_ACTION, envelope);
+
+            SoapObject resultado =  (SoapObject) envelope.getResponse();
+            if (resultado.getPropertyCount() != 0){
+	            for(int cont=0; cont< resultado.getPropertyCount(); cont ++){
+	            	SoapObject resultados = (SoapObject) resultado.getProperty(cont);
+	            	//primitivas
+	            	SoapPrimitive nombreImagen = (SoapPrimitive) resultados.getProperty("nombreImagen");
+	            	SoapPrimitive latitud = (SoapPrimitive) resultados.getProperty("latitud");
+	            	SoapPrimitive longitd = (SoapPrimitive) resultados.getProperty("longitud");
+	            	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
+	            	SoapPrimitive comentario = (SoapPrimitive) resultados.getProperty("comentario");
+	            	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
+	            	SoapPrimitive calificacion = (SoapPrimitive) resultados.getProperty("calificacion");
+	            	
+	            	Log.i("Datos: ", cont+" "+nombreImagen.toString()+" "+latitud.toString()+" "+longitd.toString()+" "+idCategoria.toString()+" "+comentario.toString());
+	            	ImagenParcelable ip = new ImagenParcelable();
+	            	ip.setNombreImagen(nombreImagen.toString());
+	            	ip.setLatitud(Double.parseDouble(latitud.toString()));
+	            	ip.setLongitud(Double.parseDouble(longitd.toString()));
+	            	ip.setIdCategoria(Integer.parseInt(idCategoria.toString()));
+	            	ip.setComentario(comentario.toString());
+	            	ip.setNombreCategoria(nombreCategoria.toString());
+	            	ip.setCalificacion(Float.parseFloat(calificacion.toString()));
+	            	
+	            	imagenParcelable.add(ip);
+	         }
+            } 
+        }
+        catch (Exception err){
+        	Log.e("Error", err.toString());
+        }
+        
+        return imagenParcelable;
 	}
 	
 }
