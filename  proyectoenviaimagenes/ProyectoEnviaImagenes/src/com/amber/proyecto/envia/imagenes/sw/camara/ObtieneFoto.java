@@ -123,6 +123,7 @@ public class ObtieneFoto extends Activity{
 		    	cierraCam();
 				  Intent intent = new Intent();
 				  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
+				  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				  intent.putExtra("ruta", ruta);
 				  intent.putExtra("nombreImagen", nombreImagen+Variables.tipoArchivo);
 				  intent.putExtra("latitud", latitud);

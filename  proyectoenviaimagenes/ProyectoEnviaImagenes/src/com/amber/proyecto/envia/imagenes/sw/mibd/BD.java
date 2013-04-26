@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.amber.proyecto.envia.imagenes.sw.utils.CantCatImagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.ImagenParcelable;
@@ -26,7 +27,7 @@ public class BD extends SQLiteOpenHelper{
 			"longitud real not null," +
 			"idCategoria integer not null," +
 			"comentario text," +
-			"califica float,"+
+			"calificacion float,"+
 			"constraint nombrePK primary key(nombreImagen) );";
 	private static final String tablaContenido = "create table "+nombreTablaContenido+"("+
 			"nombreImagen text not null, "+
@@ -49,7 +50,7 @@ public class BD extends SQLiteOpenHelper{
 			"constraint idCategoriaPK primary key(idCategoria) );";
 	
 	private static final String tablaCorreos = "create table "+nombreTablaCorreo+"(" +
-			"idCorreo integer primary key not null, +" +
+			"idCorreo integer primary key not null, " +
 			"correoE text not null," +
 			"nombreImagen text," +
 			"constraint nombreImagenFK foreign key(nombreImagen) references " +
@@ -165,6 +166,7 @@ public class BD extends SQLiteOpenHelper{
 	        	ima.setLongitud(cursor.getDouble(2));
 	        	ima.setIdCategoria(cursor.getInt(3));
 	        	ima.setComentario(cursor.getString(4));
+	        	ima.setCalificacion(cursor.getFloat(5));
 			    imagenes.add(ima);
 		   } while (cursor.moveToNext());
 		}
@@ -259,6 +261,27 @@ public class BD extends SQLiteOpenHelper{
 		return total;
 	}
 	
+	public ArrayList<CantCatImagen> cantidadCatImagenes(){
+		SQLiteDatabase db = this.getReadableDatabase();
+		ArrayList<CantCatImagen> alCantidad = new ArrayList<CantCatImagen>();
+		Cursor cursor = db.rawQuery("select i.idCategoria, c.nombreCategoria, count(i.idCategoria) from imagen i, categoria c where i.idCategoria = c.idCategoria group by idCategoria", null);
+
+		if (cursor.moveToFirst()) {
+	        do {
+	    		CantCatImagen cantidad = new CantCatImagen();	        	
+	        	cantidad.setIdCategoria(cursor.getInt(0));
+	        	cantidad.setNombreCategoria(cursor.getString(1));
+	        	cantidad.setCantidadCategoria(cursor.getInt(2));
+	        	alCantidad.add(cantidad);
+        	
+		   } while (cursor.moveToNext());
+		}
+		
+		  cursor.close();
+		  db.close();
+		return alCantidad;
+	}
+	
 	public void insertaContenido(String nombreImagen, String[] contenido){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues cv = new ContentValues();
@@ -283,7 +306,7 @@ public class BD extends SQLiteOpenHelper{
 		cv.put("longitud", longitud);
 		cv.put("idCategoria", idCategoria);
 		cv.put("comentario", comentario);
-		cv.put("califica", califica);
+		cv.put("calificacion", califica);
 		db.insert(nombreTablaImagenes, null, cv);
 		db.close();
 	}

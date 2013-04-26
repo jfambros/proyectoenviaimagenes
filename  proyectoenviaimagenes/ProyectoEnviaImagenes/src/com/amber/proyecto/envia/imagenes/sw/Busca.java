@@ -36,6 +36,7 @@ public class Busca extends Activity{
 	private ImageView ivBusca;
 	private ImageView ivAtrasBusca;
     private String URL = "http://"+Variables.HOST+"/pags/servicios.php";
+    private String queryFinal;
 
 	
 	@Override
@@ -112,6 +113,7 @@ public class Busca extends Activity{
 				if (resultados.size() != 0){
 					Intent intent = new Intent();
 					intent.putParcelableArrayListExtra("imagenes", resultados);
+					intent.putExtra("queryFinal", queryFinal);
 		    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					intent.setClass(Busca.this, Mapa.class);
 					startActivity(intent);
@@ -163,8 +165,9 @@ public class Busca extends Activity{
         HttpTransportSE httpt;
         ArrayList<ImagenParcelable> imagenParcelable = new ArrayList<ImagenParcelable>();
         try{
+        	queryFinal = llenaQuery(opciones);
             SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-            request.addProperty("opciones", llenaQuery(opciones));
+            request.addProperty("opciones", queryFinal);
             httpt = new HttpTransportSE(URL);
             envelope = new SoapSerializationEnvelope( SoapEnvelope.VER11 );
             envelope.dotNet = false;
@@ -172,9 +175,7 @@ public class Busca extends Activity{
             httpt.call(SOAP_ACTION, envelope);
 
             SoapObject resultado =  (SoapObject) envelope.getResponse();
-            SoapObject resultado2 = (SoapObject) resultado.getProperty("imagenes");
-            Log.i("Total", resultado2.getPropertyCount()+"");
-            if (resultado2.getPropertyCount() != 0){
+            if (resultado.getPropertyCount() != 0){
 	            for(int cont=0; cont< resultado.getPropertyCount(); cont ++){
 	            	SoapObject resultados = (SoapObject) resultado.getProperty(cont);
 	            	//primitivas
@@ -184,8 +185,9 @@ public class Busca extends Activity{
 	            	SoapPrimitive idCategoria = (SoapPrimitive) resultados.getProperty("idCategoria");
 	            	SoapPrimitive comentario = (SoapPrimitive) resultados.getProperty("comentario");
 	            	SoapPrimitive nombreCategoria = (SoapPrimitive) resultados.getProperty("nombreCategoria");
-	
-	            	//Log.i("Datos: ", nombreImagen.toString()+" "+latitud.toString()+" "+longitd.toString()+" "+idCategoria.toString()+" "+comentario.toString());
+	            	SoapPrimitive calificacion = (SoapPrimitive) resultados.getProperty("calificacion");
+	            	
+	            	Log.i("Datos: ", cont+" "+nombreImagen.toString()+" "+latitud.toString()+" "+longitd.toString()+" "+idCategoria.toString()+" "+comentario.toString());
 	            	ImagenParcelable ip = new ImagenParcelable();
 	            	ip.setNombreImagen(nombreImagen.toString());
 	            	ip.setLatitud(Double.parseDouble(latitud.toString()));
@@ -193,6 +195,7 @@ public class Busca extends Activity{
 	            	ip.setIdCategoria(Integer.parseInt(idCategoria.toString()));
 	            	ip.setComentario(comentario.toString());
 	            	ip.setNombreCategoria(nombreCategoria.toString());
+	            	ip.setCalificacion(Float.parseFloat(calificacion.toString()));
 	            	
 	            	imagenParcelable.add(ip);
 	         }
