@@ -60,7 +60,7 @@
     android:layout_below="@+id/vLinea3Prin"
     android:stretchColumns="1" >
  
-    <!-- 2 columns -->
+    <!-- 3 columns -->
 		    <TableRow
 		        android:id="@+id/tRFila1Prin"
 		        android:layout_width="fill_parent"
@@ -78,7 +78,7 @@
 				<ImageView android:id="@+id/ivConfigura" 
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
-				    android:src="@drawable/configura48x48"/>					    			
+				    android:src="@drawable/configura48x48"/>	
 		    </TableRow>
 		    <TableRow
 		        android:id="@+id/tRFila2Prin"
@@ -100,7 +100,44 @@
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
 				    android:layout_gravity="center"/>									    			
-		    </TableRow>		    
+		    </TableRow>	
+		    
+		     <TableRow
+		        android:id="@+id/tRFila3Prin"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+				android:gravity="center">
+				<ImageView android:id="@+id/ivInicioSesion" 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/sesion48x48"
+				    />
+				<ImageView android:id="@+id/ivRegistrar" 
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@drawable/registro48x48"
+				/>
+		    </TableRow>
+		    <TableRow
+		        android:id="@+id/tRFila4Prin"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		         android:gravity="center"
+		       >
+				<TextView
+				    android:text="Iniciar sesión"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:gravity="center"
+				    />
+				<TextView 
+				    android:text="Registrarse"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:gravity="center"
+				    />				
+				</TableRow>
+		    	    
 	    </TableLayout>
     
     

@@ -68,6 +68,7 @@ public class EnviaImagenSW extends Activity{
 	private TextView tvLongitud;
 	private ImageView imagen;
 	private ImageView ivAtrasEnvia;
+	private ImageView ivInicioEnviaImagen;
 	private RatingBar rbCalifica;
 	private EditText etComentario;
 	private String HOST = Variables.HOST;
@@ -118,6 +119,9 @@ public class EnviaImagenSW extends Activity{
         
         ivAtrasEnvia = (ImageView)findViewById(R.id.ivAtrasEnvia);
         ivAtrasEnvia.setOnClickListener(ivAtrasEnviaPres);
+        
+        ivInicioEnviaImagen = (ImageView)findViewById(R.id.ivInicioEnviaImagen);
+        ivInicioEnviaImagen.setOnClickListener(ivInicioEnviaImagenPres);
         
         spinnCategorias = (Spinner)findViewById(R.id.spinnCategoria);
 
@@ -178,6 +182,18 @@ public class EnviaImagenSW extends Activity{
 			Intent intent = new Intent();
 			intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
 			startActivity(intent);
+			
+		}
+	};
+	
+	private OnClickListener ivInicioEnviaImagenPres = new OnClickListener() {
+
+		public void onClick(View v) {
+			Intent intent = new Intent();
+    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    		intent.setClass(EnviaImagenSW.this, Principal.class);
+    		startActivity(intent);
+    		finish();	
 			
 		}
 	};

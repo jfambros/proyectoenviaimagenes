@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Timer;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -18,6 +19,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -30,7 +32,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +41,6 @@ import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
 import com.amber.proyecto.envia.imagenes.sw.utils.EnviaArchivoHttp;
-import com.amber.proyecto.envia.imagenes.sw.utils.EnviaImagenHttp;
 import com.amber.proyecto.envia.imagenes.sw.utils.Imagen;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -51,10 +51,12 @@ public class Principal extends Activity {
 	private TextView tvEnviaImagenes;
 	private ImageView ivEnviaImagenes;
 	private ImageView ivBuscaMapa;
+	private ImageView ivRegistro;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
 	private String URL = "http://"+HOST+"/pags/servicios.php";
 	private boolean gps_on;
+	private boolean wifi_on;
 	private Location loc;
 	private MediaPlayer mediaPlayerSonido;
 	private boolean activado = false;
@@ -75,7 +77,12 @@ public class Principal extends Activity {
 		ivBuscaMapa = (ImageView)findViewById(R.id.ivBuscaMapa);
 		ivBuscaMapa.setOnClickListener(ivBuscaMapaPres);
 		
+		ivRegistro = (ImageView)findViewById(R.id.ivRegistrar);
+		ivRegistro.setOnClickListener(ivRegistroPres);
+		
 		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
+		
+		
 
 		utilizarGPS();
 
@@ -87,6 +94,7 @@ public class Principal extends Activity {
 			 //http://stackoverflow.com/questions/2021176/how-can-i-check-the-current-status-of-the-gps-receiver
 			 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 			 gps_on =  locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			 wifi_on = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 		     request_updates();
 		     if (loc != null){
 		    	 mostrar();
@@ -124,7 +132,12 @@ public class Principal extends Activity {
             // GPS is enabled on device so lets add a loopback for this locationmanager
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0, locationListener);
             Log.i("Gps","encontrado GPS");
-        }      
+        }  
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            // GPS is enabled on device so lets add a loopback for this locationmanager
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0, 0, locationListenerNetwork);
+            Log.i("Network","Red encontrada");
+        }   
     }
 
     LocationListener locationListener = new LocationListener() {
@@ -141,8 +154,21 @@ public class Principal extends Activity {
          public void onProviderEnabled(String provider) {}
          public void onStatusChanged(String provider, int status, Bundle extras) {}
     };
-	
-	
+    
+    LocationListener locationListenerNetwork = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            loc = location;
+            locationManager.removeUpdates(this);
+            if (loc != null){
+            	 mostrar();
+            }
+        }
+        public void onProviderDisabled(String provider) {}
+        public void onProviderEnabled(String provider) {}
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+    };
+
+    
 	
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -161,13 +187,21 @@ public class Principal extends Activity {
 			//Principal.this.finish();
 		}
 	};
+	
+	private OnClickListener ivRegistroPres = new OnClickListener() {
+
+		public void onClick(View v) {
+			
+		}
+	};
 
 	private OnClickListener ivIniciarPres = new OnClickListener() {
-		
-		@Override
+
 		public void onClick(View v) {
 			Intent intent = new Intent();
 			intent.setClass(Principal.this,ObtieneFoto.class);
+			intent.putExtra("latitud", loc.getLatitude());
+			intent.putExtra("longitud", loc.getLongitude());
 			startActivity(intent);
 		}
 	};
@@ -203,6 +237,7 @@ public class Principal extends Activity {
 		tvTomarFoto = (TextView)findViewById(R.id.tvTomarFoto);
 		locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0, 0, locationListener);
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0, 0, locationListenerNetwork);
 	
 	}
 	@Override
@@ -260,11 +295,12 @@ public class Principal extends Activity {
 			
 		try{
 			request = new SoapObject(NAMESPACE, METHOD_NAME); 
-			imagenes = bd.obtieneImagenBorra();
+			imagenes = bd.obtieneImagen();
 			File verifica = new File(Variables.ruta+imagenes.getNombreImagen());
 			if (verifica.exists()){
 				request.addProperty("nombreImagen", imagenes.getNombreImagen());
 				enviaImagenHttp(imagenes.getNombreImagen());
+				bd.borraImagen(imagenes.getNombreImagen());
 				request.addProperty("latitud", Double.toString(imagenes.getLatitud()));
 				request.addProperty("longitud", Double.toString(imagenes.getLongitud()));
 				request.addProperty("comentario", imagenes.getComentario());						
@@ -294,7 +330,7 @@ public class Principal extends Activity {
 				Toast.makeText(Principal.this, "¡Imágenes guardadas en el dispositivo enviadas!", Toast.LENGTH_LONG).show();
 			}
 			else{
-				Toast.makeText(Principal.this, "¡No se encuentra el archivo!", Toast.LENGTH_LONG).show();
+				Toast.makeText(Principal.this, "¡No se encuentra el archivo! "+imagenes.getNombreImagen(), Toast.LENGTH_LONG).show();
 			}
 		}
 	    catch (IOException e) {
@@ -397,3 +433,5 @@ public class Principal extends Activity {
 	}
 		
 }
+
+

@@ -11,12 +11,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:orientation="vertical" 
+        android:orientation="horizontal" 
         android:background="#ff00c0ff">
 
         <ImageView
             android:id="@+id/ivAtrasMuestraInfo1"
             android:src="@drawable/atras48x48" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="     "/>
+        
+        <ImageView
+            android:id="@+id/ivBuscaMuestraInfo1"
+            android:src="@drawable/buscar48x48" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>
