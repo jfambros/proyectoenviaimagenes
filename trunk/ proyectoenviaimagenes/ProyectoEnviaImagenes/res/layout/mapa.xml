@@ -21,14 +21,28 @@
                android:src="@drawable/atras48x48"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
-                        <Button
-                        android:id="@+id/btnSateliteMapa"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textStyle="bold"                        
-                        android:text="  Satélite  "
-                        />
+            <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="     "/>
+           <ImageView  android:id="@+id/ivInicioMapa"
+               android:src="@drawable/inicio48x48"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+        	<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="     "/>           
+            <Button
+            android:id="@+id/btnSateliteMapa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold"                        
+            android:text="  Satélite  "
+            />
    </LinearLayout>
 
 </FrameLayout>

@@ -37,8 +37,9 @@ public class ObtieneFoto extends Activity{
 	private String nombreImagen = "FT"+System.currentTimeMillis(); ;
 	private double latitud;
 	private double longitud;
-	private String coordenadas;
+	private Location coordenadas;
 	private Location locCoordenadas;
+	private Bundle bundle;
 	private String ruta = Variables.ruta;
 	private File archivo;
 	private FileOutputStream archivoAlmacenado;
@@ -58,6 +59,7 @@ public class ObtieneFoto extends Activity{
 	  public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
+	    bundle = getIntent().getExtras();
 
 	    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
 	    if(!folder.exists()){
@@ -109,8 +111,10 @@ public class ObtieneFoto extends Activity{
 			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
 		    
-		    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-		    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+
+			    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+			    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+
 		    try {
 		    	Toast.makeText(ObtieneFoto.this, "Guardando imagen", Toast.LENGTH_LONG).show();
 		    	Thread.sleep (3000);
@@ -198,7 +202,11 @@ public class ObtieneFoto extends Activity{
 			  loc.getLatitude();
 			  loc.getLongitude();
 			  //String coordenadas = "Mis coordenadas son: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
-			  coordenadas = loc.getLatitude()+" "+loc.getLongitude();
+			  coordenadas = loc;
+			  if (coordenadas == null){
+				  latitud = bundle.getDouble("latitud");
+				  longitud = bundle.getDouble("longitud");
+			  }
 			  //Toast.makeText( getApplicationContext(),"latitud: "+latitud+" long: "+longitud,Toast.LENGTH_LONG).show();
 
 		  }

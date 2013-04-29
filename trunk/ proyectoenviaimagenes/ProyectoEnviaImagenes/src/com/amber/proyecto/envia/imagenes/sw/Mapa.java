@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class Mapa extends android.support.v4.app.FragmentActivity implements LocationListener{
 	  //
 	private ImageView ivAtrasMapa;
+	private ImageView ivInicioMapa;
 	private Button btnSatCalles;
 	private boolean satelite = false;
 	static final LatLng OAX = new LatLng(17.063021, -96.7202);
@@ -56,6 +57,9 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 	   ivAtrasMapa = (ImageView)findViewById(R.id.ivAtrasMapa);
 	   ivAtrasMapa.setOnClickListener(ivAtrasMapaPres);
 	   //imprimeLugares();
+	   
+	   ivInicioMapa = (ImageView)findViewById(R.id.ivInicioMapa);
+	   ivInicioMapa.setOnClickListener(ivInicioMapaPres);
 	   
 	    map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapa))
 	        .getMap();
@@ -104,6 +108,17 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 	    
 	    
 	  }
+	  
+	  private OnClickListener ivInicioMapaPres = new OnClickListener() {
+
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setClass(Mapa.this, Principal.class);
+			startActivity(intent);
+			finish();		
+		}
+	};
 	  
 	  private OnClickListener ivAtrasMapaPres = new OnClickListener() {
 		public void onClick(View v) {
@@ -164,9 +179,9 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 			if (!marker.getId().equals("m0")){
 				Intent intent = new Intent();
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				intent.setClass(Mapa.this, MuestraInfo.class);
 				intent.putExtra("datosImagen", datosImagen.get(marker));
 				intent.putExtra("queryFinal", queryFinal);
+				intent.setClass(Mapa.this, MuestraInfo.class);
 				startActivity(intent);
 				finish();
 			}

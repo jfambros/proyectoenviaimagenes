@@ -37,6 +37,7 @@ public class MuestraInfo extends Activity{
 	private TextView tvCategoria;
 	private ImageView ivAtrasMuestraInfo;
 	private ImageView ivInicioMuestraInfo;
+	private ImageView ivBuscaMuestraInfo;
 	private RatingBar rbMuestraInfo;
 	private ImagenParcelable datosImagen = new ImagenParcelable();
 	private String ruta = "http://"+Variables.HOST+"/pags/";
@@ -62,17 +63,33 @@ public class MuestraInfo extends Activity{
 		
 		ivInicioMuestraInfo = (ImageView) findViewById(R.id.ivInicioMuestraInfo);
 		ivInicioMuestraInfo.setOnClickListener(ivInicioMuestraPres);
+		
+		ivBuscaMuestraInfo = (ImageView)findViewById(R.id.ivBuscaMuestraInfo1);
+		ivBuscaMuestraInfo.setOnClickListener(ivBuscaMuestraInfoPres);
 			        
 		rbMuestraInfo = (RatingBar)findViewById(R.id.ratingBarMuestraInfo);
 		rbMuestraInfo.setRating(datosImagen.getCalificacion());
 		//Log.i("nombreImagen ",datosImagen.getNombreImagen()+" "+datosImagen.getNombreCategoria());
 	}
 	
+	private OnClickListener ivBuscaMuestraInfoPres = new OnClickListener() {
+
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.putExtra("queryFinal", bundle.getString("queryFinal"));
+    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    		intent.setClass(MuestraInfo.this, Busca.class);
+    		startActivity(intent);
+    		finish();						
+		}
+	};
+	
 	private OnClickListener ivAtrasMuestraPres = new OnClickListener() {
 
 		public void onClick(View v) {
 			Intent intent = new Intent();
 			intent.putParcelableArrayListExtra("imagenes", obtieneImagenesSW());
+			intent.putExtra("queryFinal", bundle.getString("queryFinal"));
     		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     		intent.setClass(MuestraInfo.this, Mapa.class);
     		startActivity(intent);
