@@ -80,16 +80,6 @@ public class ObtieneFoto extends Activity{
 	
 	  }	    
 	    
-	  @Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-		//preview.getHolder().removeCallback(preview);
-		//preview.camera.stopPreview();
-		//preview.camera.release();
-		//preview.camera = null;
-	}
-	
 	 
 	  private void obtieneCoordenadas(){
 		  milocListener = new MiLocationListener();
@@ -110,10 +100,27 @@ public class ObtieneFoto extends Activity{
 			
 			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
+		    milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
 		    
-
-			    latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+		    if (milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) == null){
+		    	milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
+		    }
+		    else{
+		    	latitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
 			    longitud = milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+		    }
+
+	    	if (milocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) == null){
+	    		Toast.makeText(ObtieneFoto.this, "Se perdió la señal gps,  utilizando la última obtenida", Toast.LENGTH_LONG).show();
+				  latitud = bundle.getDouble("latitud");
+				  longitud = bundle.getDouble("longitud");
+	    	}
+	    	else{
+		    	latitud = milocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
+			    longitud = milocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
+	    	}
+		    	
+			    
 
 		    try {
 		    	Toast.makeText(ObtieneFoto.this, "Guardando imagen", Toast.LENGTH_LONG).show();
@@ -191,6 +198,18 @@ public class ObtieneFoto extends Activity{
 	      }
 	    }
 	  };
+	  
+	    LocationListener locationListenerNetwork = new LocationListener() {
+	        public void onLocationChanged(Location location) {
+	            milocManager.removeUpdates(this);
+	            latitud = location.getLatitude();
+	            longitud = location.getLongitude();
+
+	        }
+	        public void onProviderDisabled(String provider) {}
+	        public void onProviderEnabled(String provider) {}
+	        public void onStatusChanged(String provider, int status, Bundle extras) {}
+	    };
 	  
 	  
 	  public class MiLocationListener implements LocationListener

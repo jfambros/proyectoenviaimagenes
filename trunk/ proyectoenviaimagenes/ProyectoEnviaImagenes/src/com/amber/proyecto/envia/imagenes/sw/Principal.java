@@ -157,8 +157,8 @@ public class Principal extends Activity {
     
     LocationListener locationListenerNetwork = new LocationListener() {
         public void onLocationChanged(Location location) {
-            loc = location;
             locationManager.removeUpdates(this);
+            loc = location;            
             if (loc != null){
             	 mostrar();
             }
@@ -230,7 +230,7 @@ public class Principal extends Activity {
 
 		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
+			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación y Utilizar redes inalámbricas");
 		}
 		
 		ivTomarFoto = (ImageView)findViewById(R.id.ivtomarFoto);

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-xmlns:android="http://schemas.android.com/apk/res/android"
->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget33"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
+    
 
     <LinearLayout
         android:id="@+id/llEncabezado"
@@ -35,7 +32,15 @@ xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>        
     </LinearLayout>
-    
+<ScrollView
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"
+>    
+ <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget33"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >   
     <ImageView android:id="@+id/ivImagen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -153,5 +158,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
  	    android:text="Enviar"
  	    android:layout_below="@+id/vLinea5EnviaImagen"
  	    android:layout_centerHorizontal="true"/>
-</RelativeLayout>
-</ScrollView>
+ 	</RelativeLayout>
+ 	</ScrollView>
+
+</LinearLayout>
