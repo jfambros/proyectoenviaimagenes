@@ -109,24 +109,32 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 	    
 	  }
 	  
+	  private void limpiar(){
+		  ivAtrasMapa = null;
+		  ivInicioMapa = null;
+		  System.gc();
+	  }
+	  
 	  private OnClickListener ivInicioMapaPres = new OnClickListener() {
 
 		public void onClick(View v) {
+			System.gc();
 			Intent intent = new Intent();
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.setClass(Mapa.this, Principal.class);
 			startActivity(intent);
-			finish();		
+			moveTaskToBack(true);
 		}
 	};
 	  
 	  private OnClickListener ivAtrasMapaPres = new OnClickListener() {
 		public void onClick(View v) {
+			System.gc();
 			Intent intent = new Intent();
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.setClass(Mapa.this, Busca.class);
 			startActivity(intent);
-			finish();
+			moveTaskToBack(true);
 		}
 	};
 	  
@@ -134,6 +142,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 		
 		@Override
 		public void onClick(View v) {
+			System.gc();
 			if (satelite == false){
 				btnSatCalles.setText("  Mapa  ");
 				map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
@@ -177,13 +186,14 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 		public void onInfoWindowClick(Marker marker) {
 			//Log.i("Seleccionado ", datosImagen.get(marker).getNombreImagen());
 			if (!marker.getId().equals("m0")){
+				limpiar();
 				Intent intent = new Intent();
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 				intent.putExtra("datosImagen", datosImagen.get(marker));
 				intent.putExtra("queryFinal", queryFinal);
 				intent.setClass(Mapa.this, MuestraInfo.class);
 				startActivity(intent);
-				finish();
+				moveTaskToBack(true);
 			}
 		}
 	};

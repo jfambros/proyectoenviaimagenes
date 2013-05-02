@@ -113,6 +113,9 @@ public class EnviaImagenSW extends Activity{
         BitmapFactory.Options options = new BitmapFactory.Options();
         
         options.inSampleSize = 2;
+	     options.inSampleSize = 2;
+	     options.inPurgeable=true;
+	     options.inTempStorage =new byte[32 * 1024];
         bm = new WeakReference<Bitmap> (BitmapFactory.decodeFile(ruta+nombreImagen, options));
         
         imagen.setImageBitmap(bm.get());
