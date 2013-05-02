@@ -1,6 +1,7 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class MuestraInfo extends Activity{
 	private ImageView ivAtrasMuestraInfo;
 	private ImageView ivInicioMuestraInfo;
 	private ImageView ivBuscaMuestraInfo;
+	private ImageView ivImagen;
 	private RatingBar rbMuestraInfo;
 	private ImagenParcelable datosImagen = new ImagenParcelable();
 	private String ruta = "http://"+Variables.HOST+"/pags/";
@@ -49,9 +51,10 @@ public class MuestraInfo extends Activity{
 		setContentView(R.layout.muestrainfo);
 		bundle = getIntent().getExtras();
 		datosImagen = bundle.getParcelable("datosImagen");
-		new MuestraImagenURL((ImageView)findViewById(R.id.ivImagenMuestraInfo)).execute(ruta+datosImagen.getNombreImagen());
+		ivImagen = (ImageView)findViewById(R.id.ivImagenMuestraInfo);
+		new MuestraImagenURL(ivImagen).execute(ruta+datosImagen.getNombreImagen());
 		//new MuestraImagen((ImageView)findViewById(R.id.ivImagenMuestraInfo)).execute(ruta+datosImagen.getNombreImagen());
-		
+		System.gc();
 		tvCategoria = (TextView)findViewById(R.id.tvCategoriaMuestraInfo);
 		tvCategoria.setText(tvCategoria.getText()+datosImagen.getNombreCategoria());
 		
@@ -75,6 +78,7 @@ public class MuestraInfo extends Activity{
 	private OnClickListener ivBuscaMuestraInfoPres = new OnClickListener() {
 
 		public void onClick(View v) {
+			limpia();
 			Intent intent = new Intent();
 			intent.putExtra("queryFinal", bundle.getString("queryFinal"));
     		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -87,6 +91,7 @@ public class MuestraInfo extends Activity{
 	private OnClickListener ivAtrasMuestraPres = new OnClickListener() {
 
 		public void onClick(View v) {
+			limpia();
 			Intent intent = new Intent();
 			intent.putParcelableArrayListExtra("imagenes", obtieneImagenesSW());
 			intent.putExtra("queryFinal", bundle.getString("queryFinal"));
@@ -100,6 +105,7 @@ public class MuestraInfo extends Activity{
 	private OnClickListener ivInicioMuestraPres = new OnClickListener() {
 
 		public void onClick(View v) {
+			limpia();
 			Intent intent = new Intent();
     		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     		intent.setClass(MuestraInfo.this, Principal.class);
@@ -124,6 +130,11 @@ public class MuestraInfo extends Activity{
 	    }
 	}
 	
+	private void limpia(){
+
+		ivImagen = null;
+		System.gc();		
+	}
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             return false;
@@ -132,19 +143,21 @@ public class MuestraInfo extends Activity{
     }
 	
 	
-	class MuestraImagenURL extends AsyncTask<String, String, Bitmap> {
+	class MuestraImagenURL extends AsyncTask<String, String, WeakReference<Bitmap>> {
 		  private ImageView bmImage;
 
 		  public MuestraImagenURL(ImageView bmImage) {
 		      this.bmImage = bmImage;
 		  }
 
-		  protected Bitmap doInBackground(String... urls) {
+		  protected WeakReference<Bitmap> doInBackground(String... urls) {
 		      String urldisplay = urls[0];
-		      Bitmap mIcon11 = null;
+		      WeakReference<Bitmap> mIcon11 = null;
 		      try {
 				  BitmapFactory.Options options = new BitmapFactory.Options();
 				     options.inSampleSize = 2;
+				     options.inPurgeable=true;
+				     options.inTempStorage =new byte[32 * 1024]; 
 		        InputStream in = new java.net.URL(urldisplay).openStream();
 		        InputStream in2 = new java.net.URL(urldisplay).openStream();
 		        
@@ -167,7 +180,7 @@ public class MuestraInfo extends Activity{
 	 
 	            }
 	            
-	            mIcon11 = BitmapFactory.decodeStream(in2, null, options);
+	            mIcon11 = new WeakReference<Bitmap>(BitmapFactory.decodeStream(in2, null, options));
 		        in.close();
 		        in2.close();
 		      } catch (Exception e) {
@@ -177,9 +190,9 @@ public class MuestraInfo extends Activity{
 		      return mIcon11;
 		  }
 
-		  protected void onPostExecute(Bitmap result) {
+		  protected void onPostExecute(WeakReference<Bitmap> result) {
 			  dismissDialog(0);   
-		      bmImage.setImageBitmap(result);
+		      bmImage.setImageBitmap(result.get());
 		  }
 		  
 		  @Override

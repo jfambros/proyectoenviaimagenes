@@ -96,11 +96,11 @@ public class ObtieneFoto extends Activity{
 			
 		public void onClick(View v) {
 			
-			preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+			
 			
 			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
-		    milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
+		    //milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
 		    
 		    if (milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) == null){
 		    	milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
@@ -111,7 +111,7 @@ public class ObtieneFoto extends Activity{
 		    }
 
 	    	if (milocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) == null){
-	    		Toast.makeText(ObtieneFoto.this, "Se perdió la señal gps,  utilizando la última obtenida", Toast.LENGTH_LONG).show();
+	    		  Toast.makeText(ObtieneFoto.this, "Se perdió la señal gps,  utilizando la última ubicación", Toast.LENGTH_LONG).show();
 				  latitud = bundle.getDouble("latitud");
 				  longitud = bundle.getDouble("longitud");
 	    	}
@@ -121,10 +121,10 @@ public class ObtieneFoto extends Activity{
 	    	}
 		    	
 			    
-
+	    	preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
 		    try {
-		    	Toast.makeText(ObtieneFoto.this, "Guardando imagen", Toast.LENGTH_LONG).show();
-		    	Thread.sleep (3000);
+		    	Toast.makeText(ObtieneFoto.this, "Guardando image...n", Toast.LENGTH_LONG).show();
+		    	Thread.sleep (2000);
 		    	} catch (Exception e) {
 		    	// Mensaje en caso de que falle
 		    	}

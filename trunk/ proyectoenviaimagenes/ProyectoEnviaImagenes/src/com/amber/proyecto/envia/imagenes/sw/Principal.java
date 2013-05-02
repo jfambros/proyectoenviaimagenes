@@ -87,7 +87,7 @@ public class Principal extends Activity {
 		utilizarGPS();
 
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación");
+			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación (mayor precisión) o Utilizar redes inalámbricas (menor precisión)");
 		}
 		else {
 
@@ -191,7 +191,11 @@ public class Principal extends Activity {
 	private OnClickListener ivRegistroPres = new OnClickListener() {
 
 		public void onClick(View v) {
-			
+			Intent intent = new Intent();
+    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    		intent.setClass(getApplicationContext(), RegistroUsuario.class);
+    		startActivity(intent);
+    		finish();
 		}
 	};
 
@@ -230,7 +234,7 @@ public class Principal extends Activity {
 
 		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
 		if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación y Utilizar redes inalámbricas");
+			mensaje("Advertencia", "Debe activar el GPS para utilizar la aplicación (mayor precisión) o Utilizar redes inalámbricas (menor precisión)");
 		}
 		
 		ivTomarFoto = (ImageView)findViewById(R.id.ivtomarFoto);
