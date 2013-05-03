@@ -6,7 +6,7 @@
     
 
     <LinearLayout
-        android:id="@+id/llEncabezadoRegUsuario"
+        android:id="@+id/llEncabezadoNvoContacto"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -15,7 +15,7 @@
         android:background="#ff00c0ff" >
 
         <ImageView
-            android:id="@+id/ivAtrasRegUsuario"
+            android:id="@+id/ivAtrasNvoContacto"
             android:src="@drawable/atras48x48" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -25,28 +25,28 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-        <View android:id="@+id/vLinea1RegUsuario"
+        <View android:id="@+id/vLinea1NvoContacto"
 
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"/>
         
-        <TextView android:text="Captura tus datos para darte de alta en el sistema"
-            android:layout_below="@+id/vLinea1RegUsuario"
+        <TextView android:text="Captura los datos para dar de alta un contacto"
+            android:layout_below="@+id/vLinea1NvoContacto"
             android:id="@+id/tvNotaRegistra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         
-             <View android:id="@+id/vLinea2RegUsuario"
+             <View android:id="@+id/vLinea2NvoContacto"
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"
 		android:layout_below="@+id/tvNotaRegistra"/>   
         <TableLayout
-    android:id="@+id/tableLayoutPrin"
+    android:id="@+id/tLPrinNvoContacto"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/vLinea2RegUsuario"
+    android:layout_below="@+id/vLinea2NvoContacto"
     android:stretchColumns="1" >
  
 		    <TableRow
@@ -56,7 +56,7 @@
 				<TextView  android:text="Nombre: "
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etNombreRegUsuario"
+				<EditText  android:id="@+id/etNombreNvoContacto"
 				    android:layout_width="120px"
 				    android:layout_height="wrap_content"/>
 			</TableRow>
@@ -68,7 +68,7 @@
 				<TextView  android:text="Correo electrónico:  "
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etCorreoRegUsuario"
+				<EditText  android:id="@+id/etCorreoNvoContacto"
 				    android:layout_width="120px"
 				    android:layout_height="wrap_content"
 				    android:inputType="textEmailAddress"
@@ -79,42 +79,30 @@
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 				android:gravity="center">
-				<TextView  android:text="Contraseña:  "
+				<TextView  android:text="Teléfono:  "
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etContraRegUsuario"
+				<EditText  android:id="@+id/etTelefonoNvoContacto"
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
-				    android:password="true"
+				    android:inputType="phone"
 				    android:maxLength="10"/>				
 
 			</TableRow>
-			<TableRow
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-				android:gravity="center">
-				<TextView  android:text="Repita contraseña:  "
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etRepContraRegUsuario"
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:password="true"
-				    android:maxLength="10"/>				
-
-			</TableRow>
+			
+	
 		</TableLayout>
-		<View android:id="@+id/vLinea3RegUsuario"
+		<View android:id="@+id/vLinea3NvoContacto"
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"
-		android:layout_below="@+id/tableLayoutPrin"/>   
+		android:layout_below="@+id/tLPrinNvoContacto"/>   
 		
-		<Button android:id="@+id/btnNuevoUsuario"
+		<Button android:id="@+id/btnNuevoContacto"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:text="Registrar"
-		    android:layout_below="@+id/vLinea3RegUsuario"
+		    android:text="Registrar contacto"
+		    android:layout_below="@+id/vLinea3NvoUsuario"
 		    android:layout_centerInParent="true"/>
         
    </RelativeLayout>

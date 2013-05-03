@@ -6,7 +6,7 @@
     
 
     <LinearLayout
-        android:id="@+id/llEncabezadoRegUsuario"
+        android:id="@+id/llEncabezadoIniciaSesion"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -15,7 +15,7 @@
         android:background="#ff00c0ff" >
 
         <ImageView
-            android:id="@+id/ivAtrasRegUsuario"
+            android:id="@+id/ivAtrasInicioSesion"
             android:src="@drawable/atras48x48" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -25,38 +25,47 @@
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-        <View android:id="@+id/vLinea1RegUsuario"
+        <View android:id="@+id/vLinea1InicioSesion"
 
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"/>
+        <ImageView 
+            android:id="@+id/ivLogoInicioSesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/iniciosesion64x64"
+            android:layout_below="@+id/vLinea1InicioSesion"
+            android:layout_centerInParent="true"/>
         
-        <TextView android:text="Captura tus datos para darte de alta en el sistema"
-            android:layout_below="@+id/vLinea1RegUsuario"
-            android:id="@+id/tvNotaRegistra"
+        <TextView android:text="Captura tus datos para iniciar sesión"
+            android:layout_below="@+id/ivLogoInicioSesion"
+            android:id="@+id/tvNotaInicioSesion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         
-             <View android:id="@+id/vLinea2RegUsuario"
+
+        
+             <View android:id="@+id/vLinea2InicioSesion"
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"
-		android:layout_below="@+id/tvNotaRegistra"/>   
+		android:layout_below="@+id/tvNotaInicioSesion"/>   
         <TableLayout
-    android:id="@+id/tableLayoutPrin"
+    android:id="@+id/tableLayoutPrinInicioSesion"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/vLinea2RegUsuario"
+    android:layout_below="@+id/vLinea2InicioSesion"
     android:stretchColumns="1" >
  
 		    <TableRow
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 				android:gravity="center">
-				<TextView  android:text="Nombre: "
+				<TextView  android:text="Correo electrónico: "
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etNombreRegUsuario"
+				<EditText  android:id="@+id/etCorreoEInicioSesion"
 				    android:layout_width="120px"
 				    android:layout_height="wrap_content"/>
 			</TableRow>
@@ -65,56 +74,29 @@
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 				android:gravity="center">
-				<TextView  android:text="Correo electrónico:  "
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etCorreoRegUsuario"
-				    android:layout_width="120px"
-				    android:layout_height="wrap_content"
-				    android:inputType="textEmailAddress"
-				    />				
-
-			</TableRow>
-				<TableRow
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-				android:gravity="center">
 				<TextView  android:text="Contraseña:  "
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etContraRegUsuario"
-				    android:layout_width="fill_parent"
+				<EditText  android:id="@+id/etContraInicioSesion"
+				    android:layout_width="120px"
 				    android:layout_height="wrap_content"
-				    android:password="true"
-				    android:maxLength="10"/>				
+				    android:inputType="textPassword"
+				    />				
 
 			</TableRow>
-			<TableRow
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-				android:gravity="center">
-				<TextView  android:text="Repita contraseña:  "
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
-				<EditText  android:id="@+id/etRepContraRegUsuario"
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:password="true"
-				    android:maxLength="10"/>				
-
-			</TableRow>
+				
 		</TableLayout>
-		<View android:id="@+id/vLinea3RegUsuario"
+		<View android:id="@+id/vLinea3InicioSesion"
         android:layout_width="fill_parent"
 		android:layout_height="10dip"
 		android:background="#FFFFFF"
-		android:layout_below="@+id/tableLayoutPrin"/>   
+		android:layout_below="@+id/tableLayoutPrinInicioSesion"/>   
 		
-		<Button android:id="@+id/btnNuevoUsuario"
+		<Button android:id="@+id/btnIniciarSesion"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
 		    android:text="Registrar"
-		    android:layout_below="@+id/vLinea3RegUsuario"
+		    android:layout_below="@+id/vLinea3InicioSesion"
 		    android:layout_centerInParent="true"/>
         
    </RelativeLayout>

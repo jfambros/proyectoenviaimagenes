@@ -1,6 +1,8 @@
 package com.amber.proyecto.envia.imagenes.sw;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -9,9 +11,14 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
+import com.amber.proyecto.envia.imagenes.sw.utils.Cifrado;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,9 +33,7 @@ public class RegistroUsuario extends Activity{
 	private EditText etContra;
 	private EditText etRepContra;
 	private Button btnRegistrar;
-	private String HOST = Variables.HOST;
-	private String URL = "http://"+HOST+"/pags/servicios.php";
-	private SoapObject request;
+
 	
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +53,24 @@ public class RegistroUsuario extends Activity{
 		
 		public void onClick(View arg0) {
 			if (valida() == true){
-				enviaImagen();
+				if (validateEmailAddress(etCorreoE.getText().toString()) != false){
+					validaUsuario();
+					mensaje("Mensaje", "¿Qué deseas realizar?");
+				}
+				else{
+					Toast.makeText(RegistroUsuario.this, "Captura una dirección de correo válida", Toast.LENGTH_LONG).show();
+				}
 			}
 		}
 	};
 	
+	private boolean validateEmailAddress(String emailAddress){
+	    String  expression="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";  
+	       CharSequence inputStr = emailAddress;  
+	       Pattern pattern = Pattern.compile(expression,Pattern.CASE_INSENSITIVE);  
+	       Matcher matcher = pattern.matcher(inputStr);  
+	       return matcher.matches();
+	}
 	private boolean valida(){
 		if (!etContra.getText().toString().equals(etRepContra.getText().toString())){
 			Toast.makeText(RegistroUsuario.this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show();
@@ -69,8 +87,9 @@ public class RegistroUsuario extends Activity{
 	
 	
 	
-	private void enviaImagen(){
-
+	private void validaUsuario(){
+		String URL = "http://"+Variables.HOST+"/pags/servicios.php";
+		SoapObject request;
 		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#nuevoUsuario"; 
 		String METHOD_NAME = "nuevoUsuario";
 		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
@@ -80,7 +99,7 @@ public class RegistroUsuario extends Activity{
 					request = new SoapObject(NAMESPACE, METHOD_NAME); 
 					request.addProperty("correoUsuario", etCorreoE.getText().toString());
 					request.addProperty("nombreUsuario", etNombre.getText().toString());
-					request.addProperty("contraUsuario", etContra.getText().toString());
+					request.addProperty("contraUsuario", Cifrado.getStringMessageDigest(etContra.getText().toString(),Cifrado.SHA256));
 				    
 					SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 					
@@ -113,4 +132,35 @@ public class RegistroUsuario extends Activity{
 		
 	}
 
+	
+	private void mensaje(String titulo, String msj){
+        new AlertDialog.Builder(RegistroUsuario.this)
+        .setTitle(titulo)
+        .setMessage(msj)
+        .setCancelable(false)
+        .setPositiveButton("Ingresar contactos", new DialogInterface.OnClickListener() {
+        	public void onClick(DialogInterface dialog, int whichButton) {
+        		Intent intent = new Intent();
+        		intent.putExtra("correoUsuario", etCorreoE.getText().toString());
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        		intent.setClass(RegistroUsuario.this, AgregarContacto.class);
+        		startActivity(intent);
+        		finish();
+        	}
+        })
+        .setNeutralButton("Ir a inicio", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+        		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        		intent.setClass(RegistroUsuario.this, Principal.class);
+        		startActivity(intent);
+        		finish();
+			}
+		})
+		
+        .show();   
+	}
+	
 }
+
+
