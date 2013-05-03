@@ -33,7 +33,6 @@ public class ObtieneFoto extends Activity{
 	private ManejoFoto preview;
 	private FrameLayout frameLayout;
 	private LocationManager milocManager;
-	private LocationListener milocListener;
 	private String nombreImagen = "FT"+System.currentTimeMillis(); ;
 	private double latitud;
 	private double longitud;
@@ -81,27 +80,77 @@ public class ObtieneFoto extends Activity{
 	  }	    
 	    
 	 
-	  private void obtieneCoordenadas(){
-		  milocListener = new MiLocationListener();
-		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);		  
-	  }
-
 	  private void cierraCam(){
 			preview.getHolder().removeCallback(preview);
 			preview.camera.stopPreview();
 			//preview.camera.release();
 			preview.camera = null;  
 	  }
+	  
+	  
+	  private LocationListener milocListener = new LocationListener() {
+
+			public void onStatusChanged(String provider, int status, Bundle extras) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void onProviderEnabled(String provider) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void onProviderDisabled(String provider) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void onLocationChanged(Location location) {
+				  //String coordenadas = "Mis coordenadas son: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
+				  coordenadas = location;
+				  if (coordenadas == null){
+					  //latitud = bundle.getDouble("latitud");
+					  //longitud = bundle.getDouble("longitud");
+				  }
+				
+			}
+		};
+	  
 	  private OnClickListener framePres = new OnClickListener() {
 			
 		public void onClick(View v) {
-			
-			
-			
-			milocListener = new MiLocationListener();
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);
 		    //milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
+		    if (coordenadas != null){
+		    	preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+		    	Toast.makeText(ObtieneFoto.this, "Guardando imagen...", Toast.LENGTH_LONG).show();
+			    try {
+			    	Thread.sleep (2000);
+			    	} catch (Exception e) {
+			    	// Mensaje en caso de que falle
+			    	}
+			    finally{
+			    	
+					  //abrimos la actividad que env�a la imagen
+			    	  cierraCam();
+					  Intent intent = new Intent();
+					  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
+					  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					  intent.putExtra("ruta", ruta);
+					  intent.putExtra("nombreImagen", nombreImagen+Variables.tipoArchivo);
+					  intent.putExtra("latitud", coordenadas.getLatitude());
+					  intent.putExtra("longitud", coordenadas.getLongitude());
+					  //Log.i("coor;:", locCoordenadas.toString()+":");
+					  
+					  startActivity(intent);
+			    }
+		    }
+		    else{
+		    	Toast.makeText(getApplicationContext(), "Se perdió la conexión GPS,  intente nuevamente",Toast.LENGTH_LONG).show();
+		    }
+		    	
 		    
+		    /*
 		    if (milocManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) == null){
 		    	milocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);
 		    }
@@ -119,30 +168,9 @@ public class ObtieneFoto extends Activity{
 		    	latitud = milocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLatitude();
 			    longitud = milocManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER).getLongitude();
 	    	}
-		    	
+		    	*/
 			    
-	    	preview.camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-		    try {
-		    	Toast.makeText(ObtieneFoto.this, "Guardando image...n", Toast.LENGTH_LONG).show();
-		    	Thread.sleep (2000);
-		    	} catch (Exception e) {
-		    	// Mensaje en caso de que falle
-		    	}
-		    finally{
-		    	
-				  //abrimos la actividad que env�a la imagen
-		    	cierraCam();
-				  Intent intent = new Intent();
-				  intent.setClass(ObtieneFoto.this, EnviaImagenSW.class);
-				  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				  intent.putExtra("ruta", ruta);
-				  intent.putExtra("nombreImagen", nombreImagen+Variables.tipoArchivo);
-				  intent.putExtra("latitud", latitud);
-				  intent.putExtra("longitud", longitud);
-				  //Log.i("coor;:", locCoordenadas.toString()+":");
-				  
-				  startActivity(intent);
-		    }
+	    	
 		}
 	  };
 	  // Called when shutter is opened
@@ -218,14 +246,7 @@ public class ObtieneFoto extends Activity{
 		  public void onLocationChanged(Location loc)
 		  {
 		
-			  loc.getLatitude();
-			  loc.getLongitude();
-			  //String coordenadas = "Mis coordenadas son: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
-			  coordenadas = loc;
-			  if (coordenadas == null){
-				  latitud = bundle.getDouble("latitud");
-				  longitud = bundle.getDouble("longitud");
-			  }
+			  
 			  //Toast.makeText( getApplicationContext(),"latitud: "+latitud+" long: "+longitud,Toast.LENGTH_LONG).show();
 
 		  }
