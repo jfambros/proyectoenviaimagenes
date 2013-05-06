@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+        <LinearLayout
+        android:id="@+id/llEncabezaSeleccionaCont"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" 
+        android:background="#ff00c0ff">
+
+        <ImageView
+            android:id="@+id/ivAtrasSeleccionaCont"
+            android:src="@drawable/atras48x48" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+   
+    <TextView android:id="@+id/tvBuscaSeleccionaCont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llEncabezaSeleccionaCont"
+        android:text="Selecciona el(los) correo(s) para envíar tu imagen y comentario"/>
+        
+        <View android:id="@+id/vLinea1SeleccionaCont"
+        android:layout_below="@id/tvBuscaSeleccionaCont" 
+        android:layout_width="fill_parent"
+		android:layout_height="10dip"		
+		android:background="#FFFFFF"/>
+        
+	     <ListView
+	         android:id="@+id/lvOpcionesSeleccionaCont"
+	         android:layout_width="fill_parent"
+	         android:layout_height="fill_parent"
+	         android:layout_above="@+id/llPieSeleccionaCont"
+	         android:layout_below="@+id/vLinea1SeleccionaCont"
+	         android:choiceMode="multipleChoice" />
+   
+             <LinearLayout
+        android:id="@+id/llPieSeleccionaCont"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" 
+        android:background="#ff00c0ff">
+
+
+    <ImageView android:id="@+id/ivBuscaSeleccionaCont" 
+        android:src="@drawable/busca148x48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        />
+    </LinearLayout>
+</RelativeLayout>
