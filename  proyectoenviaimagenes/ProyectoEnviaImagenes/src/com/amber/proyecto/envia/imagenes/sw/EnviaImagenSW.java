@@ -113,7 +113,6 @@ public class EnviaImagenSW extends Activity{
         BitmapFactory.Options options = new BitmapFactory.Options();
         
         options.inSampleSize = 2;
-	     options.inSampleSize = 2;
 	     options.inPurgeable=true;
 	     options.inTempStorage =new byte[32 * 1024];
         bm = new WeakReference<Bitmap> (BitmapFactory.decodeFile(ruta+nombreImagen, options));
@@ -182,6 +181,7 @@ public class EnviaImagenSW extends Activity{
 		
 		@Override
 		public void onClick(View v) {
+			//TODO revisar flags
 			Intent intent = new Intent();
 			intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
 			startActivity(intent);
@@ -207,14 +207,16 @@ public class EnviaImagenSW extends Activity{
 			obtieneCalificacion();
 			if (Conexiones.conexionInternet(EnviaImagenSW.this) == true && Conexiones.respondeServidor(URL) == true){
 				enviaImagen();
+				mensajeInter("Aviso", "¿Qué deseas realizar?");
 			}
 			else{
 				Toast.makeText(EnviaImagenSW.this, "No hay conexión a internet, la imagen se guardará en el dispositivo", Toast.LENGTH_LONG).show();
 				bd.insertaImagen(nombreImagen, latitud, longitud, idCat, etComentario.getText().toString()+" ",califica);
 				bd.close();
 				Toast.makeText(EnviaImagenSW.this, "Imagen guardada en el dispositivo!", Toast.LENGTH_LONG).show();
+				mensajeSinInter("Aviso", "¿Qué deseas realizar?");
 			}
-			mensaje("Aviso", "¿Qué deseas realizar?");
+
 		}
 	};
 	private int obtieneCalificacion(){
@@ -440,7 +442,48 @@ public class EnviaImagenSW extends Activity{
 	}
 
 	
-	private void mensaje(String titulo, String msj){
+	private void mensajeInter(String titulo, String msj){
+        new AlertDialog.Builder(EnviaImagenSW.this)
+        .setTitle(titulo)
+        .setMessage(msj)
+        .setCancelable(false)
+        .setPositiveButton("Tomar otra foto", new DialogInterface.OnClickListener() {
+        	public void onClick(DialogInterface dialog, int whichButton) {
+    			liberaBM();
+        		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        		intent.setClass(EnviaImagenSW.this, ObtieneFoto.class);
+        		startActivity(intent);
+        		finish();
+        	}
+        })
+        .setNegativeButton("Enviar a contacto", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				liberaBM();
+        		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        		intent.putExtra("origen", Variables.ENVIAIMAGEN);
+        		intent.setClass(EnviaImagenSW.this, InicioSesion.class);
+        		startActivity(intent);
+        		finish();
+			}
+		})
+       .setNeutralButton("Ir a inicio", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				liberaBM();
+        		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        		intent.setClass(EnviaImagenSW.this, Principal.class);
+        		startActivity(intent);
+        		finish();
+			}
+		})
+		
+        .show();   
+	}
+	
+	private void mensajeSinInter(String titulo, String msj){
         new AlertDialog.Builder(EnviaImagenSW.this)
         .setTitle(titulo)
         .setMessage(msj)

@@ -76,7 +76,7 @@ public class ObtieneFoto extends Activity{
 		    frameLayout.setOnClickListener(framePres);
 		    
 		    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-	
+		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);	
 	  }	    
 	    
 	 

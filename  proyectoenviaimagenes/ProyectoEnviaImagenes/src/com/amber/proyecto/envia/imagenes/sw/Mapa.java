@@ -123,7 +123,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.setClass(Mapa.this, Principal.class);
 			startActivity(intent);
-			moveTaskToBack(true);
+
 		}
 	};
 	  
@@ -134,7 +134,7 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			intent.setClass(Mapa.this, Busca.class);
 			startActivity(intent);
-			moveTaskToBack(true);
+
 		}
 	};
 	  
@@ -193,7 +193,6 @@ public class Mapa extends android.support.v4.app.FragmentActivity implements Loc
 				intent.putExtra("queryFinal", queryFinal);
 				intent.setClass(Mapa.this, MuestraInfo.class);
 				startActivity(intent);
-				moveTaskToBack(true);
 			}
 		}
 	};

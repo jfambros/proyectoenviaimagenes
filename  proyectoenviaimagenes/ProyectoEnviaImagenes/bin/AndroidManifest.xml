@@ -56,7 +56,9 @@
 		<activity android:name="com.amber.proyecto.envia.imagenes.sw.AgregarContacto"
             android:label="Agregar contacto" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>
 		<activity android:name="com.amber.proyecto.envia.imagenes.sw.InicioSesion"
-            android:label="Iniciar sesión" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>		          
+            android:label="Iniciar sesión" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>
+		<activity android:name="com.amber.proyecto.envia.imagenes.sw.usuario.PrincipalUsuario"
+            android:label="Usuario" android:screenOrientation="portrait" android:launchMode="singleTask"></activity>		          				          
           <!-- 
             
 		<meta-data

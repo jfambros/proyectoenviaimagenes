@@ -52,6 +52,7 @@ public class Principal extends Activity {
 	private ImageView ivEnviaImagenes;
 	private ImageView ivBuscaMapa;
 	private ImageView ivRegistro;
+	private ImageView ivInicioSesion;
 	private SoapObject request;
 	private String HOST = Variables.HOST;
 	private String URL = "http://"+HOST+"/pags/servicios.php";
@@ -79,6 +80,9 @@ public class Principal extends Activity {
 		
 		ivRegistro = (ImageView)findViewById(R.id.ivRegistrar);
 		ivRegistro.setOnClickListener(ivRegistroPres);
+		
+		ivInicioSesion = (ImageView)findViewById(R.id.ivInicioSesion);
+		ivInicioSesion.setOnClickListener(ivInicioSesionPres);
 		
 		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
 		
@@ -177,9 +181,20 @@ public class Principal extends Activity {
         return super.onKeyDown(keyCode, event);
     }
     
-    private OnClickListener ivBuscaMapaPres = new OnClickListener() {
+    private OnClickListener ivInicioSesionPres = new OnClickListener() {
 		
-		@Override
+
+		public void onClick(View v) {
+			Intent intent = new Intent();
+    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    		intent.putExtra("origen", Variables.INICIO);
+    		intent.setClass(Principal.this, InicioSesion.class);
+    		startActivity(intent);
+    		finish();
+		}
+	};
+    private OnClickListener ivBuscaMapaPres = new OnClickListener() {
+
 		public void onClick(View v) {
 			Intent intent = new Intent();
 			intent.setClass(Principal.this, Busca.class);
@@ -211,8 +226,7 @@ public class Principal extends Activity {
 	};
 	
 	private OnClickListener ivEnviaImagenesPres = new OnClickListener() {
-		
-		@Override
+
 		public void onClick(View v) {
 			if (verificaCantidad() == 0){
 				Toast.makeText(Principal.this,"No hay imagenes en la base de datos", Toast.LENGTH_LONG).show();
@@ -220,7 +234,7 @@ public class Principal extends Activity {
 			verificaInternetBD();
 		}
 	};
-	@Override
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.principal, menu);
@@ -244,7 +258,7 @@ public class Principal extends Activity {
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0, 0, locationListenerNetwork);
 	
 	}
-	@Override
+
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
