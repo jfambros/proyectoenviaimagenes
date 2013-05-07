@@ -25,7 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/llEncabezaSeleccionaCont"
-        android:text="Selecciona el(los) correo(s) para envíar tu imagen y comentario"/>
+        android:text="Selecciona el(los) correo(s) para envíar la imagen y comentario"
+        android:textSize="16dp"/>
         
         <View android:id="@+id/vLinea1SeleccionaCont"
         android:layout_below="@id/tvBuscaSeleccionaCont" 
@@ -50,8 +51,8 @@
         android:background="#ff00c0ff">
 
 
-    <ImageView android:id="@+id/ivBuscaSeleccionaCont" 
-        android:src="@drawable/busca148x48"
+    <ImageView android:id="@+id/ivEnviaCoSeleccionaCont" 
+        android:src="@drawable/enviacorreo48x48"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

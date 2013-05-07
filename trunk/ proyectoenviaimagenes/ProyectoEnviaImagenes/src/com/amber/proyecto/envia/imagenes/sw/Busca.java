@@ -86,7 +86,6 @@ public class Busca extends Activity{
 	
 	private OnItemClickListener listaPres = new OnItemClickListener() {
 
-		@Override
 		public void onItemClick(AdapterView<?> arg0, View arg1, int posi,	long arg3) {
 			String opcion = Integer.toString(categorias.get(posi).getIdCategoria());
 			Log.i("número ",":"+posi);
