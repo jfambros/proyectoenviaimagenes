@@ -376,10 +376,8 @@ public class EnviaImagenSW extends Activity{
 					Toast.makeText(EnviaImagenSW.this, "Imagen enviada", Toast.LENGTH_LONG).show();
 		    } 
 	    catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -457,24 +455,25 @@ public class EnviaImagenSW extends Activity{
         		finish();
         	}
         })
-        .setNegativeButton("Enviar a contacto", new DialogInterface.OnClickListener() {
-
-			public void onClick(DialogInterface dialog, int which) {
-				liberaBM();
-        		Intent intent = new Intent();
-        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        		intent.putExtra("origen", Variables.ENVIAIMAGEN);
-        		intent.setClass(EnviaImagenSW.this, InicioSesion.class);
-        		startActivity(intent);
-        		finish();
-			}
-		})
        .setNeutralButton("Ir a inicio", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				liberaBM();
         		Intent intent = new Intent();
         		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         		intent.setClass(EnviaImagenSW.this, Principal.class);
+        		startActivity(intent);
+        		finish();
+			}
+		})
+		.setNegativeButton("Enviar a contacto", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface dialog, int which) {
+				liberaBM();
+        		Intent intent = new Intent();
+        		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        		intent.putExtra("origen", Variables.ENVIAIMAGEN);
+        		intent.putExtra("nombreImagen", nombreImagen);
+        		intent.setClass(EnviaImagenSW.this, InicioSesion.class);
         		startActivity(intent);
         		finish();
 			}

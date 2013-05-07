@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.usuario.PrincipalUsuario;
+import com.amber.proyecto.envia.imagenes.sw.usuario.SeleccionaContactos;
 import com.amber.proyecto.envia.imagenes.sw.utils.Cifrado;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -75,7 +76,8 @@ public class InicioSesion extends Activity{
 		    		intent.putExtra("nombreUsuario", nombreUsuario);
 		    		intent.putExtra("correoUsuario", correoUsuario);
 		    		if (bundle.getInt("origen") == Variables.ENVIAIMAGEN){
-		    			intent.setClass(InicioSesion.this, PrincipalUsuario.class);
+		    			intent.putExtra("nombreImagen", bundle.getString("nombreImagen"));
+		    			intent.setClass(InicioSesion.this, SeleccionaContactos.class);
 		    		}
 		    		else{
 		    			intent.setClass(InicioSesion.this, PrincipalUsuario.class);
@@ -118,8 +120,8 @@ public class InicioSesion extends Activity{
 					aht.call(SOAP_ACTION, envelope);
 					
 					SoapObject result =  (SoapObject) envelope.getResponse();
-	                correoUsuario = ((SoapPrimitive)result.getProperty(0)).toString();
-	                nombreUsuario = ((SoapPrimitive)result.getProperty(1)).toString();
+	                nombreUsuario = ((SoapPrimitive)result.getProperty(0)).toString();
+	                correoUsuario = ((SoapPrimitive)result.getProperty(1)).toString();
 	                
 	                if (correoUsuario.equals("null")){
 	                	return false;

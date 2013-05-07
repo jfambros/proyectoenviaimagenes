@@ -19,12 +19,14 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW;
+import com.amber.proyecto.envia.imagenes.sw.InicioSesion;
 import com.amber.proyecto.envia.imagenes.sw.Principal;
 import com.amber.proyecto.envia.imagenes.sw.R;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
@@ -52,6 +54,12 @@ public class ObtieneFoto extends Activity{
 		this.locCoordenadas = locCoordenadas;
 	}
 
+	   public boolean onKeyDown(int keyCode, KeyEvent event) {
+	        if (keyCode == KeyEvent.KEYCODE_BACK) {
+	            return false;
+	        }
+	        return super.onKeyDown(keyCode, event);
+	    }
 
 	/** Called when the activity is first created. */
 	  @Override
