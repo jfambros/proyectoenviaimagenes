@@ -124,15 +124,11 @@ public class SeleccionaContactos extends Activity{
 	        
 	        envelope.setOutputSoapObject(request);
 	        httpt.call(SOAP_ACTION, envelope);
+	        /*
 	        SoapObject result =  (SoapObject) envelope.bodyIn;
             SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
             Log.i("correo", spResul.toString());
-	        //SoapObject result2 =  (SoapObject) envelope.getResponse();
-	        
-	        
-	        
-
-            
+            */
         }
         	catch(Exception err){
         		Log.e("Error en enviar correo", err.toString());
@@ -177,6 +173,11 @@ public class SeleccionaContactos extends Activity{
 					enviaCorreo(correos.get(i));
 				}
 				Toast.makeText(SeleccionaContactos.this, "Correos enviados", Toast.LENGTH_LONG).show();
+				Intent intent = new Intent();
+	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				intent.setClass(SeleccionaContactos.this, PrincipalUsuario.class);
+				startActivity(intent);
+				finish();				
 			}
 		}
 	};
@@ -186,7 +187,7 @@ public class SeleccionaContactos extends Activity{
 		public void onClick(View v) {
 			Intent intent = new Intent();
     		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			intent.setClass(SeleccionaContactos.this, Principal.class);
+			intent.setClass(SeleccionaContactos.this, PrincipalUsuario.class);
 			startActivity(intent);
 			finish();			
 		}

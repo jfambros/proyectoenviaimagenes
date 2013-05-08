@@ -146,7 +146,6 @@ public class EnviaImagenSW extends Activity{
     
     @Override
     protected void onDestroy() {
-    	// TODO Auto-generated method stub
     	super.onDestroy();
     	//liberaBM();
     	System.gc();
@@ -414,7 +413,6 @@ public class EnviaImagenSW extends Activity{
 	    try {
 	        jsonObject = new JSONObject(stringBuilder.toString());
 	    } catch (JSONException e) {
-	        // TODO Auto-generated catch block
 	        e.printStackTrace();
 	    }
 
@@ -432,7 +430,6 @@ public class EnviaImagenSW extends Activity{
 			String country = addresses.get(0).getAddressLine(2);
 			Toast.makeText(this, "Geocoder:"+address+" "+city+" "+country, Toast.LENGTH_LONG).show();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -527,7 +524,6 @@ public class EnviaImagenSW extends Activity{
 		  } catch (FileNotFoundException e) {
 		    // Error: File not found
 		  } catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}

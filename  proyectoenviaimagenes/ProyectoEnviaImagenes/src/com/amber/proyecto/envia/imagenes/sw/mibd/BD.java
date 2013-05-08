@@ -58,7 +58,6 @@ public class BD extends SQLiteOpenHelper{
 
 	public BD(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
-		// TODO Auto-generated constructor stub
 	}
 	public BD(Context context){
 		super(context, nombreBD, null,1);
@@ -76,7 +75,6 @@ public class BD extends SQLiteOpenHelper{
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 		
 	}
 	

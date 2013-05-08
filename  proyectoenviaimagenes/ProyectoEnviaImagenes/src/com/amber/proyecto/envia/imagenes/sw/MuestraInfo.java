@@ -46,7 +46,7 @@ public class MuestraInfo extends Activity{
     private String URL = "http://"+Variables.HOST+"/pags/servicios.php";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.muestrainfo);
 		bundle = getIntent().getExtras();
@@ -197,7 +197,7 @@ public class MuestraInfo extends Activity{
 		  
 		  @Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
+
 			super.onPreExecute();
 			showDialog(0);
 	
@@ -205,7 +205,6 @@ public class MuestraInfo extends Activity{
 		  
 		  @Override
 		protected void onProgressUpdate(String... values) {
-			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 			
 			pDialog.setProgress(Integer.parseInt(values[0]));			

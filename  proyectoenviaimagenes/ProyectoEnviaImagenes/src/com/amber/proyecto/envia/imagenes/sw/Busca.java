@@ -41,7 +41,6 @@ public class Busca extends Activity{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.busca);
 		ivBusca = (ImageView)findViewById(R.id.ivBusca);

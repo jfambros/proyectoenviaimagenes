@@ -40,7 +40,7 @@ public class MuestraImagen extends AsyncTask<String, Void, Bitmap> {
 	  
 	  @Override
 	protected void onPreExecute() {
-		// TODO Auto-generated method stub
+
 		super.onPreExecute();
 		
 	}
