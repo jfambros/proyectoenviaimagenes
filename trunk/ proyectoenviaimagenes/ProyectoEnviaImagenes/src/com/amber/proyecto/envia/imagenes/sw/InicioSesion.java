@@ -132,11 +132,11 @@ public class InicioSesion extends Activity{
 
 		    } 
 	    catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 			return false;
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 			return false;
 		}

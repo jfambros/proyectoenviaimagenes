@@ -37,7 +37,6 @@ public class RegistroUsuario extends Activity{
 	
 
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.registrausuario);
 		
@@ -119,10 +118,8 @@ public class RegistroUsuario extends Activity{
 					Toast.makeText(RegistroUsuario.this, "Registro", Toast.LENGTH_LONG).show();
 		    } 
 	    catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

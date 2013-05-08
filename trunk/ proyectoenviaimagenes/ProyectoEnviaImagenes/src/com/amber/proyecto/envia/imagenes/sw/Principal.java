@@ -243,7 +243,6 @@ public class Principal extends Activity {
 	
 	@Override
 	protected void onRestart() {
-		// TODO Auto-generated method stub
 		super.onRestart();
 
 		tvEnviaImagenes.setText("Enviar imagen ("+verificaCantidad()+")");
@@ -260,7 +259,6 @@ public class Principal extends Activity {
 	}
 
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		
 	}
@@ -352,11 +350,9 @@ public class Principal extends Activity {
 			}
 		}
 	    catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -382,7 +378,6 @@ public class Principal extends Activity {
 		  } catch (FileNotFoundException e) {
 		    // Error: File not found
 		  } catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}

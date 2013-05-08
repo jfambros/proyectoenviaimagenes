@@ -99,17 +99,17 @@ public class ObtieneFoto extends Activity{
 	  private LocationListener milocListener = new LocationListener() {
 
 			public void onStatusChanged(String provider, int status, Bundle extras) {
-				// TODO Auto-generated method stub
+
 				
 			}
 
 			public void onProviderEnabled(String provider) {
-				// TODO Auto-generated method stub
+
 				
 			}
 
 			public void onProviderDisabled(String provider) {
-				// TODO Auto-generated method stub
+
 				
 			}
 
@@ -216,10 +216,8 @@ public class ObtieneFoto extends Activity{
 	    	  }
 
 	      } catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			data = null;
