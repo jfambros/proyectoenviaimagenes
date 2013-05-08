@@ -105,10 +105,10 @@ public class AgregarContacto extends Activity{
 					Toast.makeText(AgregarContacto.this, "Contacto registrado", Toast.LENGTH_LONG).show();
 		    } 
 	    catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} catch (XmlPullParserException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		

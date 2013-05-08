@@ -67,7 +67,8 @@
 				    android:layout_height="wrap_content"/>
 				<EditText  android:id="@+id/etCorreoEInicioSesion"
 				    android:layout_width="120px"
-				    android:layout_height="wrap_content"/>
+				    android:layout_height="wrap_content"
+				    android:text="yo@yo.yo"/>
 			</TableRow>
 			
 		    <TableRow
@@ -81,6 +82,7 @@
 				    android:layout_width="120px"
 				    android:layout_height="wrap_content"
 				    android:inputType="textPassword"
+				    android:text="qwe"
 				    />				
 
 			</TableRow>

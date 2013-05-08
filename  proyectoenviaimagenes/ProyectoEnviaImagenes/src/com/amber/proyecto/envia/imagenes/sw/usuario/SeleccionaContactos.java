@@ -10,7 +10,6 @@ import org.ksoap2.transport.HttpTransportSE;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,10 +21,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.amber.proyecto.envia.imagenes.sw.Busca;
 import com.amber.proyecto.envia.imagenes.sw.Principal;
 import com.amber.proyecto.envia.imagenes.sw.R;
-import com.amber.proyecto.envia.imagenes.sw.utils.Categoria;
 import com.amber.proyecto.envia.imagenes.sw.utils.Contacto;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
 
@@ -105,8 +102,41 @@ public class SeleccionaContactos extends Activity{
         return contactos;
 	}
 	
-	private void enviaCorreo(){
+	private void enviaCorreo(String correoContacto){
+	    String URL = "http://"+Variables.HOST+"/pags/servicios.php";
+		String SOAP_ACTION="capeconnect:servicios:serviciosPortType#enviaCorreo"; 
+		String METHOD_NAME = "enviaCorreo";
+		String NAMESPACE = "http://www.your-company.com/servicios.wsdl";
 		
+		SoapSerializationEnvelope envelope;
+        HttpTransportSE httpt;
+        
+        try{
+            SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+               
+	        httpt = new HttpTransportSE(URL);
+	        envelope = new SoapSerializationEnvelope( SoapEnvelope.VER11 );
+	        envelope.dotNet = false;
+	        request.addProperty("nombreImagen", bundle.getString("nombreImagen"));
+	        request.addProperty("correoContacto", correoContacto);
+	        request.addProperty("correoUsuario", bundle.getString("correoUsuario"));
+	        request.addProperty("host", Variables.HOST);
+	        
+	        envelope.setOutputSoapObject(request);
+	        httpt.call(SOAP_ACTION, envelope);
+	        SoapObject result =  (SoapObject) envelope.bodyIn;
+            SoapPrimitive spResul = (SoapPrimitive) result.getProperty("result");
+            Log.i("correo", spResul.toString());
+	        //SoapObject result2 =  (SoapObject) envelope.getResponse();
+	        
+	        
+	        
+
+            
+        }
+        	catch(Exception err){
+        		Log.e("Error en enviar correo", err.toString());
+        	}	
 	}
 	
 	private void llenaLista(){
@@ -143,9 +173,10 @@ public class SeleccionaContactos extends Activity{
 			if (correos.size() == 0){
 				Toast.makeText(SeleccionaContactos.this, "Selecciona al menos un contacto", Toast.LENGTH_LONG).show();
 			}else{
-			for (int i=0; i<correos.size(); i++){
-				Log.i("Correos;",correos.get(i));
-			}
+				for (int i=0; i<correos.size(); i++){
+					enviaCorreo(correos.get(i));
+				}
+				Toast.makeText(SeleccionaContactos.this, "Correos enviados", Toast.LENGTH_LONG).show();
 			}
 		}
 	};
