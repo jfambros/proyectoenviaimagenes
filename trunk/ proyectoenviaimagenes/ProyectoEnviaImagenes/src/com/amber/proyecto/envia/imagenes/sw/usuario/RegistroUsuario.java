@@ -1,4 +1,4 @@
-package com.amber.proyecto.envia.imagenes.sw;
+package com.amber.proyecto.envia.imagenes.sw.usuario;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -11,6 +11,11 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.amber.proyecto.envia.imagenes.sw.AgregarContacto;
+import com.amber.proyecto.envia.imagenes.sw.Principal;
+import com.amber.proyecto.envia.imagenes.sw.R;
+import com.amber.proyecto.envia.imagenes.sw.R.id;
+import com.amber.proyecto.envia.imagenes.sw.R.layout;
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.utils.Cifrado;
 import com.amber.proyecto.envia.imagenes.sw.utils.Variables;
