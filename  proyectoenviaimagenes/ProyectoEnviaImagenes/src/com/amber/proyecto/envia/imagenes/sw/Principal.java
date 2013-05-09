@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.camara.ObtieneFoto;
 import com.amber.proyecto.envia.imagenes.sw.mibd.BD;
+import com.amber.proyecto.envia.imagenes.sw.usuario.RegistroUsuario;
 import com.amber.proyecto.envia.imagenes.sw.utils.Conexiones;
 import com.amber.proyecto.envia.imagenes.sw.utils.ContenidoArray;
 import com.amber.proyecto.envia.imagenes.sw.utils.EnviaArchivoHttp;

@@ -9,5 +9,21 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_centerInParent="true">
+
+      <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="304dp"
+          android:background="#550000ff"
+          android:orientation="horizontal"
+          android:padding="2px" >
+
+          <ImageView
+              android:id="@+id/ivAtrasFoto"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:src="@drawable/atras48x48" />
+      </LinearLayout>
+
   </FrameLayout>
+
 </RelativeLayout>

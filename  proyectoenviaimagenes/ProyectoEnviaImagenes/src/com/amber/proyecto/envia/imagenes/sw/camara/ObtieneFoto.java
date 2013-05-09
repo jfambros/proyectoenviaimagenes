@@ -23,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amber.proyecto.envia.imagenes.sw.EnviaImagenSW;
@@ -44,6 +45,7 @@ public class ObtieneFoto extends Activity{
 	private String ruta = Variables.ruta;
 	private File archivo;
 	private FileOutputStream archivoAlmacenado;
+	private ImageView ivAtras;
 
 	  public Location getLocCoordenadas() {
 		return locCoordenadas;
@@ -66,6 +68,9 @@ public class ObtieneFoto extends Activity{
 	  public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
+	    
+	    ivAtras = (ImageView)findViewById(R.id.ivAtrasFoto);
+	    ivAtras.setOnClickListener(ivAtrasPres);
 	    bundle = getIntent().getExtras();
 
 	    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
@@ -87,6 +92,18 @@ public class ObtieneFoto extends Activity{
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);	
 	  }	    
 	    
+	  
+	  private OnClickListener ivAtrasPres = new OnClickListener() {
+
+		public void onClick(View v) {
+			cierraCam();
+				Intent intent = new Intent();
+			  intent.setClass(ObtieneFoto.this, Principal.class);
+			  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			  startActivity(intent);
+			
+		}
+	};
 	 
 	  private void cierraCam(){
 			preview.getHolder().removeCallback(preview);
