@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:orientation="vertical" 
+        android:orientation="horizontal" 
         android:background="#ff00c0ff">
 
         <ImageView
@@ -18,6 +18,18 @@
             android:src="@drawable/atras48x48" 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        
+         <TextView
+			android:text="     "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+         
+        <ImageView
+            android:id="@+id/ivInicioSeleccionaCont"
+            android:src="@drawable/inicio48x48" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>         
+        
     </LinearLayout>
 
    
