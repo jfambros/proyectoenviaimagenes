@@ -32,6 +32,7 @@ public class InicioSesion extends Activity{
 	private String correoUsuario;
 	private String nombreUsuario;
 	private ImageView ivAtrasInicioSesion;
+	private ImageView ivInicio;
 	private Bundle bundle;
 
 	protected void onCreate(Bundle savedInstanceState) {

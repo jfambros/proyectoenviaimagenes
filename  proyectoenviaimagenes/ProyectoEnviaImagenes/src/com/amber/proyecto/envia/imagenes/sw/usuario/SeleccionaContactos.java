@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -33,6 +34,7 @@ public class SeleccionaContactos extends Activity{
 	private ArrayList<String> correos = new ArrayList<String>();
 	private ImageView ivEnviaCorreo;
 	private ImageView ivAtrasSelCont;
+	private ImageView ivInicio;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +50,9 @@ public class SeleccionaContactos extends Activity{
 		
 		ivAtrasSelCont = (ImageView)findViewById(R.id.ivAtrasSeleccionaCont);
 		ivAtrasSelCont.setOnClickListener(ivAtrasSelContPres);
+		
+		ivInicio = (ImageView)findViewById(R.id.ivInicioSeleccionaCont);
+		ivInicio.setOnClickListener(ivInicioPres);
 		
 		
 	}
@@ -150,10 +155,20 @@ public class SeleccionaContactos extends Activity{
 		
 	}
 	
+	private OnClickListener ivInicioPres = new OnClickListener() {
+
+		public void onClick(View v) {
+			Intent intent = new Intent();
+    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.setClass(SeleccionaContactos.this, Principal.class);
+			startActivity(intent);
+			finish();		
+		}
+	};
+	
 	private OnItemClickListener listaPres = new OnItemClickListener() {
 
 		public void onItemClick(AdapterView<?> arg0, View arg1, int posi,	long arg3) {
-//			Log.i("Seleccionado", contactos.get(posi).getEmailContacto());
 			if (!((CheckedTextView)arg1).isChecked() && !correos.contains(contactos.get(posi).getEmailContacto())){		
 				correos.add(contactos.get(posi).getEmailContacto());
 			}

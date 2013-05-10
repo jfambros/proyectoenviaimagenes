@@ -64,13 +64,12 @@ public class ObtieneFoto extends Activity{
 	    }
 
 	/** Called when the activity is first created. */
-	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.obtienefoto);
-	    
-	    ivAtras = (ImageView)findViewById(R.id.ivAtrasFoto);
-	    ivAtras.setOnClickListener(ivAtrasPres);
+
+	    //ivAtras = (ImageView)findViewById(R.id.ivAtrasFoto);
+	    //ivAtras.setOnClickListener(ivAtrasPres);
 	    bundle = getIntent().getExtras();
 
 	    File folder = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString());
@@ -84,6 +83,8 @@ public class ObtieneFoto extends Activity{
 		
 
 			preview = new ManejoFoto(this); // <3>
+
+
 		    frameLayout = ((FrameLayout) findViewById(R.id.preview));
 		    frameLayout.addView(preview);// <4>
 		    frameLayout.setOnClickListener(framePres);
@@ -91,15 +92,23 @@ public class ObtieneFoto extends Activity{
 		    milocManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		    milocManager.requestLocationUpdates( LocationManager.GPS_PROVIDER, 0, 0, milocListener);	
 	  }	    
-	    
+	  
+	  @Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		cierraCam();
+	}
+
 	  
 	  private OnClickListener ivAtrasPres = new OnClickListener() {
 
 		public void onClick(View v) {
-			cierraCam();
+			//cierraCam();
 				Intent intent = new Intent();
 			  intent.setClass(ObtieneFoto.this, Principal.class);
 			  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			  preview.camera.release();
 			  startActivity(intent);
 			
 		}
