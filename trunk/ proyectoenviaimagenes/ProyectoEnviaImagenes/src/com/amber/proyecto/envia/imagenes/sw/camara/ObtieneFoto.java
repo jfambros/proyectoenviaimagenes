@@ -97,7 +97,16 @@ public class ObtieneFoto extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		cierraCam();
+		//cierraCam();
+	}
+	  
+	  @Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		/*if (preview.camera == null)
+			preview.camera.startPreview();
+			*/
 	}
 
 	  
